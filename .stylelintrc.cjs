@@ -20,7 +20,7 @@ module.exports = {
   ],
   // 自定义规则
   rules: {
-    'import-notation': 'string' /*          指定导入CSS文件的方式("string"|"url")         */,
+    'import-notation': 'string', // 指定导入CSS文件的方式("string"|"url")
     'selector-class-pattern': null, // 选择器类名命名规则
     'custom-property-pattern': null, // 自定义属性命名规则
     'keyframes-name-pattern': null, // 动画帧节点样式命名规则

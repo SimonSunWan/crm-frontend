@@ -1,6 +1,6 @@
 import type { App, Directive, DirectiveBinding } from 'vue'
 
-/*          *
+/**
  * 水波纹指令
  * 用法:
  * <!-- 基础用法 -->
@@ -20,7 +20,7 @@ export const vRipple: Directive = {
     // 获取指令的配置参数
     const options: RippleOptions = binding.value || {}
 
-    /*  设置元素为相对定位,并隐藏溢出部分 */
+    /* 设置元素为相对定位,并隐藏溢出部分 */
     el.style.position = 'relative'
     el.style.overflow = 'hidden'
 
@@ -35,8 +35,8 @@ export const vRipple: Directive = {
       const diameter = Math.max(el.clientWidth, el.clientHeight)
       const radius = diameter / 2
 
-      /*  根据直径计算动画时间(直径越大,动画时间越长) */
-      const baseTime = 600 /*  基础动画时间(毫秒) */
+      /* 根据直径计算动画时间(直径越大,动画时间越长) */
+      const baseTime = 600 /* 基础动画时间(毫秒) */
       const scaleFactor = 0.5 // 缩放因子
       const animationDuration = baseTime + diameter * scaleFactor
 
@@ -48,7 +48,7 @@ export const vRipple: Directive = {
       ripple.style.borderRadius = '50%'
       ripple.style.pointerEvents = 'none'
 
-      /*  判断是否为有色按钮(Element Plus 按钮类型) */
+      /* 判断是否为有色按钮(Element Plus 按钮类型) */
       const buttonTypes = ['primary', 'info', 'warning', 'danger', 'success'].map(
         type => `el-button--${type}`
       )

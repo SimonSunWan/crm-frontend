@@ -146,7 +146,7 @@
     })
   )
 
-  /*  计算菜单高度(用于边界检测) */
+  /* 计算菜单高度(用于边界检测) */
   const calculateMenuHeight = (): number => {
     let totalHeight = props.menuPadding * 2 // 上下内边距
 
@@ -169,12 +169,12 @@
     let x = e.clientX
     let y = e.clientY
 
-    /*  检查右边界 - 优先显示在鼠标右侧,如果空间不足则显示在左侧 */
+    /* 检查右边界 - 优先显示在鼠标右侧,如果空间不足则显示在左侧 */
     if (x + props.menuWidth > screenWidth - props.boundaryDistance) {
       x = Math.max(props.boundaryDistance, x - props.menuWidth)
     }
 
-    /*  检查下边界 - 优先显示在鼠标下方,如果空间不足则向上调整 */
+    /* 检查下边界 - 优先显示在鼠标下方,如果空间不足则向上调整 */
     if (y + menuHeight > screenHeight - props.boundaryDistance) {
       y = Math.max(props.boundaryDistance, screenHeight - menuHeight - props.boundaryDistance)
     }
@@ -251,13 +251,13 @@
 
     emit('show')
 
-    /*  延迟添加事件监听器,避免立即触发关闭 */
+    /* 延迟添加事件监听器,避免立即触发关闭 */
     showTimer = window.setTimeout(() => {
       if (visible.value) {
         addEventListeners()
       }
       showTimer = null
-    }, 50) /*  减少延迟时间,提升响应性 */
+    }, 50) /* 减少延迟时间,提升响应性 */
   }
 
   const hide = () => {

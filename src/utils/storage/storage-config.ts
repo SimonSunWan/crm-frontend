@@ -15,13 +15,13 @@ export class StorageConfig {
   /** 跳过升级检查的版本 */
   static readonly SKIP_UPGRADE_VERSION = '1.0.0'
 
-  /* * 升级处理延迟时间(毫秒)  */
+  /** 升级处理延迟时间(毫秒)  */
   static readonly UPGRADE_DELAY = 1000
 
-  /* * 登出延迟时间(毫秒)  */
+  /** 登出延迟时间(毫秒)  */
   static readonly LOGOUT_DELAY = 1000
 
-  /* *
+  /**
    * 生成版本化的存储键名
    * @param storeId 存储ID
    * @param version 版本号,默认使用当前版本
@@ -30,7 +30,7 @@ export class StorageConfig {
     return `${this.STORAGE_PREFIX}${version}-${storeId}`
   }
 
-  /* *
+  /**
    * 生成旧版本的存储键名(不带分隔符)
    * @param version 版本号,默认使用当前版本
    */

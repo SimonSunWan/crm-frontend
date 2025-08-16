@@ -69,7 +69,7 @@ export function useChart(options: UseChartOptions = {}) {
     })
   }
 
-  /*  防抖的resize处理(用于窗口resize事件) */
+  /* 防抖的resize处理(用于窗口resize事件) */
   const debouncedResize = () => {
     if (resizeTimeoutId) {
       clearTimeout(resizeTimeoutId)
@@ -82,16 +82,16 @@ export function useChart(options: UseChartOptions = {}) {
 
   // 多延迟resize处理 - 统一方法
   const multiDelayResize = (delays: readonly number[]) => {
-    /*  立即调用一次,快速响应 */
+    /* 立即调用一次,快速响应 */
     nextTick(requestAnimationResize)
 
-    /*  使用延迟时间,确保图表正确适应变化 */
+    /* 使用延迟时间,确保图表正确适应变化 */
     delays.forEach(delay => {
       setTimeout(requestAnimationResize, delay)
     })
   }
 
-  /*  收缩菜单时,重新计算图表大小 */
+  /* 收缩菜单时,重新计算图表大小 */
   watch(menuOpen, () => multiDelayResize(RESIZE_DELAYS))
 
   // 菜单类型变化触发
@@ -282,12 +282,12 @@ export function useChart(options: UseChartOptions = {}) {
             requestAnimationFrame(() => {
               if (!isDestroyed && pendingOptions) {
                 try {
-                  /*  元素变为可见,初始化图表 */
+                  /* 元素变为可见,初始化图表 */
                   if (!chart) {
                     chart = echarts.init(entry.target as HTMLElement)
                   }
 
-                  /*  触发自定义事件,让组件处理动画逻辑 */
+                  /* 触发自定义事件,让组件处理动画逻辑 */
                   const event = new CustomEvent('chartVisible', {
                     detail: { options: pendingOptions }
                   })
@@ -342,14 +342,14 @@ export function useChart(options: UseChartOptions = {}) {
 
     try {
       if (isContainerVisible(chartRef.value)) {
-        /*  容器可见,正常初始化 */
+        /* 容器可见,正常初始化 */
         if (initDelay > 0) {
           setTimeout(() => performChartInit(mergedOptions), initDelay)
         } else {
           performChartInit(mergedOptions)
         }
       } else {
-        /*  容器不可见,保存选项并设置监听器 */
+        /* 容器不可见,保存选项并设置监听器 */
         pendingOptions = mergedOptions
         createIntersectionObserver()
       }
@@ -364,7 +364,7 @@ export function useChart(options: UseChartOptions = {}) {
 
     try {
       if (!chart) {
-        /*  如果图表不存在,先初始化 */
+        /* 如果图表不存在,先初始化 */
         initChart(options)
         return
       }

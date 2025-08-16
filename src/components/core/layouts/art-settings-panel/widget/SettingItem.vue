@@ -65,17 +65,17 @@
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
 
-  /*  标准化选项,处理computed和普通数组 */
+  /* 标准化选项,处理computed和普通数组 */
   const normalizedOptions = computed(() => {
     if (!props.config.options) return []
 
     try {
-      /*  如果是 ComputedRef,则返回其值 */
+      /* 如果是 ComputedRef,则返回其值 */
       if (typeof props.config.options === 'object' && 'value' in props.config.options) {
         return props.config.options.value || []
       }
 
-      /*  如果是普通数组,直接返回 */
+      /* 如果是普通数组,直接返回 */
       return Array.isArray(props.config.options) ? props.config.options : []
     } catch (error) {
       console.warn('Error processing options for config:', props.config.key, error)

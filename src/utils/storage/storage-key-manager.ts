@@ -44,7 +44,7 @@ export class StorageKeyManager {
     }
   }
 
-  /* *
+  /**
    * 获取持久化存储的键名(支持自动数据迁移)
    */
   getStorageKey(storeId: string): string {

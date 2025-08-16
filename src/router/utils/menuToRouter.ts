@@ -90,7 +90,7 @@ const validateComponent = (route: AppRouteRecord, parentPath: string): void => {
 
   // 检查 component 是否为空字符串
   if (!route.component) {
-    /*  如果不是特殊情况,则给出警告 */
+    /* 如果不是特殊情况,则给出警告 */
     if (!hasExternalLink && !hasChildren) {
       console.error(`[路由错误] component 不存在或为空`)
       console.error(route)

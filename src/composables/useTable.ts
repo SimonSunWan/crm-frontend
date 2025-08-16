@@ -34,9 +34,7 @@ export interface UseTableConfig<
     columnsFactory?: () => ColumnOption<T>[]
     /** 自定义分页字段映射 */
     paginationKey?: {
-      /*          * 当前页码字段名,默认为 'current'           */
       current?: string
-      /*          * 每页条数字段名,默认为 'size'           */
       size?: string
     }
   }
@@ -53,9 +51,9 @@ export interface UseTableConfig<
   performance?: {
     /** 是否启用缓存 */
     enableCache?: boolean
-    /* * 缓存时间(毫秒)  */
+    /** 缓存时间(毫秒)  */
     cacheTime?: number
-    /* * 防抖延迟时间(毫秒)  */
+    /** 防抖延迟时间(毫秒)  */
     debounceTime?: number
     /** 最大缓存条数限制 */
     maxCacheSize?: number
@@ -63,11 +61,11 @@ export interface UseTableConfig<
 
   // 🎪 生命周期钩子
   hooks?: {
-    /* * 数据加载成功回调(仅网络请求成功时触发)  */
+    /** 数据加载成功回调(仅网络请求成功时触发)  */
     onSuccess?: (data: T[], response: ApiResponse<T>) => void
     /** 错误处理回调 */
     onError?: (error: TableError) => void
-    /* * 缓存命中回调(从缓存获取数据时触发)  */
+    /** 缓存命中回调(从缓存获取数据时触发)  */
     onCacheHit?: (data: T[], response: ApiResponse<T>) => void
     /** 加载状态变化回调 */
     onLoading?: (loading: boolean) => void
@@ -84,7 +82,7 @@ export interface UseTableConfig<
   }
 }
 
-/* *
+/**
  * 🚀 useTable - 强大的表格数据管理 Hook
  *
  * 提供完整的表格解决方案,包括:
@@ -122,7 +120,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
   const pageKey = paginationKey?.current || 'current'
   const sizeKey = paginationKey?.size || 'size'
 
-  /*  响应式触发器,用于手动更新缓存统计信息 */
+  /* 响应式触发器,用于手动更新缓存统计信息 */
   const cacheUpdateTrigger = ref(0)
 
   // 🔧 日志工具函数
@@ -197,7 +195,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
 
   // 缓存统计信息
   const cacheStats = computed(() => {
-    /*  依赖触发器,确保缓存变化时重新计算 */
+    /* 依赖触发器,确保缓存变化时重新计算 */
     void cacheUpdateTrigger.value
     if (!cache) return { total: 0, size: '0KB', hitRate: '0 avg hits' }
     return cache.getStats()
@@ -272,7 +270,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
           data.value = cachedItem.data
           updatePaginationFromResponse(pagination, cachedItem.response)
 
-          /*  🔧 修复:避免重复设置相同的值,防止响应式循环更新 */
+          /* 🔧 修复:避免重复设置相同的值,防止响应式循环更新 */
           if ((searchParams as any)[pageKey] !== pagination.current) {
             ;(searchParams as any)[pageKey] = pagination.current
           }
@@ -282,7 +280,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
 
           loading.value = false
 
-          /*  🔧 缓存命中时触发专门的回调,而不是 onSuccess */
+          /* 🔧 缓存命中时触发专门的回调,而不是 onSuccess */
           if (onCacheHit) {
             onCacheHit(cachedItem.data, cachedItem.response)
           }
@@ -314,7 +312,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
       data.value = tableData
       updatePaginationFromResponse(pagination, standardResponse)
 
-      /*  🔧 修复:避免重复设置相同的值,防止响应式循环更新 */
+      /* 🔧 修复:避免重复设置相同的值,防止响应式循环更新 */
       if ((searchParams as any)[pageKey] !== pagination.current) {
         ;(searchParams as any)[pageKey] = pagination.current
       }
@@ -338,7 +336,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
       return standardResponse
     } catch (err) {
       if (err instanceof Error && err.message === '请求已取消') {
-        /*  请求被取消,不做处理 */
+        /* 请求被取消,不做处理 */
         return { records: [], total: 0, current: 1, size: 10 }
       }
 
@@ -369,7 +367,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
     pagination.current = 1
     ;(searchParams as any)[pageKey] = 1
 
-    /*  🔧 搜索时清空当前搜索条件的缓存,确保获取最新数据 */
+    /* 🔧 搜索时清空当前搜索条件的缓存,确保获取最新数据 */
     invalidateCache(CacheInvalidationStrategy.CLEAR_CURRENT, '搜索数据')
 
     try {
@@ -445,12 +443,12 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
   const handleCurrentChange = async (newCurrent: number): Promise<void> => {
     if (newCurrent <= 0) return
 
-    /*  🔧 修复:防止重复调用 */
+    /* 🔧 修复:防止重复调用 */
     if (isCurrentChanging) {
       return
     }
 
-    /*  🔧 修复:如果当前页没有变化,不需要重新请求 */
+    /* 🔧 修复:如果当前页没有变化,不需要重新请求 */
     if (pagination.current === newCurrent) {
       logger.log('分页页码未变化，跳过请求')
       return
@@ -459,7 +457,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
     try {
       isCurrentChanging = true
 
-      /*  🔧 修复:只更新必要的状态 */
+      /* 🔧 修复:只更新必要的状态 */
       pagination.current = newCurrent
       // 只有当 searchParams 的分页字段与新值不同时才更新
       if ((searchParams as any)[pageKey] !== newCurrent) {
@@ -474,7 +472,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
 
   // 🚀 针对不同业务场景的刷新方法
 
-  /*  新增数据后刷新 - 回到第一页,清空分页缓存 */
+  /* 新增数据后刷新 - 回到第一页,清空分页缓存 */
   const refreshAfterAdd = async (): Promise<void> => {
     debouncedGetDataByPage.cancel()
     pagination.current = 1
@@ -483,7 +481,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
     await getData()
   }
 
-  /*  编辑数据后刷新 - 保持当前页,清空当前搜索缓存 */
+  /* 编辑数据后刷新 - 保持当前页,清空当前搜索缓存 */
   const refreshAfterEdit = async (): Promise<void> => {
     invalidateCache(CacheInvalidationStrategy.CLEAR_CURRENT, '编辑数据')
     await getData()
@@ -491,7 +489,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
 
   // 删除数据后刷新 - 智能处理页码
   const refreshAfterDelete = async (): Promise<void> => {
-    /*  如果当前页只有1条数据,且不是第1页,则回到上一页 */
+    /* 如果当前页只有1条数据,且不是第1页,则回到上一页 */
     if (data.value.length === 1 && pagination.current > 1) {
       pagination.current = pagination.current - 1
       ;(searchParams as any)[pageKey] = pagination.current
@@ -618,7 +616,7 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
   }
 }
 
-/*  重新导出类型和枚举,方便使用 */
+/* 重新导出类型和枚举,方便使用 */
 export { CacheInvalidationStrategy } from '../utils/table/tableCache'
 export type { ApiResponse, CacheItem } from '../utils/table/tableCache'
 export type { BaseRequestParams, TableError } from '../utils/table/tableUtils'

@@ -11,7 +11,7 @@ export function useFastEnter() {
   // 获取快速入口配置
   const fastEnterConfig = computed(() => appConfig.fastEnter)
 
-  /*  获取启用的应用列表(按排序权重排序) */
+  /* 获取启用的应用列表(按排序权重排序) */
   const enabledApplications = computed<FastEnterApplication[]>(() => {
     if (!fastEnterConfig.value?.applications) return []
 
@@ -20,7 +20,7 @@ export function useFastEnter() {
       .sort((a, b) => (a.order || 0) - (b.order || 0))
   })
 
-  /*  获取启用的快速链接(按排序权重排序) */
+  /* 获取启用的快速链接(按排序权重排序) */
   const enabledQuickLinks = computed<FastEnterQuickLink[]>(() => {
     if (!fastEnterConfig.value?.quickLinks) return []
 

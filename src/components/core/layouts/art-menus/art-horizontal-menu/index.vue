@@ -54,7 +54,7 @@
    */
   const routerPath = computed(() => String(route.meta.activePath || route.path))
 
-  /* *
+  /**
    * 递归过滤菜单项,移除隐藏的菜单
    * 如果一个父菜单的所有子菜单都被隐藏,则父菜单也会被隐藏
    * @param items 菜单项数组
@@ -63,19 +63,19 @@
   const filterMenuItems = (items: AppRouteRecord[]): AppRouteRecord[] => {
     return items
       .filter(item => {
-        /*  如果当前项被隐藏,直接过滤掉 */
+        /* 如果当前项被隐藏,直接过滤掉 */
         if (item.meta.isHide) {
           return false
         }
 
-        /*  如果有子菜单,递归过滤子菜单 */
+        /* 如果有子菜单,递归过滤子菜单 */
         if (item.children && item.children.length > 0) {
           const filteredChildren = filterMenuItems(item.children)
-          /*  如果所有子菜单都被过滤掉了,则隐藏父菜单 */
+          /* 如果所有子菜单都被过滤掉了,则隐藏父菜单 */
           return filteredChildren.length > 0
         }
 
-        /*  叶子节点且未被隐藏,保留 */
+        /* 叶子节点且未被隐藏,保留 */
         return true
       })
       .map(item => ({

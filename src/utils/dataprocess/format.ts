@@ -8,7 +8,7 @@ export function timestampToTime(timestamp: number = Date.now(), isMs: boolean = 
   return date.toISOString().replace('T', ' ').slice(0, 19)
 }
 
-/*  数字格式化(千位分隔符) */
+/* 数字格式化(千位分隔符) */
 export function commafy(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }

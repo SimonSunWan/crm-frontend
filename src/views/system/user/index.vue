@@ -113,11 +113,7 @@
         // pageNum: 1,
         // pageSize: 20
       },
-      /*  自定义分页字段映射,同时需要在 apiParams 中配置字段名 */
-      // paginationKey: {
-      /*             current: 'pageNum',          */
-      /*             size: 'pageSize'          */
-      // },
+      /* 自定义分页字段映射,同时需要在 apiParams 中配置字段名 */
       columnsFactory: () => [
         { type: 'selection' }, // 勾选列
         { type: 'index', width: 60, label: '序号' }, // 序号
@@ -201,7 +197,7 @@
    * @param params 参数
    */
   const handleSearch = (params: Record<string, any>) => {
-    /*  处理日期区间参数,把 daterange 转换为 startTime 和 endTime */
+    /* 处理日期区间参数,把 daterange 转换为 startTime 和 endTime */
     const { daterange, ...searchParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
 

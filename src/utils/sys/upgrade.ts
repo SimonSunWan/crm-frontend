@@ -8,7 +8,7 @@ import { StorageConfig } from '@/utils/storage/storage-config'
  * 负责处理版本比较、升级检测和数据清理
  */
 class VersionManager {
-  /*          *
+  /**
    * 规范化版本号字符串,移除前缀 'v'
    */
   private normalizeVersion(version: string): string {
@@ -55,10 +55,7 @@ class VersionManager {
    */
   private findLegacyStorage(): { oldSysKey: string | null; oldVersionKeys: string[] } {
     const storageKeys = Object.keys(localStorage)
-    const currentVersionPrefix = StorageConfig.generateStorageKey('').slice(
-      0,
-      -1
-    ) /*           移除末尾的 '-'          */
+    const currentVersionPrefix = StorageConfig.generateStorageKey('').slice(0, -1)
 
     // 查找旧的单一存储结构
     const oldSysKey =
@@ -182,7 +179,7 @@ class VersionManager {
       // 清理旧数据
       this.cleanupLegacyData(legacyStorage.oldSysKey, legacyStorage.oldVersionKeys)
 
-      /*  执行登出(如果需要) */
+      /* 执行登出(如果需要) */
       if (requireReLogin) {
         this.performLogout()
       }
@@ -212,9 +209,8 @@ class VersionManager {
       return
     }
 
-    /*  版本相同,无需升级 */
+    /* 版本相同,无需升级 */
     if (this.isSameVersion(storedVersion!)) {
-      /*           console.debug('[Upgrade] 版本相同,无需升级')          */
       return
     }
 
@@ -226,7 +222,7 @@ class VersionManager {
       return
     }
 
-    /*  延迟执行升级流程,确保应用已完全加载 */
+    /* 延迟执行升级流程,确保应用已完全加载 */
     setTimeout(() => {
       this.executeUpgrade(storedVersion!, legacyStorage)
     }, StorageConfig.UPGRADE_DELAY)

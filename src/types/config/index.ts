@@ -82,7 +82,7 @@ export interface FastEnterConfig {
   applications: FastEnterApplication[]
   /** 快速链接 */
   quickLinks: FastEnterQuickLink[]
-  /* * 显示条件(屏幕宽度)  */
+  /** 显示条件(屏幕宽度)  */
   minWidth?: number
 }
 

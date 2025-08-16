@@ -1,7 +1,7 @@
 import { useUserStore } from '@/store/modules/user'
 import { App, Directive, DirectiveBinding } from 'vue'
 
-/*          *
+/**
  * 角色权限指令
  * 只要用户角色包含指令值中的任意一个角色,则显示元素
  * 用法:
@@ -17,7 +17,7 @@ function checkRolePermission(el: HTMLElement, binding: RolesBinding): void {
   const userStore = useUserStore()
   const userRoles = userStore.getUserInfo.roles
 
-  /*  如果用户角色为空或未定义,移除元素 */
+  /* 如果用户角色为空或未定义,移除元素 */
   if (!userRoles?.length) {
     removeElement(el)
     return
@@ -29,7 +29,7 @@ function checkRolePermission(el: HTMLElement, binding: RolesBinding): void {
   // 检查用户是否具有所需角色之一
   const hasPermission = requiredRoles.some((role: string) => userRoles.includes(role))
 
-  /*  如果没有权限,安全地移除元素 */
+  /* 如果没有权限,安全地移除元素 */
   if (!hasPermission) {
     removeElement(el)
   }

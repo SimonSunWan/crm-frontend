@@ -11,7 +11,7 @@ export function useCeremony() {
   const settingStore = useSettingStore()
   const { holidayFireworksLoaded, isShowFireworks } = storeToRefs(settingStore)
 
-  /*  烟花间隔引用,用于清理 */
+  /* 烟花间隔引用,用于清理 */
   let fireworksInterval: { pause: () => void } | null = null
 
   // 判断当前日期是否是节日
@@ -22,17 +22,17 @@ export function useCeremony() {
 
   // 节日庆祝相关配置
   const FESTIVAL_CONFIG = {
-    INITIAL_DELAY: 300 /*  初始延迟时间,单位毫秒 */,
-    FIREWORK_INTERVAL: 1000 /*  烟花效果触发间隔,单位毫秒 */,
-    TEXT_DELAY: 2000 /*  文本显示延迟时间,单位毫秒 */,
+    INITIAL_DELAY: 300 /* 初始延迟时间,单位毫秒 */,
+    FIREWORK_INTERVAL: 1000 /* 烟花效果触发间隔,单位毫秒 */,
+    TEXT_DELAY: 2000 /* 文本显示延迟时间,单位毫秒 */,
     MAX_TRIGGERS: 6 // 最大触发次数
   } as const
 
   // 根据节日列表显示节日祝福
   const openFestival = () => {
-    /*  没有节日数据,不显示 */
+    /* 没有节日数据,不显示 */
     if (!currentFestivalData.value) return
-    /*  礼花效果结束,不显示 */
+    /* 礼花效果结束,不显示 */
     if (!isShowFireworks.value) return
 
     let triggers = 0

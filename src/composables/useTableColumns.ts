@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { $t } from '@/locales'
 import type { ColumnOption } from '@/types/component'
 
-/*  工具函数:根据列配置生成列选择状态 */
+/* 工具函数:根据列配置生成列选择状态 */
 const getColumnChecks = <T>(columns: ColumnOption<T>[]): ColumnOption<T>[] => {
   const checks: ColumnOption<T>[] = []
 
@@ -46,7 +46,7 @@ export function useTableColumns<T = any>(columnsFactory: () => ColumnOption<T>[]
   // 获取所有列定义
   const allColumns = columnsFactory()
 
-  /*  列选中状态,初始包含所有普通列和特殊类型列 */
+  /* 列选中状态,初始包含所有普通列和特殊类型列 */
   const columnChecks = ref<ColumnOption<T>[]>(getColumnChecks(allColumns))
 
   // 当前显示的列

@@ -71,7 +71,7 @@
 
   const emit = defineEmits(['close'])
 
-  /*  过滤后的子菜单项(不包含隐藏的) */
+  /* 过滤后的子菜单项(不包含隐藏的) */
   const filteredChildren = computed(() => {
     return props.item.children?.filter(child => !child.meta.isHide) || []
   })

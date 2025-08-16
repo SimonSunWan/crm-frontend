@@ -2,7 +2,7 @@
 
 import type { ApiResponse } from './tableCache'
 
-/*  请求参数基础接口,扩展分页参数 */
+/* 请求参数基础接口,扩展分页参数 */
 export interface BaseRequestParams extends Api.Common.PaginatingParams {
   [key: string]: unknown
 }
@@ -14,7 +14,7 @@ export interface TableError {
   details?: unknown
 }
 
-/*  辅助函数:从对象中提取记录数组 */
+/* 辅助函数:从对象中提取记录数组 */
 function extractRecords<T>(obj: Record<string, unknown>, fields: string[]): T[] {
   for (const field of fields) {
     if (field in obj && Array.isArray(obj[field])) {
@@ -24,7 +24,7 @@ function extractRecords<T>(obj: Record<string, unknown>, fields: string[]): T[] 
   return []
 }
 
-/*  辅助函数:从对象中提取总数 */
+/* 辅助函数:从对象中提取总数 */
 function extractTotal(obj: Record<string, unknown>, records: unknown[], fields: string[]): number {
   for (const field of fields) {
     if (field in obj && typeof obj[field] === 'number') {
@@ -34,7 +34,7 @@ function extractTotal(obj: Record<string, unknown>, records: unknown[], fields: 
   return records.length
 }
 
-/*  辅助函数:提取分页参数 */
+/* 辅助函数:提取分页参数 */
 function extractPagination(
   obj: Record<string, unknown>,
   data?: Record<string, unknown>
@@ -96,7 +96,7 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
   total = extractTotal(res, records, ['total', 'count'])
   pagination = extractPagination(res)
 
-  /*  如果没有找到,检查嵌套data */
+  /* 如果没有找到,检查嵌套data */
   if (records.length === 0 && 'data' in res && typeof res.data === 'object') {
     const data = res.data as Record<string, unknown>
     records = extractRecords(data, ['list', 'records', 'items'])
@@ -109,7 +109,7 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
     }
   }
 
-  /*  如果还是没有找到,使用兜底 */
+  /* 如果还是没有找到,使用兜底 */
   if (records.length === 0) {
     console.warn('[tableUtils] 无法识别的响应格式:', response)
   }

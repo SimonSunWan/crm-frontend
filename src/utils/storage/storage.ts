@@ -16,7 +16,7 @@ class StorageCompatibilityManager {
     return localStorage.getItem(StorageConfig.VERSION_KEY)
   }
 
-  /* *
+  /**
    * 获取系统存储数据(兼容旧格式)
    */
   getSystemStorage(): any {
@@ -108,7 +108,7 @@ class StorageCompatibilityManager {
    * 验证存储数据完整性
    */
   validateStorageData(): boolean {
-    /*  如果在登录页面,跳过验证 */
+    /* 如果在登录页面,跳过验证 */
     if (this.isOnLoginPage()) {
       return true
     }
@@ -116,7 +116,6 @@ class StorageCompatibilityManager {
     try {
       // 优先检查新版本存储结构
       if (this.hasCurrentVersionStorage()) {
-        /*           console.debug('[Storage] 发现当前版本存储数据')          */
         return true
       }
 
@@ -171,7 +170,6 @@ class StorageCompatibilityManager {
       const isEmpty = this.isStorageEmpty()
 
       if (isValid || isEmpty) {
-        /*           console.debug('[Storage] 存储兼容性检查通过')          */
         return true
       }
 

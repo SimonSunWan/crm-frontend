@@ -224,7 +224,7 @@
       }
     }
 
-    /* *
+    /**
      * 从对象池获取可用粒子 (性能优化版本)
      * 使用循环索引而非Array.find(),时间复杂度从O(n)降至O(1)
      * @returns 可用的粒子对象或null
@@ -249,7 +249,7 @@
      * @returns Promise<HTMLImageElement>
      */
     async preloadImage(url: string): Promise<HTMLImageElement> {
-      /*  如果已缓存,直接返回 */
+      /* 如果已缓存,直接返回 */
       if (this.imageCache[url]) {
         return this.imageCache[url]
       }
@@ -266,7 +266,7 @@
       })
     }
 
-    /* *
+    /**
      * 预加载所有需要的图片资源
      * 在组件初始化时调用,确保图片ready
      */
@@ -279,7 +279,7 @@
       }
     }
 
-    /* *
+    /**
      * 创建烟花爆炸效果
      * @param imageUrl 可选的图片URL,如果提供则使用图片粒子
      */
@@ -291,7 +291,7 @@
       // 根据是否有图片确定可用形状
       const availableShapes = imageUrl && this.imageCache[imageUrl] ? ['image'] : CONFIG.SHAPES
 
-      /*  批量创建粒子数组,减少频繁的数组操作 */
+      /* 批量创建粒子数组,减少频繁的数组操作 */
       const particles: Firework[] = []
 
       for (let i = 0; i < CONFIG.PARTICLES_PER_BURST; i++) {
@@ -303,10 +303,10 @@
         const speed = (12 + Math.random() * 6) * 1.5 // 随机速度
         const spread = Math.random() * Math.PI * 2 // 360度随机扩散
 
-        /*  直接属性赋值,避免Object.assign的性能开销 */
+        /* 直接属性赋值,避免Object.assign的性能开销 */
         particle.x = startX
         particle.y = startY
-        /*  复杂的速度计算,模拟真实烟花爆炸轨迹 */
+        /* 复杂的速度计算,模拟真实烟花爆炸轨迹 */
         particle.vx = Math.cos(angle) * Math.cos(spread) * speed * (Math.random() * 0.5 + 0.5)
         particle.vy = Math.sin(angle) * speed - 15 // 向上初始速度
         particle.color = CONFIG.COLORS[Math.floor(Math.random() * CONFIG.COLORS.length)]
@@ -322,7 +322,7 @@
         particles.push(particle)
       }
 
-      /*  批量添加到活动粒子数组,减少多次数组操作 */
+      /* 批量添加到活动粒子数组,减少多次数组操作 */
       this.activeParticles.push(...particles)
     }
 
@@ -334,7 +334,7 @@
       const { GRAVITY, VELOCITY_THRESHOLD, OPACITY_DECAY } = CONFIG.PHYSICS
       const { DECAY } = CONFIG.ROTATION
 
-      /*  使用倒序遍历,避免删除元素时的索引混乱问题 */
+      /* 使用倒序遍历,避免删除元素时的索引混乱问题 */
       for (let i = this.activeParticles.length - 1; i >= 0; i--) {
         const particle = this.activeParticles[i]
 
@@ -494,7 +494,6 @@
 
       // 清除整个画布
       ctx.value.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-      /*           设置混合模式为"变亮",增强视觉效果          */
       ctx.value.globalCompositeOperation = 'lighter'
 
       // 渲染所有活动粒子
@@ -531,7 +530,7 @@
       this.animate()
     }
 
-    /* *
+    /**
      * 停止动画循环
      * 在组件卸载时调用,避免内存泄漏
      */
@@ -573,7 +572,7 @@
     }
   }
 
-  /* *
+  /**
    * 调整Canvas画布大小
    * 响应窗口大小变化,确保画布始终覆盖整个视口
    */
@@ -586,7 +585,7 @@
     fireworkSystem.updateCanvasSize(innerWidth, innerHeight)
   }
 
-  /* *
+  /**
    * 处理外部触发的烟花事件
    * 通过 mittBus 事件总线接收触发指令
    * @param event 事件数据,可能包含图片URL
@@ -623,7 +622,7 @@
     mittBus.on('triggerFireworks', handleFireworkTrigger) // 外部触发事件
   })
 
-  /* *
+  /**
    * 组件卸载时的清理逻辑
    * 停止动画循环并移除事件监听器,防止内存泄漏
    */
