@@ -16,8 +16,7 @@
       :class="{ goFirst2: isOk }"
       ref="progressBar"
       :style="progressBarStyle"
-    >
-    </div>
+    ></div>
 
     <!-- 提示文本 -->
     <div class="dv_text" :style="textStyle" ref="messageRef">
@@ -116,13 +115,13 @@
   // 解构响应式状态
   const { isOk } = toRefs(state)
 
-  // DOM 元素引用
+  // DOM元素引用
   const dragVerify = ref()
   const messageRef = ref()
   const handler = ref()
   const progressBar = ref()
 
-  // 触摸事件变量 - 用于禁止页面滑动
+  // 触摸事件变量-用于禁止页面滑动
   let startX: number, startY: number, moveX: number, moveY: number
 
   /**
@@ -135,14 +134,14 @@
   }
 
   /**
-   * 触摸移动事件处理 - 判断是否为横向滑动，如果是则阻止默认行为
+   * 触摸移动事件处理-判断是否为横向滑动, 如果是则阻止默认行为
    * @param e 触摸事件对象
    */
   const onTouchMove = (e: any) => {
     moveX = e.targetTouches[0].pageX
     moveY = e.targetTouches[0].pageY
 
-    // 如果横向移动距离大于纵向移动距离，阻止默认行为（防止页面滑动）
+    // 如果横向移动距离大于纵向移动距离, 阻止默认行为
     if (Math.abs(moveX - startX) > Math.abs(moveY - startY)) {
       e.preventDefault()
     }
@@ -155,7 +154,7 @@
   // 获取数值形式的宽度
   const getNumericWidth = (): number => {
     if (typeof props.width === 'string') {
-      // 如果是字符串，尝试从DOM元素获取实际宽度
+      // 如果是字符串, 尝试从DOM元素获取实际宽度
       return dragVerify.value?.offsetWidth || 260
     }
     return props.width
@@ -171,7 +170,7 @@
 
   // 组件挂载后的初始化
   onMounted(() => {
-    // 设置 CSS 自定义属性
+    // 设置CSS自定义属性
     dragVerify.value?.style.setProperty('--textColor', props.textColor)
 
     // 等待DOM更新后设置宽度相关属性
@@ -181,7 +180,7 @@
       dragVerify.value?.style.setProperty('--pwidth', -Math.floor(numericWidth / 2) + 'px')
     })
 
-    // 重复添加事件监听器（确保事件绑定）
+    // 重复添加事件监听器(确保事件绑定)
     document.addEventListener('touchstart', onTouchStart)
     document.addEventListener('touchmove', onTouchMove, { passive: false })
   })
@@ -258,7 +257,7 @@
         handler.value.style.left = _x + 'px'
         progressBar.value.style.width = _x + props.height / 2 + 'px'
       } else if (_x > numericWidth - props.height) {
-        // 拖拽到末端，触发验证成功
+        // 拖拽到末端, 触发验证成功
         handler.value.style.left = numericWidth - props.height + 'px'
         progressBar.value.style.width = numericWidth - props.height / 2 + 'px'
         passVerify()
@@ -277,14 +276,14 @@
       let _x = (e.pageX || e.changedTouches[0].pageX) - state.x
 
       if (_x < numericWidth - props.height) {
-        // 未拖拽到末端，重置位置
+        // 未拖拽到末端, 重置位置
         state.isOk = true
         handler.value.style.left = '0'
         handler.value.style.transition = 'all 0.2s'
         progressBar.value.style.width = '0'
         state.isOk = false
       } else {
-        // 拖拽到末端，保持验证成功状态
+        // 拖拽到末端, 保持验证成功状态
         handler.value.style.transition = 'none'
         handler.value.style.left = numericWidth - props.height + 'px'
         progressBar.value.style.width = numericWidth - props.height / 2 + 'px'

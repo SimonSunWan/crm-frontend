@@ -29,9 +29,9 @@
 
       <!-- subtitle slot -->
       <slot name="subtitle">
-        <p v-if="subtitle" class="basic-banner__subtitle" :style="{ color: subtitleColor }">{{
-          subtitle
-        }}</p>
+        <p v-if="subtitle" class="basic-banner__subtitle" :style="{ color: subtitleColor }">
+          {{ subtitle }}
+        </p>
       </slot>
 
       <!-- button slot -->

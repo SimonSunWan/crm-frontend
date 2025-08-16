@@ -20,8 +20,8 @@ const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env
 const axiosInstance = axios.create({
   timeout: REQUEST_TIMEOUT, // 请求超时时间(毫秒)
   baseURL: VITE_API_URL, // API地址
-  withCredentials: VITE_WITH_CREDENTIALS === 'true', // 是否携带cookie，默认关闭
-  validateStatus: (status) => status >= 200 && status < 300, // 只接受 2xx 的状态码
+  withCredentials: VITE_WITH_CREDENTIALS === 'true' /*  是否携带cookie,默认关闭 */,
+  validateStatus: status => status >= 200 && status < 300, // 只接受 2xx 的状态码
   transformResponse: [
     (data, headers) => {
       const contentType = headers['content-type']
@@ -55,7 +55,7 @@ axiosInstance.interceptors.request.use(
 
     return request
   },
-  (error) => {
+  error => {
     showError(new HttpError($t('httpMsg.requestConfigError'), ApiStatus.error))
     return Promise.reject(error)
   }
@@ -76,7 +76,7 @@ axiosInstance.interceptors.response.use(
         throw new HttpError(msg || $t('httpMsg.requestFailed'), code)
     }
   },
-  (error) => {
+  error => {
     return Promise.reject(handleError(error))
   }
 )
@@ -90,7 +90,7 @@ async function retryRequest<T>(
     return await request<T>(config)
   } catch (error) {
     if (retries > 0 && error instanceof HttpError && shouldRetry(error.code)) {
-      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY))
       return retryRequest<T>(config, retries - 1)
     }
     throw error

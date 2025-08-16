@@ -113,12 +113,12 @@
   // 计算属性
   const list = computed(() => store.opened)
   const activeTab = computed(() => currentRoute.value.path)
-  const activeTabIndex = computed(() => list.value.findIndex((tab) => tab.path === activeTab.value))
+  const activeTabIndex = computed(() => list.value.findIndex(tab => tab.path === activeTab.value))
 
   // 右键菜单逻辑
   const useContextMenu = () => {
     const getClickedTabInfo = () => {
-      const clickedIndex = list.value.findIndex((tab) => tab.path === clickedPath.value)
+      const clickedIndex = list.value.findIndex(tab => tab.path === clickedPath.value)
       const currentTab = list.value[clickedIndex]
 
       return {
@@ -137,10 +137,10 @@
       const otherTabs = list.value.filter((_, index) => index !== clickedIndex)
 
       return {
-        areAllLeftTabsFixed: leftTabs.length > 0 && leftTabs.every((tab) => tab.fixedTab),
-        areAllRightTabsFixed: rightTabs.length > 0 && rightTabs.every((tab) => tab.fixedTab),
-        areAllOtherTabsFixed: otherTabs.length > 0 && otherTabs.every((tab) => tab.fixedTab),
-        areAllTabsFixed: list.value.every((tab) => tab.fixedTab)
+        areAllLeftTabsFixed: leftTabs.length > 0 && leftTabs.every(tab => tab.fixedTab),
+        areAllRightTabsFixed: rightTabs.length > 0 && rightTabs.every(tab => tab.fixedTab),
+        areAllOtherTabsFixed: otherTabs.length > 0 && otherTabs.every(tab => tab.fixedTab),
+        areAllTabsFixed: list.value.every(tab => tab.fixedTab)
       }
     }
 
@@ -385,8 +385,8 @@
         return
       }
 
-      const activeIndex = list.value.findIndex((tab) => tab.path === activeTab.value)
-      const clickedIndex = list.value.findIndex((tab) => tab.path === clickedPath.value)
+      const activeIndex = list.value.findIndex(tab => tab.path === activeTab.value)
+      const clickedIndex = list.value.findIndex(tab => tab.path === clickedPath.value)
 
       const navigationRules = {
         left: activeIndex < clickedIndex,

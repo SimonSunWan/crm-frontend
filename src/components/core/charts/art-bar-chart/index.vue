@@ -129,7 +129,7 @@
       // 检查单数据情况
       if (Array.isArray(props.data) && typeof props.data[0] === 'number') {
         const singleData = props.data as number[]
-        return !singleData.length || singleData.every((val) => val === 0)
+        return !singleData.length || singleData.every(val => val === 0)
       }
 
       // 检查多数据情况
@@ -137,7 +137,7 @@
         const multiData = props.data as BarDataItem[]
         return (
           !multiData.length ||
-          multiData.every((item) => !item.data?.length || item.data.every((val) => val === 0))
+          multiData.every(item => !item.data?.length || item.data.every(val => val === 0))
         )
       }
 

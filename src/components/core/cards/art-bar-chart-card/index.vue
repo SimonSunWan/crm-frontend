@@ -36,7 +36,7 @@
     value: number
     /** 标签 */
     label: string
-    /** 百分比 +（绿色）-（红色） */
+    /** 百分比 */
     percentage: number
     /** 日期 */
     date?: string
@@ -62,9 +62,9 @@
     props: {
       height: `${props.height}rem`,
       loading: false,
-      isEmpty: !props.chartData?.length || props.chartData.every((val) => val === 0)
+      isEmpty: !props.chartData?.length || props.chartData.every(val => val === 0)
     },
-    checkEmpty: () => !props.chartData?.length || props.chartData.every((val) => val === 0),
+    checkEmpty: () => !props.chartData?.length || props.chartData.every(val => val === 0),
     watchSources: [() => props.chartData, () => props.color, () => props.barWidth],
     generateOptions: (): EChartsOption => {
       const computedColor = props.color || useChartOps().themeColor

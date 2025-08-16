@@ -63,7 +63,7 @@
   // 对话框显示控制
   const dialogVisible = computed({
     get: () => props.visible,
-    set: (value) => emit('update:visible', value)
+    set: value => emit('update:visible', value)
   })
 
   const dialogType = computed(() => props.type)
@@ -124,7 +124,7 @@
   const handleSubmit = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate((valid) => {
+    await formRef.value.validate(valid => {
       if (valid) {
         ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
         dialogVisible.value = false

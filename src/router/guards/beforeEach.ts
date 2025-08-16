@@ -17,7 +17,7 @@ import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { UserService } from '@/api/usersApi'
 
-// 前端权限模式 loading 关闭延时，提升用户体验
+/*  前端权限模式 loading 关闭延时,提升用户体验 */
 const LOADING_DELAY = 100
 
 // 是否已注册动态路由
@@ -120,7 +120,7 @@ async function handleRouteGuard(
     return
   }
 
-  // 未匹配到路由，跳转到 404
+  /*  未匹配到路由,跳转到 404 */
   next(RoutesAlias.Exception404)
 }
 
@@ -205,7 +205,7 @@ async function getMenuData(router: Router): Promise<void> {
  * 处理前端控制模式的菜单逻辑
  */
 async function processFrontendMenu(router: Router): Promise<void> {
-  const menuList = asyncRoutes.map((route) => menuDataToRouter(route))
+  const menuList = asyncRoutes.map(route => menuDataToRouter(route))
   const userStore = useUserStore()
   const roles = userStore.info.roles
 
@@ -216,7 +216,7 @@ async function processFrontendMenu(router: Router): Promise<void> {
   const filteredMenuList = filterMenuByRoles(menuList, roles)
 
   // 添加延时以提升用户体验
-  await new Promise((resolve) => setTimeout(resolve, LOADING_DELAY))
+  await new Promise(resolve => setTimeout(resolve, LOADING_DELAY))
 
   await registerAndStoreMenu(router, filteredMenuList)
 }
@@ -234,8 +234,8 @@ async function processBackendMenu(router: Router): Promise<void> {
  */
 function filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
   return menuList
-    .map((item) => {
-      // 如果有子菜单，先递归过滤子菜单
+    .map(item => {
+      /*  如果有子菜单,先递归过滤子菜单 */
       if (item.children && item.children.length > 0) {
         const filteredChildren = filterEmptyMenus(item.children)
         return {
@@ -245,7 +245,7 @@ function filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
       }
       return item
     })
-    .filter((item) => {
+    .filter(item => {
       // 过滤掉布局组件且没有子菜单的项
       const isEmptyLayoutMenu =
         item.component === RoutesAlias.Layout && (!item.children || item.children.length === 0)
@@ -291,7 +291,7 @@ function handleMenuError(error: unknown): void {
 const filterMenuByRoles = (menu: AppRouteRecord[], roles: string[]): AppRouteRecord[] => {
   return menu.reduce((acc: AppRouteRecord[], item) => {
     const itemRoles = item.meta?.roles
-    const hasPermission = !itemRoles || itemRoles.some((role) => roles?.includes(role))
+    const hasPermission = !itemRoles || itemRoles.some(role => roles?.includes(role))
 
     if (hasPermission) {
       const filteredItem = { ...item }

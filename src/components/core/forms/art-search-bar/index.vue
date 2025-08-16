@@ -79,7 +79,7 @@
     filter: FilterData
     /** 表单数据 */
     items: SearchFormItem[]
-    /** 每列的宽度（基于 24 格布局） */
+    /** 每列的宽度(基于24格布局) */
     elColSpan?: number
     /** 表单控件间隙 */
     gutter?: number
@@ -89,9 +89,9 @@
     labelPosition?: 'left' | 'right'
     /** 文字宽度 */
     labelWidth?: string
-    /** 是否需要展示，收起 */
+    /** 是否需要展示, 收起 */
     showExpand?: boolean
-    /** 按钮靠左对齐限制（表单项小于等于该值时） */
+    /** 按钮靠左对齐限制(表单项小于等于该值时) */
     buttonLeftLimit?: number
   }
 
@@ -119,13 +119,13 @@
   const isExpanded = ref(false)
 
   /**
-   * 组件映射表（使用 markRaw 优化性能）
+   * 组件映射表(使用markRaw优化性能)
    */
   const componentsMap = markRaw({
     input: ArtSearchInput,
     select: ArtSearchSelect,
     radio: ArtSearchRadio,
-    checkbox: ArtSearchSelect, // 复用 select 组件
+    checkbox: ArtSearchSelect, // 复用select组件
     datetime: ArtSearchDate,
     date: ArtSearchDate,
     daterange: ArtSearchDate,
@@ -156,7 +156,7 @@
    */
   const filter = computed({
     get: () => props.filter,
-    set: (value) => emit('update:filter', value)
+    set: value => emit('update:filter', value)
   })
 
   /**
@@ -216,7 +216,7 @@
     emit('search')
   }
 
-  // 解构 props 以便在模板中直接使用
+  // 解构props以便在模板中直接使用
   const { elColSpan, gutter, labelPosition, labelWidth } = toRefs(props)
 </script>
 

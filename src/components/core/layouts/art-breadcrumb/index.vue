@@ -37,7 +37,7 @@
   const route = useRoute()
   const router = useRouter()
 
-  // 使用computed替代watch，提高性能
+  // 使用computed替代watch, 提高性能
   const breadcrumbItems = computed<BreadcrumbItem[]>(() => {
     const { matched } = route
 
@@ -53,7 +53,7 @@
     return isFirstLevel ? [createBreadcrumbItem(currentRoute)] : matched.map(createBreadcrumbItem)
   })
 
-  // 辅助函数：创建面包屑项目
+  // 辅助函数: 创建面包屑项目
   function createBreadcrumbItem(route: RouteLocationMatched): BreadcrumbItem {
     return {
       path: route.path,
@@ -61,40 +61,40 @@
     }
   }
 
-  // 辅助函数：判断是否为首页
+  // 辅助函数: 判断是否为首页
   function isHomeRoute(route: RouteLocationMatched): boolean {
     return route.name === '/'
   }
 
-  // 辅助函数：判断是否为最后一项
+  // 辅助函数: 判断是否为最后一项
   function isLastItem(index: number): boolean {
     return index === breadcrumbItems.value.length - 1
   }
 
-  // 辅助函数：判断是否可点击
+  // 辅助函数: 判断是否可点击
   function isClickable(item: BreadcrumbItem, index: number): boolean {
     return item.path !== '/outside' && !isLastItem(index)
   }
 
-  // 辅助函数：查找路由的第一个有效子路由
+  // 辅助函数: 查找路由的第一个有效子路由
   function findFirstValidChild(route: RouteRecordRaw) {
-    return route.children?.find((child) => !child.redirect && !child.meta?.isHide)
+    return route.children?.find(child => !child.redirect && !child.meta?.isHide)
   }
 
-  // 辅助函数：构建完整路径
+  // 辅助函数: 构建完整路径
   function buildFullPath(childPath: string): string {
     return `/${childPath}`.replace('//', '/')
   }
 
   // 处理面包屑点击事件
   async function handleBreadcrumbClick(item: BreadcrumbItem, index: number): Promise<void> {
-    // 如果是最后一项或外部链接，不处理
+    // 如果是最后一项或外部链接, 不处理
     if (isLastItem(index) || item.path === '/outside') {
       return
     }
 
     try {
-      const targetRoute = router.getRoutes().find((route) => route.path === item.path)
+      const targetRoute = router.getRoutes().find(route => route.path === item.path)
 
       if (!targetRoute?.children?.length) {
         await router.push(item.path)

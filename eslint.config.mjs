@@ -57,7 +57,33 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off', // 禁用any检查
       'vue/multi-word-component-names': 'off', // 禁用对vue组件名称的多词要求检查
       'no-multiple-empty-lines': ['warn', { max: 1 }], // 不允许多个空行
-      'no-unexpected-multiline': 'error' // 禁止空余的多行
+      'no-unexpected-multiline': 'error', // 禁止空余的多行
+
+      // 注释相关规则
+      'spaced-comment': [
+        'error',
+        'always',
+        {
+          line: {
+            markers: ['/'],
+            exceptions: ['-', '+']
+          },
+          block: {
+            markers: ['!'],
+            exceptions: ['*'],
+            balanced: true
+          }
+        }
+      ],
+
+      // 禁止使用待办和修复注释
+      'no-warning-comments': [
+        'warn',
+        {
+          terms: ['todo', 'fixme'],
+          location: 'anywhere'
+        }
+      ]
     }
   },
   // vue规则

@@ -136,12 +136,12 @@
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
 
-  // 处理菜单数据，将 authList 转换为子节点
+  /*  处理菜单数据,将 authList 转换为子节点 */
   const processedMenuList = computed(() => {
     const processNode = (node: any) => {
       const processed = { ...node }
 
-      // 如果有 authList，将其转换为子节点
+      /*  如果有 authList,将其转换为子节点 */
       if (node.meta && node.meta.authList && node.meta.authList.length) {
         const authNodes = node.meta.authList.map((auth: any) => ({
           id: `${node.id}_${auth.authMark}`,
@@ -247,7 +247,7 @@
   const handleSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
 
-    await formEl.validate((valid) => {
+    await formEl.validate(valid => {
       if (valid) {
         const message = dialogType.value === 'add' ? '新增成功' : '修改成功'
         ElMessage.success(message)
@@ -280,11 +280,11 @@
     if (!tree) return
 
     if (!isSelectAll.value) {
-      // 全选：获取所有节点的key并设置为选中
+      /*  全选:获取所有节点的key并设置为选中 */
       const allKeys = getAllNodeKeys(processedMenuList.value)
       tree.setCheckedKeys(allKeys)
     } else {
-      // 取消全选：清空所有选中
+      /*  取消全选:清空所有选中 */
       tree.setCheckedKeys([])
     }
 
@@ -294,7 +294,7 @@
   const getAllNodeKeys = (nodes: any[]): string[] => {
     const keys: string[] = []
     const traverse = (nodeList: any[]) => {
-      nodeList.forEach((node) => {
+      nodeList.forEach(node => {
         if (node.name) {
           keys.push(node.name)
         }
@@ -315,7 +315,7 @@
     const checkedKeys = tree.getCheckedKeys()
     const allKeys = getAllNodeKeys(processedMenuList.value)
 
-    // 判断是否全选：选中的节点数量等于总节点数量
+    /*  判断是否全选:选中的节点数量等于总节点数量 */
     isSelectAll.value = checkedKeys.length === allKeys.length && allKeys.length > 0
   }
 

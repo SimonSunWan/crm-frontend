@@ -26,7 +26,7 @@ export class StorageKeyManager {
     const storageKeys = Object.keys(localStorage)
     const pattern = StorageConfig.createKeyPattern(storeId)
 
-    return storageKeys.find((key) => pattern.test(key) && localStorage.getItem(key)) || null
+    return storageKeys.find(key => pattern.test(key) && localStorage.getItem(key)) || null
   }
 
   /**
@@ -44,8 +44,8 @@ export class StorageKeyManager {
     }
   }
 
-  /**
-   * 获取持久化存储的键名（支持自动数据迁移）
+  /* *
+   * 获取持久化存储的键名(支持自动数据迁移)
    */
   getStorageKey(storeId: string): string {
     const currentKey = this.getCurrentVersionKey(storeId)

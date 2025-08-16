@@ -113,10 +113,10 @@
         // pageNum: 1,
         // pageSize: 20
       },
-      // 自定义分页字段映射，同时需要在 apiParams 中配置字段名
+      /*  自定义分页字段映射,同时需要在 apiParams 中配置字段名 */
       // paginationKey: {
-      //   current: 'pageNum',
-      //   size: 'pageSize'
+      /*             current: 'pageNum',          */
+      /*             size: 'pageSize'          */
       // },
       columnsFactory: () => [
         { type: 'selection' }, // 勾选列
@@ -125,7 +125,7 @@
           prop: 'avatar',
           label: '用户名',
           minWidth: width.value < 500 ? 220 : '',
-          formatter: (row) => {
+          formatter: row => {
             return h('div', { class: 'user', style: 'display: flex; align-items: center' }, [
               h('img', { class: 'avatar', src: row.avatar }),
               h('div', {}, [
@@ -140,13 +140,13 @@
           label: '性别',
           sortable: true,
           // checked: false, // 隐藏列
-          formatter: (row) => row.userGender
+          formatter: row => row.userGender
         },
         { prop: 'userPhone', label: '手机号' },
         {
           prop: 'status',
           label: '状态',
-          formatter: (row) => {
+          formatter: row => {
             const statusConfig = getUserStatusConfig(row.status)
             return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
           }
@@ -161,7 +161,7 @@
           label: '操作',
           width: 120,
           fixed: 'right', // 固定列
-          formatter: (row) =>
+          formatter: row =>
             h('div', [
               h(ArtButtonTable, {
                 type: 'edit',
@@ -201,7 +201,7 @@
    * @param params 参数
    */
   const handleSearch = (params: Record<string, any>) => {
-    // 处理日期区间参数，把 daterange 转换为 startTime 和 endTime
+    /*  处理日期区间参数,把 daterange 转换为 startTime 和 endTime */
     const { daterange, ...searchParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
 

@@ -10,9 +10,7 @@
 
     <RouterView v-if="isRefresh" v-slot="{ Component, route }" :style="contentStyle">
       <!-- 路由信息调试 -->
-      <div v-if="isOpenRouteInfo === 'true'" class="route-info">
-        router meta：{{ route.meta }}
-      </div>
+      <div v-if="isOpenRouteInfo === 'true'" class="route-info">router meta：{{ route.meta }}</div>
 
       <!-- 缓存路由动画 -->
       <Transition :name="showTransitionMask ? '' : actualTransition" mode="out-in" appear>
@@ -62,19 +60,19 @@
   const showTransitionMask = ref(false)
 
   // 检查当前路由是否需要使用无基础布局模式
-  const isFullPage = computed(() => route.matched.some((r) => r.meta?.isFullPage))
+  const isFullPage = computed(() => route.matched.some(r => r.meta?.isFullPage))
   const prevIsFullPage = ref(isFullPage.value)
 
-  // 切换动画名称：从全屏返回时不使用动画
+  /*  切换动画名称:从全屏返回时不使用动画 */
   const actualTransition = computed(() =>
     prevIsFullPage.value && !isFullPage.value ? '' : pageTransition.value
   )
 
-  // 监听全屏状态变化，显示过渡遮罩
+  /*  监听全屏状态变化,显示过渡遮罩 */
   watch(isFullPage, (val, oldVal) => {
     if (val !== oldVal) {
       showTransitionMask.value = true
-      // 延迟隐藏遮罩，给足时间让页面完成切换
+      /*  延迟隐藏遮罩,给足时间让页面完成切换 */
       setTimeout(() => {
         showTransitionMask.value = false
       }, 50)

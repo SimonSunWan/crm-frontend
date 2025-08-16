@@ -1,5 +1,5 @@
 <template>
-  <ElInput v-model="value" v-bind="config" @change="(val) => changeValue(val)" />
+  <ElInput v-model="value" v-bind="config" @change="val => changeValue(val)" />
 </template>
 
 <script setup lang="ts">
@@ -19,7 +19,7 @@
     (e: 'update:value', value: ValueVO): void // 更新输入框值的事件
   }>()
 
-  // 计算属性:处理v-model双向绑定
+  // 计算属性: 处理v-model双向绑定
   const value = computed({
     get: () => prop.value as string,
     set: (value: ValueVO) => emit('update:value', value)

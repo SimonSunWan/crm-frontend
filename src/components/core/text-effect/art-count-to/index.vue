@@ -13,7 +13,7 @@
   interface CountToProps {
     /** 目标值 */
     target: number
-    /** 动画持续时间（毫秒） */
+    /* * 动画持续时间(毫秒)  */
     duration?: number
     /** 是否自动开始 */
     autoStart?: boolean
@@ -195,7 +195,7 @@
       return
     }
 
-    // 从暂停值开始（如果存在）
+    /*  从暂停值开始(如果存在) */
     if (isPaused.value) {
       currentValue.value = pausedValue.value
       resetPauseState()
@@ -252,7 +252,7 @@
   // 监听器
   watch(
     safeTarget,
-    (newTarget) => {
+    newTarget => {
       if (props.autoStart && !props.disabled) {
         start(newTarget)
       } else {
@@ -264,7 +264,7 @@
 
   watch(
     () => props.disabled,
-    (disabled) => {
+    disabled => {
       if (disabled && isRunning.value) {
         stop()
       }

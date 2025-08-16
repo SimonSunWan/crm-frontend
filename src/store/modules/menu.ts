@@ -60,7 +60,7 @@ export const useMenuStore = defineStore('menuStore', () => {
    * 执行所有存储的路由移除函数并清空数组
    */
   const removeAllDynamicRoutes = () => {
-    removeRouteFns.value.forEach((fn) => fn())
+    removeRouteFns.value.forEach(fn => fn())
     removeRouteFns.value = []
   }
 

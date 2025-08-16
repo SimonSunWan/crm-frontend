@@ -2,10 +2,10 @@ import { App, Directive } from 'vue'
 import hljs from 'highlight.js'
 import { ElMessage } from 'element-plus'
 
-/**
+/* *
  * 高亮代码
- * 插入行号、添加复制按钮、分片处理代码块，解决大数据量一次写入卡顿问题
- * 支持动态内容监听，确保所有代码块都能被正确处理
+ * 插入行号、添加复制按钮、分片处理代码块,解决大数据量一次写入卡顿问题
+ * 支持动态内容监听,确保所有代码块都能被正确处理
  */
 
 // 高亮代码
@@ -24,13 +24,13 @@ function insertLineNumbers(block: HTMLElement) {
   block.innerHTML = numberedLines
 }
 
-// 添加复制按钮：调整 DOM 结构，将代码部分包裹在 .code-wrapper 内
+/*  添加复制按钮:调整 DOM 结构,将代码部分包裹在 .code-wrapper 内 */
 function addCopyButton(block: HTMLElement) {
   const copyButton = document.createElement('i')
   copyButton.className = 'copy-button iconfont-sys'
   copyButton.innerHTML = '&#xe7b2;'
   copyButton.onclick = () => {
-    // 过滤掉行号，只复制代码内容
+    /*  过滤掉行号,只复制代码内容 */
     const codeContent = block.innerText.replace(/^\d+\s+/gm, '')
     navigator.clipboard.writeText(codeContent).then(() => {
       ElMessage.success('复制成功')
@@ -40,7 +40,7 @@ function addCopyButton(block: HTMLElement) {
   const preElement = block.parentElement
   if (preElement) {
     let codeWrapper: HTMLElement
-    // 如果代码块还没有被包裹，则创建包裹容器
+    /*  如果代码块还没有被包裹,则创建包裹容器 */
     if (!block.parentElement.classList.contains('code-wrapper')) {
       codeWrapper = document.createElement('div')
       codeWrapper.className = 'code-wrapper'
@@ -49,7 +49,7 @@ function addCopyButton(block: HTMLElement) {
     } else {
       codeWrapper = block.parentElement
     }
-    // 将复制按钮添加到 pre 元素（而非 codeWrapper 内），这样它不会随滚动条滚动
+    /*  将复制按钮添加到 pre 元素(而非 codeWrapper 内),这样它不会随滚动条滚动 */
     preElement.appendChild(copyButton)
   }
 }
@@ -87,15 +87,15 @@ function processBlock(block: HTMLElement) {
 // 查找并处理所有代码块
 function processAllCodeBlocks(el: HTMLElement) {
   const blocks = Array.from(el.querySelectorAll<HTMLElement>('pre code'))
-  const unprocessedBlocks = blocks.filter((block) => !isBlockProcessed(block))
+  const unprocessedBlocks = blocks.filter(block => !isBlockProcessed(block))
 
   if (unprocessedBlocks.length === 0) {
     return
   }
 
   if (unprocessedBlocks.length <= 10) {
-    // 如果代码块数量少于等于10，直接处理所有代码块
-    unprocessedBlocks.forEach((block) => processBlock(block))
+    /*  如果代码块数量少于等于10,直接处理所有代码块 */
+    unprocessedBlocks.forEach(block => processBlock(block))
   } else {
     // 定义每次处理的代码块数
     const batchSize = 10
@@ -104,7 +104,7 @@ function processAllCodeBlocks(el: HTMLElement) {
     const processBatch = () => {
       const batch = unprocessedBlocks.slice(currentIndex, currentIndex + batchSize)
 
-      batch.forEach((block) => {
+      batch.forEach(block => {
         processBlock(block)
       })
 
@@ -130,7 +130,7 @@ function retryProcessing(el: HTMLElement, maxRetries: number = 3, delay: number 
 
     // 检查是否还有未处理的代码块
     const remainingBlocks = Array.from(el.querySelectorAll<HTMLElement>('pre code')).filter(
-      (block) => !isBlockProcessed(block)
+      block => !isBlockProcessed(block)
     )
 
     if (remainingBlocks.length > 0 && retryCount < maxRetries) {
@@ -148,18 +148,18 @@ const highlightDirective: Directive<HTMLElement> = {
     // 立即尝试处理一次
     processAllCodeBlocks(el)
 
-    // 延迟处理，确保 v-html 内容已经渲染
+    /*  延迟处理,确保 v-html 内容已经渲染 */
     setTimeout(() => {
       retryProcessing(el)
     }, 100)
 
     // 使用 MutationObserver 监听 DOM 变化
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(mutations => {
       let hasNewCodeBlocks = false
 
-      mutations.forEach((mutation) => {
+      mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
+          mutation.addedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as HTMLElement
               // 检查新添加的节点是否包含代码块
@@ -185,12 +185,12 @@ const highlightDirective: Directive<HTMLElement> = {
       subtree: true
     })
 
-    // 将 observer 存储到元素上，以便在 unmounted 时清理
+    /*  将 observer 存储到元素上,以便在 unmounted 时清理 */
     ;(el as any)._highlightObserver = observer
   },
 
   updated(el: HTMLElement) {
-    // 当组件更新时，重新处理代码块
+    /*  当组件更新时,重新处理代码块 */
     setTimeout(() => {
       processAllCodeBlocks(el)
     }, 50)

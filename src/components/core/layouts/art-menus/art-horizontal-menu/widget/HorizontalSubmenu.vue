@@ -71,9 +71,9 @@
 
   const emit = defineEmits(['close'])
 
-  // 过滤后的子菜单项（不包含隐藏的）
+  /*  过滤后的子菜单项(不包含隐藏的) */
   const filteredChildren = computed(() => {
-    return props.item.children?.filter((child) => !child.meta.isHide) || []
+    return props.item.children?.filter(child => !child.meta.isHide) || []
   })
 
   // 计算当前项是否有可见的子菜单

@@ -18,7 +18,7 @@
           v-show="props.iconType === IconTypeEnum.UNICODE"
         ></i>
       </div>
-      <div class="text"> {{ props.text }} </div>
+      <div class="text">{{ props.text }}</div>
       <div class="arrow">
         <i class="iconfont-sys arrow-icon">&#xe709;</i>
         <i class="iconfont-sys clear-icon" @click.stop="clearIcon">&#xe83a;</i>
@@ -61,11 +61,11 @@
   // 组件大小类型
   type ComponentSize = 'large' | 'default' | 'small'
 
-  // Props 接口定义
+  // Props接口定义
   interface Props {
     /** 图标类型 */
     iconType?: IconTypeEnum
-    /** v-model 绑定的图标值 */
+    /** v-model绑定的图标值 */
     modelValue?: string
     /** 显示文本 */
     text?: string
@@ -77,13 +77,13 @@
     disabled?: boolean
   }
 
-  // Emits 接口定义
+  // Emits接口定义
   interface Emits {
     'update:modelValue': [value: string]
     getIcon: [value: string]
   }
 
-  // 使用 withDefaults 定义 props
+  // 使用withDefaults定义props
   const props = withDefaults(defineProps<Props>(), {
     iconType: IconTypeEnum.CLASS_NAME,
     modelValue: '',
@@ -93,7 +93,7 @@
     disabled: false
   })
 
-  // 定义 emits
+  // 定义emits
   const emits = defineEmits<Emits>()
 
   // 响应式数据
@@ -101,10 +101,10 @@
   const visible = ref<boolean>(false)
   const activeName = ref<string>('icons')
 
-  // 图标列表 - 使用计算属性优化性能
+  // 图标列表-使用计算属性优化性能
   const iconsList = computed<IconfontType[]>(() => extractIconClasses())
 
-  // 监听 modelValue 变化
+  // 监听modelValue变化
   watch(
     () => props.modelValue,
     (newVal: string) => {
@@ -121,7 +121,7 @@
     selectValue.value = iconValue
     visible.value = false
 
-    // 发射 v-model 更新事件和自定义事件
+    // 发射v-model更新事件和自定义事件
     emits('update:modelValue', iconValue)
     emits('getIcon', iconValue)
   }
@@ -137,12 +137,12 @@
   const clearIcon = (): void => {
     selectValue.value = ''
 
-    // 发射 v-model 更新事件和自定义事件
+    // 发射v-model更新事件和自定义事件
     emits('update:modelValue', '')
     emits('getIcon', '')
   }
 
-  // 计算属性：当前图标类型（用于模板中的判断）
+  // 计算属性: 当前图标类型
   const iconType = computed<IconTypeEnum>(() => props.iconType)
 </script>
 

@@ -26,7 +26,7 @@
 
   watch(
     () => props.filter,
-    (newFilter) => {
+    newFilter => {
       searchFormState.value = { ...newFilter }
     },
     { deep: true, immediate: true }
@@ -75,7 +75,7 @@
       config: {
         clearable: true
       },
-      // options 可以是一个函数返回数组，也可以是直接的数组
+      /*  options 可以是一个函数返回数组,也可以是直接的数组 */
       options: [
         { label: '普通用户', value: 'normal' },
         { label: 'VIP用户', value: 'vip' },

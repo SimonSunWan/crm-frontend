@@ -33,10 +33,10 @@ export function extractIconClasses(): IconfontType[] {
   const iconInfos: IconfontType[] = []
 
   try {
-    Array.from(document.styleSheets).forEach((sheet) => {
+    Array.from(document.styleSheets).forEach(sheet => {
       try {
         const rules = Array.from(sheet.cssRules || sheet.rules)
-        rules.forEach((rule) => {
+        rules.forEach(rule => {
           const iconInfo = extractIconFromRule(rule)
           if (iconInfo) {
             iconInfos.push(iconInfo)

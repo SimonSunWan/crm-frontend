@@ -6,13 +6,13 @@ export enum CacheInvalidationStrategy {
   CLEAR_ALL = 'clear_all',
   /** 仅清空当前查询条件的缓存 */
   CLEAR_CURRENT = 'clear_current',
-  /** 清空所有分页缓存（保留不同搜索条件的缓存） */
+  /* * 清空所有分页缓存(保留不同搜索条件的缓存)  */
   CLEAR_PAGINATION = 'clear_pagination',
   /** 不清除缓存 */
   KEEP_ALL = 'keep_all'
 }
 
-// 通用 API 响应接口（兼容不同的后端响应格式）
+/*  通用 API 响应接口(兼容不同的后端响应格式) */
 export interface ApiResponse<T = unknown> {
   records?: T[]
   data?: T[]
@@ -28,9 +28,9 @@ export interface CacheItem<T> {
   response: ApiResponse<T>
   timestamp: number
   params: string
-  // 缓存标签，用于分组管理
+  /*  缓存标签,用于分组管理 */
   tags: Set<string>
-  // 访问次数（用于 LRU 算法）
+  /*  访问次数(用于 LRU 算法) */
   accessCount: number
   // 最后访问时间
   lastAccessTime: number
@@ -44,7 +44,7 @@ export class TableCache<T> {
   private enableLog: boolean
 
   constructor(cacheTime = 5 * 60 * 1000, maxSize = 50, enableLog = false) {
-    // 默认5分钟，最多50条缓存
+    /*  默认5分钟,最多50条缓存 */
     this.cacheTime = cacheTime
     this.maxSize = maxSize
     this.enableLog = enableLog
@@ -57,13 +57,13 @@ export class TableCache<T> {
     }
   }
 
-  // 🔧 优化：生成稳定的缓存键
+  /*  🔧 优化:生成稳定的缓存键 */
   private generateKey(params: unknown): string {
     if (!params || typeof params !== 'object') {
       return JSON.stringify(params)
     }
 
-    // 对象属性排序后再序列化，确保键的稳定性
+    /*  对象属性排序后再序列化,确保键的稳定性 */
     const sortedParams = this.sortObjectKeys(params as Record<string, unknown>)
     return JSON.stringify(sortedParams)
   }
@@ -85,13 +85,13 @@ export class TableCache<T> {
     return result
   }
 
-  // 🔧 优化：增强类型安全性
+  /*  🔧 优化:增强类型安全性 */
   private generateTags(params: Record<string, unknown>): Set<string> {
     const tags = new Set<string>()
 
     // 添加搜索条件标签
     const searchKeys = Object.keys(params).filter(
-      (key) =>
+      key =>
         !['current', 'size', 'total'].includes(key) &&
         params[key] !== undefined &&
         params[key] !== '' &&
@@ -99,7 +99,7 @@ export class TableCache<T> {
     )
 
     if (searchKeys.length > 0) {
-      const searchTag = searchKeys.map((key) => `${key}:${String(params[key])}`).join('|')
+      const searchTag = searchKeys.map(key => `${key}:${String(params[key])}`).join('|')
       tags.add(`search:${searchTag}`)
     } else {
       tags.add('search:default')
@@ -107,13 +107,13 @@ export class TableCache<T> {
 
     // 添加分页标签
     tags.add(`pagination:${params.size || 10}`)
-    // 添加通用分页标签，用于清理所有分页缓存
+    /*  添加通用分页标签,用于清理所有分页缓存 */
     tags.add('pagination')
 
     return tags
   }
 
-  // 🔧 优化：LRU 缓存清理
+  /*  🔧 优化:LRU 缓存清理 */
   private evictLRU(): void {
     if (this.cache.size <= this.maxSize) return
 
@@ -185,8 +185,8 @@ export class TableCache<T> {
 
     for (const [key, item] of this.cache.entries()) {
       // 检查是否包含任意一个标签
-      const hasMatchingTag = tags.some((tag) =>
-        Array.from(item.tags).some((itemTag) => itemTag.includes(tag))
+      const hasMatchingTag = tags.some(tag =>
+        Array.from(item.tags).some(itemTag => itemTag.includes(tag))
       )
 
       if (hasMatchingTag) {
@@ -222,7 +222,7 @@ export class TableCache<T> {
     let totalAccess = 0
 
     for (const item of this.cache.values()) {
-      // 粗略估算大小（JSON字符串长度）
+      /*  粗略估算大小(JSON字符串长度) */
       totalSize += JSON.stringify(item.data).length
       totalAccess += item.accessCount
     }

@@ -17,7 +17,7 @@ export class UserService {
       url: '/api/user/info'
       // 自定义请求头
       // headers: {
-      //   'X-Custom-Header': 'your-custom-value'
+      /*             'X-Custom-Header': 'your-custom-value'          */
       // }
     })
   }

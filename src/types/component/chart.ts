@@ -139,7 +139,7 @@ export interface LineChartProps extends BaseChartProps, AxisDisplayProps, Intera
   symbol?: SymbolType
   /** 数据点大小 */
   symbolSize?: number
-  /** 多数据动画延迟间隔（毫秒） */
+  /* * 多数据动画延迟间隔(毫秒)  */
   animationDelay?: number
 }
 
@@ -249,14 +249,14 @@ export interface MapChartProps extends BaseChartProps {
   showScatter?: boolean
 }
 
-// 双向堆叠柱状图 Props 接口（人口金字塔样式）
+/*  双向堆叠柱状图 Props 接口(人口金字塔样式) */
 export interface BidirectionalBarChartProps
   extends BaseChartProps,
     AxisDisplayProps,
     InteractionProps {
-  /** 正向数据（向上显示） */
+  /* * 正向数据(向上显示)  */
   positiveData: number[]
-  /** 负向数据（向下显示） */
+  /* * 负向数据(向下显示)  */
   negativeData: number[]
   /** X轴标签数据 */
   xAxisData?: string[]

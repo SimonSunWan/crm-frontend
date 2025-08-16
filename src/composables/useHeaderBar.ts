@@ -102,8 +102,8 @@ export function useHeaderBar() {
     return (config as any)?.minWidth || 1200
   })
 
-  /**
-   * 检查功能是否启用（别名）
+  /* *
+   * 检查功能是否启用(别名)
    * @param feature 功能名称
    * @returns 是否启用
    */
@@ -111,8 +111,8 @@ export function useHeaderBar() {
     return isFeatureEnabled(feature)
   }
 
-  /**
-   * 获取功能配置（别名）
+  /* *
+   * 获取功能配置(别名)
    * @param feature 功能名称
    * @returns 功能配置
    */
@@ -126,7 +126,7 @@ export function useHeaderBar() {
    */
   const getEnabledFeatures = (): (keyof HeaderBarFeatureConfig)[] => {
     return Object.keys(headerBarConfigRef.value).filter(
-      (key) => headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
+      key => headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
     ) as (keyof HeaderBarFeatureConfig)[]
   }
 
@@ -136,20 +136,20 @@ export function useHeaderBar() {
    */
   const getDisabledFeatures = (): (keyof HeaderBarFeatureConfig)[] => {
     return Object.keys(headerBarConfigRef.value).filter(
-      (key) => !headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
+      key => !headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
     ) as (keyof HeaderBarFeatureConfig)[]
   }
 
-  /**
-   * 获取所有启用的功能（别名）
+  /* *
+   * 获取所有启用的功能(别名)
    * @returns 启用的功能列表
    */
   const getActiveFeatures = () => {
     return getEnabledFeatures()
   }
 
-  /**
-   * 获取所有禁用的功能（别名）
+  /* *
+   * 获取所有禁用的功能(别名)
    * @returns 禁用的功能列表
    */
   const getInactiveFeatures = () => {
@@ -178,12 +178,12 @@ export function useHeaderBar() {
 
     // 方法
     isFeatureEnabled, // 检查功能是否启用
-    isFeatureActive, // 检查功能是否启用（别名）
+    isFeatureActive /*  检查功能是否启用(别名) */,
     getFeatureConfig, // 获取功能配置
-    getFeatureInfo, // 获取功能配置（别名）
+    getFeatureInfo /*  获取功能配置(别名) */,
     getEnabledFeatures, // 获取所有启用的功能
     getDisabledFeatures, // 获取所有禁用的功能
-    getActiveFeatures, // 获取所有启用的功能（别名）
-    getInactiveFeatures // 获取所有禁用的功能（别名）
+    getActiveFeatures /*  获取所有启用的功能(别名) */,
+    getInactiveFeatures /*  获取所有禁用的功能(别名) */
   }
 }

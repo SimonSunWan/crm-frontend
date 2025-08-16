@@ -1,4 +1,4 @@
-<!-- 折线图，支持多组数据，支持阶梯式动画效果 -->
+<!-- 折线图, 支持多组数据, 支持阶梯式动画效果 -->
 <template>
   <div
     ref="chartRef"
@@ -47,7 +47,7 @@
     legendPosition: 'bottom'
   })
 
-  // 使用基础的 useChart hook
+  // 使用基础的useChart hook
   const {
     chartRef,
     isDark,
@@ -81,7 +81,7 @@
     // 检查单数据情况
     if (Array.isArray(props.data) && typeof props.data[0] === 'number') {
       const singleData = props.data as number[]
-      return !singleData.length || singleData.every((val) => val === 0)
+      return !singleData.length || singleData.every(val => val === 0)
     }
 
     // 检查多数据情况
@@ -89,7 +89,7 @@
       const multiData = props.data as LineDataItem[]
       return (
         !multiData.length ||
-        multiData.every((item) => !item.data?.length || item.data.every((val) => val === 0))
+        multiData.every(item => !item.data?.length || item.data.every(val => val === 0))
       )
     }
 
@@ -106,7 +106,7 @@
     )
   })
 
-  // 缓存计算的最大值，避免重复计算
+  // 缓存计算的最大值, 避免重复计算
   const maxValue = computed(() => {
     if (isMultipleData.value) {
       const multiData = props.data as LineDataItem[]
@@ -127,7 +127,7 @@
   const initAnimationData = () => {
     if (isMultipleData.value) {
       const multiData = props.data as LineDataItem[]
-      return multiData.map((item) => ({
+      return multiData.map(item => ({
         ...item,
         data: new Array(item.data.length).fill(0)
       }))
@@ -157,7 +157,6 @@
 
   // 生成区域样式
   const generateAreaStyle = (item: LineDataItem, color: string) => {
-    // 如果有 areaStyle 配置，或者显式开启了区域颜色，则显示区域样式
     if (!item.areaStyle && !item.showAreaColor && !props.showAreaColor) return undefined
 
     const areaConfig = item.areaStyle || {}
@@ -306,13 +305,13 @@
     }
   }
 
-  // 初始化动画函数（优化多数据阶梯式动画效果）
+  // 初始化动画函数
   const initChartWithAnimation = () => {
     if (!isEmpty.value) {
       clearAnimationTimer()
       isAnimating.value = true
 
-      // 如果是多数据情况，使用阶梯式动画
+      // 如果是多数据情况, 使用阶梯式动画
       if (isMultipleData.value) {
         const multiData = props.data as LineDataItem[]
 
@@ -363,11 +362,11 @@
 
   // 处理图表进入可视区域时的动画
   const handleChartVisible = () => {
-    // 当图表变为可见时，也使用相同的动画逻辑
+    // 当图表变为可见时, 也使用相同的动画逻辑
     initChartWithAnimation()
   }
 
-  // 监听数据变化 - 优化监听器，减少不必要的重新渲染
+  // 优化监听器, 减少不必要的重新渲染
   watch(
     [() => props.data, () => props.xAxisData, () => props.colors],
     () => {
@@ -379,14 +378,14 @@
     { deep: true }
   )
 
-  // 监听主题变化 - 使用setOption更新而不是重新渲染
+  // 监听主题变化
   watch(isDark, () => {
     // 获取图表实例
     const chartInstance =
       (chartRef.value as any)?.__echart__ || echarts.getInstanceByDom(chartRef.value as HTMLElement)
 
     if (chartInstance && !isEmpty.value) {
-      // 重新生成配置并更新图表，避免重新渲染
+      // 重新生成配置并更新图表, 避免重新渲染
       const newOptions = generateChartOptions(false)
       chartInstance.setOption(newOptions)
     }

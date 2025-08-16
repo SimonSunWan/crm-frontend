@@ -28,7 +28,7 @@
   const { hasAuth } = useAuth()
 
   export interface ButtonMoreItem {
-    /** 按钮标识，可用于点击事件 */
+    /** 按钮标识, 可用于点击事件 */
     key: string | number
     /** 按钮文本 */
     label: string
@@ -51,9 +51,9 @@
     hasBackground: true
   })
 
-  // 检查是否有任何有权限的 item
+  // 检查是否有任何有权限的项
   const hasAnyAuthItem = computed(() => {
-    return props.list.some((item) => !item.auth || hasAuth(item.auth))
+    return props.list.some(item => !item.auth || hasAuth(item.auth))
   })
 
   const emit = defineEmits<{

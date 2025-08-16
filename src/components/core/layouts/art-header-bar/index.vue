@@ -98,8 +98,8 @@
               </div>
             </template>
             <template #default>
-              <p
-                >{{ $t('topBar.guide.title')
+              <p>
+                {{ $t('topBar.guide.title')
                 }}<span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.theme') }} </span
                 >、 <span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.menu') }} </span
                 >{{ $t('topBar.guide.description') }}
@@ -303,9 +303,9 @@
     }, 200)
   }
 
-  /**
+  /* *
    * 刷新页面
-   * @param {number} time - 延迟时间，默认为0毫秒
+   * @param {number} time - 延迟时间,默认为0毫秒
    */
   const reload = (time: number = 0): void => {
     setTimeout(() => {

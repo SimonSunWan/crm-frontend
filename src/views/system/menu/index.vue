@@ -328,7 +328,7 @@
     {
       prop: 'status',
       label: '隐藏菜单',
-      formatter: (row) => {
+      formatter: row => {
         return h(ElTag, { type: row.meta.isHide ? 'danger' : 'info' }, () =>
           row.meta.isHide ? '是' : '否'
         )
@@ -340,7 +340,7 @@
       width: 180,
       formatter: (row: AppRouteRecord) => {
         return h('div', [
-          // 这里写两组权限标识判断是为了方便演示，在实际开发中可以删除其中一组
+          /*  这里写两组权限标识判断是为了方便演示,在实际开发中可以删除其中一组 */
           // 前端模式权限标识
           hasAuth('B_CODE1') &&
             h(ArtButtonTable, {
@@ -433,11 +433,11 @@
 
   // 过滤后的表格数据
   const filteredTableData = computed(() => {
-    // 深拷贝函数，避免修改原数据
+    /*  深拷贝函数,避免修改原数据 */
     const deepClone = (obj: any): any => {
       if (obj === null || typeof obj !== 'object') return obj
       if (obj instanceof Date) return new Date(obj)
-      if (Array.isArray(obj)) return obj.map((item) => deepClone(item))
+      if (Array.isArray(obj)) return obj.map(item => deepClone(item))
 
       const cloned: any = {}
       for (const key in obj) {
@@ -453,11 +453,11 @@
       const results: AppRouteRecord[] = []
 
       for (const item of items) {
-        // 获取搜索关键词，转换为小写并去除首尾空格
+        /*  获取搜索关键词,转换为小写并去除首尾空格 */
         const searchName = appliedFilters.name?.toLowerCase().trim() || ''
         const searchRoute = appliedFilters.route?.toLowerCase().trim() || ''
 
-        // 获取菜单标题和路径，确保它们存在
+        /*  获取菜单标题和路径,确保它们存在 */
         const menuTitle = formatMenuTitle(item.meta?.title || '').toLowerCase()
         const menuPath = (item.path || '').toLowerCase()
 
@@ -465,10 +465,10 @@
         const nameMatch = !searchName || menuTitle.includes(searchName)
         const routeMatch = !searchRoute || menuPath.includes(searchRoute)
 
-        // 如果有子菜单，递归搜索
+        /*  如果有子菜单,递归搜索 */
         if (item.children && item.children.length > 0) {
           const matchedChildren = searchMenu(item.children)
-          // 如果子菜单有匹配项，保留当前菜单并更新子菜单
+          /*  如果子菜单有匹配项,保留当前菜单并更新子菜单 */
           if (matchedChildren.length > 0) {
             const clonedItem = deepClone(item)
             clonedItem.children = matchedChildren
@@ -505,7 +505,7 @@
   const submitForm = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate(async (valid) => {
+    await formRef.value.validate(async valid => {
       if (valid) {
         try {
           ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
@@ -606,7 +606,7 @@
     }
   }
 
-  // 修改计算属性，增加锁定控制参数
+  /*  修改计算属性,增加锁定控制参数 */
   const disableMenuType = computed(() => {
     // 编辑权限时锁定为权限类型
     if (isEdit.value && labelPosition.value === 'button') return true
@@ -629,7 +629,7 @@
       if (tableRef.value && filteredTableData.value) {
         // 递归处理所有行的展开/收起状态
         const processRows = (rows: AppRouteRecord[]) => {
-          rows.forEach((row) => {
+          rows.forEach(row => {
             if (row.children && row.children.length > 0) {
               tableRef.value.elTableRef.toggleRowExpansion(row, isExpanded.value)
               processRows(row.children)

@@ -21,9 +21,9 @@ export const languageOptions = [
   { value: LanguageEnum.EN, label: 'English' }
 ]
 
-/**
+/* *
  * 从存储中获取语言设置
- * @returns 语言设置，如果获取失败则返回默认语言
+ * @returns 语言设置,如果获取失败则返回默认语言
  */
 const getDefaultLanguage = (): LanguageEnum => {
   // 尝试从版本化的存储中获取语言设置

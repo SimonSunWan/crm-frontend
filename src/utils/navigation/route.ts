@@ -27,10 +27,10 @@ const normalizePath = (path: string): string => {
   return path.startsWith('/') ? path : `/${path}`
 }
 
-/**
+/* *
  * 递归获取菜单的第一个有效路径
  * @param menuList 菜单列表
- * @returns 第一个有效路径，如果没有找到则返回空字符串
+ * @returns 第一个有效路径,如果没有找到则返回空字符串
  */
 export const getFirstMenuPath = (menuList: AppRouteRecord[]): string => {
   if (!Array.isArray(menuList) || menuList.length === 0) {
@@ -42,7 +42,7 @@ export const getFirstMenuPath = (menuList: AppRouteRecord[]): string => {
       continue
     }
 
-    // 如果有子菜单，优先查找子菜单
+    /*  如果有子菜单,优先查找子菜单 */
     if (menuItem.children?.length) {
       const childPath = getFirstMenuPath(menuItem.children)
       if (childPath) {

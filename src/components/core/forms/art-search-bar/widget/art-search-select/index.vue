@@ -1,5 +1,5 @@
 <template>
-  <ElSelect v-model="value" v-bind="config" @change="(val) => changeValue(val)">
+  <ElSelect v-model="value" v-bind="config" @change="val => changeValue(val)">
     <ElOption
       v-for="v in options"
       :key="v.value"
@@ -31,7 +31,7 @@
     (e: 'update:value', value: ValueVO): void // 更新选择框值的事件
   }>()
 
-  // 计算属性:处理v-model双向绑定
+  // 计算属性: 处理v-model双向绑定
   const value = computed({
     get: () => prop.value as string,
     set: (value: ValueVO) => emit('update:value', value)
@@ -53,7 +53,7 @@
     }
   }
 
-  // 计算属性:处理选项数据
+  // 计算属性: 处理选项数据
   const options = computed(() => {
     if (prop.item.options) {
       // 判断options是数组还是函数

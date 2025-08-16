@@ -403,7 +403,7 @@
   // 监听属性变化
   watch(
     () => props.value,
-    (newValue) => {
+    newValue => {
       showNotice(newValue)
     }
   )

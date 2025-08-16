@@ -40,13 +40,13 @@ export function flatten<T>(arr: any[], depth: number = Infinity): T[] {
 // 返回两个数组的差集
 export function difference<T>(arrA: T[], arrB: T[]): T[] {
   const setB = new Set(arrB)
-  return arrA.filter((item) => !setB.has(item))
+  return arrA.filter(item => !setB.has(item))
 }
 
 // 返回两个数组的交集
 export function intersection<T>(arr1: T[], arr2: T[]): T[] {
   const set2 = new Set(arr2)
-  return arr1.filter((item) => set2.has(item))
+  return arr1.filter(item => set2.has(item))
 }
 
 // 从右删除 n 个元素

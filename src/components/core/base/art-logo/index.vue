@@ -9,7 +9,7 @@
   defineOptions({ name: 'ArtLogo' })
 
   interface Props {
-    /** logo 大小 */
+    /** logo大小 */
     size?: number | string
   }
 

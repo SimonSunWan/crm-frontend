@@ -65,9 +65,9 @@
     props: {
       height: `${props.height}rem`,
       loading: false,
-      isEmpty: !props.chartData?.length || props.chartData.every((val) => val === 0)
+      isEmpty: !props.chartData?.length || props.chartData.every(val => val === 0)
     },
-    checkEmpty: () => !props.chartData?.length || props.chartData.every((val) => val === 0),
+    checkEmpty: () => !props.chartData?.length || props.chartData.every(val => val === 0),
     watchSources: [() => props.chartData, () => props.color, () => props.showAreaColor],
     generateOptions: (): EChartsOption => {
       const computedColor = props.color || useChartOps().themeColor

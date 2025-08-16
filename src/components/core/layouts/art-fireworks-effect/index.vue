@@ -18,7 +18,7 @@
    * 定义了烟花效果的所有可配置参数
    */
   interface FireworkConfig {
-    /** 对象池大小 - 预先创建的粒子对象数量 */
+    /** 对象池大小-预先创建的粒子对象数量 */
     readonly POOL_SIZE: number
     /** 每次爆炸产生的粒子数量 */
     readonly PARTICLES_PER_BURST: number
@@ -43,14 +43,14 @@
       readonly BASE_SPEED: number
       /** 随机旋转速度增量 */
       readonly RANDOM_SPEED: number
-      /** 旋转衰减系数 - 控制旋转速度递减 */
+      /** 旋转衰减系数-控制旋转速度递减 */
       readonly DECAY: number
     }
     /** 物理效果参数 */
     readonly PHYSICS: {
       /** 重力加速度 */
       readonly GRAVITY: number
-      /** 下落速度阈值 - 超过此值开始淡出 */
+      /** 下落速度阈值-超过此值开始淡出 */
       readonly VELOCITY_THRESHOLD: number
       /** 透明度衰减速度 */
       readonly OPACITY_DECAY: number
@@ -74,7 +74,7 @@
     vx: number
     /** Y方向速度 */
     vy: number
-    /** 粒子颜色 (RGBA格式) */
+    /** 粒子颜色(RGBA格式) */
     color: string
     /** 当前旋转角度 */
     rotation: number
@@ -84,11 +84,11 @@
     scale: number
     /** 粒子形状类型 */
     shape: string
-    /** 透明度 (0-1) */
+    /** 透明度(0-1) */
     opacity: number
     /** 是否处于活动状态 */
     active: boolean
-    /** 图片URL (当shape为image时使用) */
+    /** 图片URL(当shape为image时使用) */
     imageUrl?: string
   }
 
@@ -100,16 +100,14 @@
     [url: string]: HTMLImageElement
   }
 
-  // ==================== 配置常量 ====================
-
   /**
    * 烟花效果的全局配置
-   * 使用 as const 确保配置的不可变性
+   * 使用as const确保配置的不可变性
    */
   const CONFIG: FireworkConfig = {
     // 性能相关配置
-    POOL_SIZE: 600, // 对象池大小，影响同时存在的最大粒子数
-    PARTICLES_PER_BURST: 200, // 每次爆炸的粒子数量，影响视觉效果密度
+    POOL_SIZE: 600, // 对象池大小, 影响同时存在的最大粒子数
+    PARTICLES_PER_BURST: 200, // 每次爆炸的粒子数量, 影响视觉效果密度
 
     // 粒子尺寸配置
     SIZES: {
@@ -125,17 +123,17 @@
     ROTATION: {
       BASE_SPEED: 2, // 基础旋转速度
       RANDOM_SPEED: 3, // 额外随机旋转速度范围
-      DECAY: 0.98 // 旋转速度衰减系数 (越小衰减越快)
+      DECAY: 0.98 // 旋转速度衰减系数(越小衰减越快)
     },
 
     // 物理效果配置
     PHYSICS: {
-      GRAVITY: 0.525, // 重力加速度，影响粒子下落速度
-      VELOCITY_THRESHOLD: 10, // 速度阈值，超过时开始透明度衰减
-      OPACITY_DECAY: 0.02 // 透明度衰减速度，影响粒子消失快慢
+      GRAVITY: 0.525, // 重力加速度, 影响粒子下落速度
+      VELOCITY_THRESHOLD: 10, // 速度阈值, 超过时开始透明度衰减
+      OPACITY_DECAY: 0.02 // 透明度衰减速度, 影响粒子消失快慢
     },
 
-    // 粒子颜色配置 - 使用RGBA格式支持透明度
+    // 粒子颜色配置-使用RGBA格式支持透明度
     COLORS: [
       'rgba(255, 68, 68, 1)', // 红色系
       'rgba(255, 68, 68, 0.9)',
@@ -152,7 +150,7 @@
       'rgba(250, 198, 122, 0.8)' // 金色系
     ],
 
-    // 粒子形状配置 - 矩形出现概率更高，营造更丰富的视觉效果
+    // 粒子形状配置-矩形出现概率更高, 营造更丰富的视觉效果
     SHAPES: [
       'rectangle',
       'rectangle',
@@ -167,29 +165,25 @@
     ]
   } as const
 
-  // ==================== 响应式状态 ====================
-
-  /** Canvas DOM 元素引用 */
+  /** Canvas DOM元素引用 */
   const canvasRef = ref<HTMLCanvasElement>()
-  /** Canvas 2D 绘制上下文 */
+  /** Canvas 2D绘制上下文 */
   const ctx = ref<CanvasRenderingContext2D | null>(null)
-
-  // ==================== 烟花系统 ====================
 
   /**
    * 烟花系统核心类
    * 负责管理粒子生命周期、渲染和动画
    */
   class FireworkSystem {
-    /** 粒子对象池 - 预先创建的粒子对象数组 */
+    /** 粒子对象池-预先创建的粒子对象数组 */
     private particlePool: Firework[] = []
     /** 当前活动的粒子数组 */
     private activeParticles: Firework[] = []
-    /** 对象池索引指针 - 用于循环分配粒子 */
+    /** 对象池索引指针-用于循环分配粒子 */
     private poolIndex = 0
     /** 图片资源缓存 */
     private imageCache: ImageCache = {}
-    /** 动画帧ID - 用于取消动画 */
+    /** 动画帧ID-用于取消动画 */
     private animationId = 0
     /** 画布宽度缓存 */
     private canvasWidth = 0
@@ -202,7 +196,7 @@
 
     /**
      * 初始化对象池
-     * 预先创建指定数量的粒子对象，避免运行时频繁创建
+     * 预先创建指定数量的粒子对象, 避免运行时频繁创建
      */
     private initializePool(): void {
       for (let i = 0; i < CONFIG.POOL_SIZE; i++) {
@@ -230,9 +224,9 @@
       }
     }
 
-    /**
+    /* *
      * 从对象池获取可用粒子 (性能优化版本)
-     * 使用循环索引而非Array.find()，时间复杂度从O(n)降至O(1)
+     * 使用循环索引而非Array.find(),时间复杂度从O(n)降至O(1)
      * @returns 可用的粒子对象或null
      */
     private getAvailableParticle(): Firework | null {
@@ -255,7 +249,7 @@
      * @returns Promise<HTMLImageElement>
      */
     async preloadImage(url: string): Promise<HTMLImageElement> {
-      // 如果已缓存，直接返回
+      /*  如果已缓存,直接返回 */
       if (this.imageCache[url]) {
         return this.imageCache[url]
       }
@@ -272,22 +266,22 @@
       })
     }
 
-    /**
+    /* *
      * 预加载所有需要的图片资源
-     * 在组件初始化时调用，确保图片ready
+     * 在组件初始化时调用,确保图片ready
      */
     async preloadAllImages(): Promise<void> {
       const imageUrls = [bp, sd, yd]
       try {
-        await Promise.all(imageUrls.map((url) => this.preloadImage(url)))
+        await Promise.all(imageUrls.map(url => this.preloadImage(url)))
       } catch (error) {
         console.error('Image preloading failed:', error)
       }
     }
 
-    /**
+    /* *
      * 创建烟花爆炸效果
-     * @param imageUrl 可选的图片URL，如果提供则使用图片粒子
+     * @param imageUrl 可选的图片URL,如果提供则使用图片粒子
      */
     createFirework(imageUrl?: string): void {
       // 随机确定爆炸起始位置
@@ -297,7 +291,7 @@
       // 根据是否有图片确定可用形状
       const availableShapes = imageUrl && this.imageCache[imageUrl] ? ['image'] : CONFIG.SHAPES
 
-      // 批量创建粒子数组，减少频繁的数组操作
+      /*  批量创建粒子数组,减少频繁的数组操作 */
       const particles: Firework[] = []
 
       for (let i = 0; i < CONFIG.PARTICLES_PER_BURST; i++) {
@@ -309,10 +303,10 @@
         const speed = (12 + Math.random() * 6) * 1.5 // 随机速度
         const spread = Math.random() * Math.PI * 2 // 360度随机扩散
 
-        // 直接属性赋值，避免Object.assign的性能开销
+        /*  直接属性赋值,避免Object.assign的性能开销 */
         particle.x = startX
         particle.y = startY
-        // 复杂的速度计算，模拟真实烟花爆炸轨迹
+        /*  复杂的速度计算,模拟真实烟花爆炸轨迹 */
         particle.vx = Math.cos(angle) * Math.cos(spread) * speed * (Math.random() * 0.5 + 0.5)
         particle.vy = Math.sin(angle) * speed - 15 // 向上初始速度
         particle.color = CONFIG.COLORS[Math.floor(Math.random() * CONFIG.COLORS.length)]
@@ -328,7 +322,7 @@
         particles.push(particle)
       }
 
-      // 批量添加到活动粒子数组，减少多次数组操作
+      /*  批量添加到活动粒子数组,减少多次数组操作 */
       this.activeParticles.push(...particles)
     }
 
@@ -340,7 +334,7 @@
       const { GRAVITY, VELOCITY_THRESHOLD, OPACITY_DECAY } = CONFIG.PHYSICS
       const { DECAY } = CONFIG.ROTATION
 
-      // 使用倒序遍历，避免删除元素时的索引混乱问题
+      /*  使用倒序遍历,避免删除元素时的索引混乱问题 */
       for (let i = this.activeParticles.length - 1; i >= 0; i--) {
         const particle = this.activeParticles[i]
 
@@ -500,7 +494,7 @@
 
       // 清除整个画布
       ctx.value.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-      // 设置混合模式为"变亮"，增强视觉效果
+      /*           设置混合模式为"变亮",增强视觉效果          */
       ctx.value.globalCompositeOperation = 'lighter'
 
       // 渲染所有活动粒子
@@ -537,9 +531,9 @@
       this.animate()
     }
 
-    /**
+    /* *
      * 停止动画循环
-     * 在组件卸载时调用，避免内存泄漏
+     * 在组件卸载时调用,避免内存泄漏
      */
     stop(): void {
       if (this.animationId) {
@@ -579,9 +573,9 @@
     }
   }
 
-  /**
+  /* *
    * 调整Canvas画布大小
-   * 响应窗口大小变化，确保画布始终覆盖整个视口
+   * 响应窗口大小变化,确保画布始终覆盖整个视口
    */
   const resizeCanvas = (): void => {
     if (!canvasRef.value) return
@@ -592,10 +586,10 @@
     fireworkSystem.updateCanvasSize(innerWidth, innerHeight)
   }
 
-  /**
+  /* *
    * 处理外部触发的烟花事件
    * 通过 mittBus 事件总线接收触发指令
-   * @param event 事件数据，可能包含图片URL
+   * @param event 事件数据,可能包含图片URL
    */
   const handleFireworkTrigger: Handler<unknown> = (event: unknown) => {
     const imageUrl = event as string | undefined
@@ -629,9 +623,9 @@
     mittBus.on('triggerFireworks', handleFireworkTrigger) // 外部触发事件
   })
 
-  /**
+  /* *
    * 组件卸载时的清理逻辑
-   * 停止动画循环并移除事件监听器，防止内存泄漏
+   * 停止动画循环并移除事件监听器,防止内存泄漏
    */
   onUnmounted(() => {
     fireworkSystem.stop()

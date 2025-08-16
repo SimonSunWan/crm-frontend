@@ -19,7 +19,7 @@ export const handleMenuJump = (item: AppRouteRecord, jumpToFirst: boolean = fals
     return openExternalLink(link)
   }
 
-  // 如果不需要跳转到第一个子菜单，或者没有子菜单，直接跳转当前路径
+  /*  如果不需要跳转到第一个子菜单,或者没有子菜单,直接跳转当前路径 */
   if (!jumpToFirst || !item.children?.length) {
     return router.push(item.path)
   }

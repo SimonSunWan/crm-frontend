@@ -14,9 +14,9 @@ import { useMenuStore } from '@/store/modules/menu'
  */
 const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
 
-/**
+/* *
  * 注册异步路由
- * 将接口返回的菜单列表转换为 Vue Router 路由配置，并添加到传入的 router 实例中
+ * 将接口返回的菜单列表转换为 Vue Router 路由配置,并添加到传入的 router 实例中
  * @param router Vue Router 实例
  * @param menuList 接口返回的菜单列表
  */
@@ -29,12 +29,12 @@ export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]
   // 检测菜单列表中是否有重复路由
   checkDuplicateRoutes(menuList)
 
-  // 遍历菜单列表，注册路由
-  menuList.forEach((route) => {
+  /*  遍历菜单列表,注册路由 */
+  menuList.forEach(route => {
     // 只有还没注册过的路由才进行注册
     if (route.name && !router.hasRoute(route.name)) {
       const routeConfig = convertRouteComponent(route, iframeRoutes)
-      // addRoute 返回移除函数，收集起来
+      /*  addRoute 返回移除函数,收集起来 */
       const removeRouteFn = router.addRoute(routeConfig as RouteRecordRaw)
       removeRouteFns.push(removeRouteFn)
     }
@@ -48,15 +48,15 @@ export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]
   saveIframeRoutes(iframeRoutes)
 }
 
-/**
- * 路径解析函数：处理父路径和子路径的拼接
+/* *
+ * 路径解析函数:处理父路径和子路径的拼接
  */
 function resolvePath(parent: string, child: string): string {
   return [parent.replace(/\/$/, ''), child.replace(/^\//, '')].filter(Boolean).join('/')
 }
 
-/**
- * 检测菜单中的重复路由（包括子路由）
+/* *
+ * 检测菜单中的重复路由(包括子路由)
  */
 function checkDuplicateRoutes(routes: AppRouteRecord[], parentPath = ''): void {
   // 用于检测动态路由中的重复项
@@ -64,7 +64,7 @@ function checkDuplicateRoutes(routes: AppRouteRecord[], parentPath = ''): void {
   const componentPathMap = new Map<string, string>() // 组件路径 -> 路由信息
 
   const checkRoutes = (routes: AppRouteRecord[], parentPath = '') => {
-    routes.forEach((route) => {
+    routes.forEach(route => {
       // 处理路径拼接
       const currentPath = route.path || ''
       const fullPath = resolvePath(parentPath, currentPath)
@@ -111,7 +111,7 @@ function getComponentPathString(component: any): string {
     return component
   }
 
-  // 对于其他别名路由，获取组件名称
+  /*  对于其他别名路由,获取组件名称 */
   for (const key in RoutesAlias) {
     if (RoutesAlias[key as keyof typeof RoutesAlias] === component) {
       return `RoutesAlias.${key}`
@@ -121,14 +121,14 @@ function getComponentPathString(component: any): string {
   return ''
 }
 
-/**
+/* *
  * 根据组件路径动态加载组件
- * @param componentPath 组件路径（不包含 ../../views 前缀和 .vue 后缀）
- * @param routeName 当前路由名称（用于错误提示）
+ * @param componentPath 组件路径(不包含 ../../views 前缀和 .vue 后缀)
+ * @param routeName 当前路由名称(用于错误提示)
  * @returns 组件加载函数
  */
 function loadComponent(componentPath: string, routeName: string): () => Promise<any> {
-  // 如果路径为空，直接返回一个空的组件
+  /*  如果路径为空,直接返回一个空的组件 */
   if (componentPath === '') {
     return () =>
       Promise.resolve({
@@ -142,7 +142,7 @@ function loadComponent(componentPath: string, routeName: string): () => Promise<
   const fullPath = `../../views${componentPath}.vue`
   const fullPathWithIndex = `../../views${componentPath}/index.vue`
 
-  // 先尝试直接路径，再尝试添加/index的路径
+  /*  先尝试直接路径,再尝试添加/index的路径 */
   const module = modules[fullPath] || modules[fullPathWithIndex]
 
   if (!module) {
@@ -197,7 +197,7 @@ function convertRouteComponent(
 
   // 递归时增加深度
   if (children?.length) {
-    converted.children = children.map((child) =>
+    converted.children = children.map(child =>
       convertRouteComponent(child, iframeRoutes, depth + 1)
     )
   }

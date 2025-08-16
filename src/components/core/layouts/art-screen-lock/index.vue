@@ -262,7 +262,7 @@
     }
     document.addEventListener('dragstart', handleDragStart, true)
 
-    // 监听开发者工具打开状态（仅在桌面端启用）
+    /*  监听开发者工具打开状态(仅在桌面端启用) */
     let devtools = { open: false }
     const threshold = 160
     let devToolsInterval: ReturnType<typeof setInterval> | null = null
@@ -378,7 +378,7 @@
   }
 
   // 监听锁屏状态变化
-  watch(isLock, (newValue) => {
+  watch(isLock, newValue => {
     if (newValue) {
       document.body.style.overflow = 'hidden'
       setTimeout(() => {

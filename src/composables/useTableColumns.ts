@@ -4,11 +4,11 @@ import { ref, computed } from 'vue'
 import { $t } from '@/locales'
 import type { ColumnOption } from '@/types/component'
 
-// 工具函数：根据列配置生成列选择状态
+/*  工具函数:根据列配置生成列选择状态 */
 const getColumnChecks = <T>(columns: ColumnOption<T>[]): ColumnOption<T>[] => {
   const checks: ColumnOption<T>[] = []
 
-  columns.forEach((column) => {
+  columns.forEach(column => {
     if (column.type === 'selection') {
       checks.push({
         ...column,
@@ -46,7 +46,7 @@ export function useTableColumns<T = any>(columnsFactory: () => ColumnOption<T>[]
   // 获取所有列定义
   const allColumns = columnsFactory()
 
-  // 列选中状态，初始包含所有普通列和特殊类型列
+  /*  列选中状态,初始包含所有普通列和特殊类型列 */
   const columnChecks = ref<ColumnOption<T>[]>(getColumnChecks(allColumns))
 
   // 当前显示的列
@@ -54,7 +54,7 @@ export function useTableColumns<T = any>(columnsFactory: () => ColumnOption<T>[]
     const cols = allColumns
     const columnMap = new Map<string, ColumnOption<T>>()
 
-    cols.forEach((column) => {
+    cols.forEach(column => {
       if (column.type === 'selection') {
         columnMap.set('__selection__', column)
       } else if (column.type === 'expand') {
@@ -67,8 +67,8 @@ export function useTableColumns<T = any>(columnsFactory: () => ColumnOption<T>[]
     })
 
     return columnChecks.value
-      .filter((item) => item.checked)
-      .map((check) => columnMap.get(check.prop as string) as ColumnOption<T>)
+      .filter(item => item.checked)
+      .map(check => columnMap.get(check.prop as string) as ColumnOption<T>)
   })
 
   return {

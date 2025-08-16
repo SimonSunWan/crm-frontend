@@ -46,12 +46,12 @@ $box-radius: calc(var(--custom-radius) / 2 + 2px);
     border-radius: 10px;
   }
 
-  /* 下拉选择框 正文文字大小调整 */
+  /* 正文文字大小调整 */
   .w-e-select-list ul li:last-of-type {
     font-size: 16px !important;
   }
 
-  /* 下拉选择框 hover 样式调整 */
+  /* 下拉选择框hover样式调整 */
   .w-e-select-list ul li:hover {
     background-color: var(--art-gray-200);
   }
@@ -60,7 +60,7 @@ $box-radius: calc(var(--custom-radius) / 2 + 2px);
     /* 激活颜色 */
     --w-e-toolbar-active-bg-color: var(--art-gray-200);
 
-    /* toolbar 图标和文字颜色 */
+    /* toolbar图标和文字颜色 */
     --w-e-toolbar-color: #000;
 
     /* 表格选中时候的边框颜色 */
@@ -75,7 +75,7 @@ $box-radius: calc(var(--custom-radius) / 2 + 2px);
     border-radius: 8px;
   }
 
-  /* 工具栏 hover 按钮背景颜色 */
+  /* 工具栏hover按钮背景颜色 */
   .w-e-bar-item button:hover {
     background-color: var(--art-gray-200);
   }
@@ -139,7 +139,7 @@ $box-radius: calc(var(--custom-radius) / 2 + 2px);
     border-left: 4px solid var(--art-gray-300);
   }
 
-  /* 输入区域弹出 bar  */
+  /* 输入区域弹出bar  */
   .w-e-hover-bar {
     border-radius: 10px;
   }

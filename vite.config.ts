@@ -27,7 +27,7 @@ export default ({ mode }: { mode: string }) => {
         '/api': {
           target: VITE_API_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+          rewrite: path => path.replace(/^\/api/, '')
         }
       },
       host: true
@@ -203,7 +203,7 @@ export default ({ mode }: { mode: string }) => {
           {
             postcssPlugin: 'internal:charset-removal',
             AtRule: {
-              charset: (atRule) => {
+              charset: atRule => {
                 if (atRule.name === 'charset') {
                   atRule.remove()
                 }

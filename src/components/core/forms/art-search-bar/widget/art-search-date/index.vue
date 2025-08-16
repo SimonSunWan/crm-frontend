@@ -30,7 +30,7 @@
     | 'yearrange' // 年份范围
     | 'week' // 周
 
-  // 定义组件值类型 - 根据不同类型返回不同的值
+  // 定义组件值类型-根据不同类型返回不同的值
   export type ValueVO = string | Date | null | undefined | [Date, Date] | [string, string] | number
 
   // 定义组件props
@@ -247,7 +247,7 @@
     const defaultConfig = getDefaultConfig(dateType)
     const userConfig = props.item.config || {}
 
-    // 如果用户没有提供快捷选项且类型是范围选择，则添加默认快捷选项
+    // 如果用户没有提供快捷选项且类型是范围选择, 则添加默认快捷选项
     const shouldAddShortcuts =
       !userConfig.shortcuts && ['daterange', 'datetimerange'].includes(dateType)
     const shortcuts = shouldAddShortcuts ? getCommonShortcuts(dateType) : userConfig.shortcuts

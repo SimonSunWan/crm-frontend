@@ -161,14 +161,14 @@
 
   // 菜单数据
   const firstLevelMenus = computed(() => {
-    return useMenuStore().menuList.filter((menu) => !menu.meta.isHide)
+    return useMenuStore().menuList.filter(menu => !menu.meta.isHide)
   })
 
   const menuList = computed(() => {
     const menuStore = useMenuStore()
     const allMenus = menuStore.menuList
 
-    // 如果不是顶部左侧菜单或双列菜单，直接返回完整菜单列表
+    /*  如果不是顶部左侧菜单或双列菜单,直接返回完整菜单列表 */
     if (!isTopLeftMenu.value && !isDualMenu.value) {
       return allMenus
     }
@@ -185,7 +185,7 @@
 
     // 返回当前顶级路径对应的子菜单
     const currentTopPath = `/${route.path.split('/')[1]}`
-    const currentMenu = allMenus.find((menu) => menu.path === currentTopPath)
+    const currentMenu = allMenus.find(menu => menu.path === currentTopPath)
     return currentMenu?.children ?? []
   })
 
@@ -247,17 +247,17 @@
     // 移动端模态框控制逻辑
     if (isMobileScreen()) {
       if (!menuOpen.value) {
-        // 菜单即将打开，立即显示模态框
+        /*  菜单即将打开,立即显示模态框 */
         showMobileModal.value = true
       } else {
-        // 菜单即将关闭，延迟隐藏模态框确保动画完成
+        /*  菜单即将关闭,延迟隐藏模态框确保动画完成 */
         delayHideMobileModal()
       }
     }
   }
 
-  /**
-   * 处理菜单关闭（来自子组件）
+  /* *
+   * 处理菜单关闭(来自子组件)
    */
   const handleMenuClose = (): void => {
     if (isMobileScreen()) {
@@ -280,7 +280,7 @@
     // 小屏幕自动折叠菜单
     if (currentScreenWidth.value < MOBILE_BREAKPOINT) {
       settingStore.setMenuOpen(false)
-      // 在小屏幕上，如果菜单关闭则隐藏模态框
+      /*  在小屏幕上,如果菜单关闭则隐藏模态框 */
       if (!menuOpen.value) {
         showMobileModal.value = false
       }
@@ -310,15 +310,15 @@
     () => menuOpen.value,
     (isMenuOpen: boolean) => {
       if (!isMobileScreen()) {
-        // 大屏幕设备上，模态框始终隐藏
+        /*  大屏幕设备上,模态框始终隐藏 */
         showMobileModal.value = false
       } else {
-        // 小屏幕设备上，根据菜单状态控制模态框
+        /*  小屏幕设备上,根据菜单状态控制模态框 */
         if (isMenuOpen) {
           // 菜单打开时立即显示模态框
           showMobileModal.value = true
         } else {
-          // 菜单关闭时延迟隐藏模态框，确保动画完成
+          /*  菜单关闭时延迟隐藏模态框,确保动画完成 */
           delayHideMobileModal()
         }
       }

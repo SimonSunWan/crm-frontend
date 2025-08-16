@@ -81,9 +81,9 @@
                   handlerBg="var(--art-main-bg-color)"
                 />
               </div>
-              <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">{{
-                $t('login.placeholder[2]')
-              }}</p>
+              <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">
+                {{ $t('login.placeholder[2]') }}
+              </p>
             </div>
 
             <div class="forget-password">

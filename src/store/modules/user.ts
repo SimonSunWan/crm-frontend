@@ -34,11 +34,11 @@ export const useUserStore = defineStore(
     // 刷新令牌
     const refreshToken = ref('')
 
-    // 计算属性：获取用户信息
+    /*  计算属性:获取用户信息 */
     const getUserInfo = computed(() => info.value)
-    // 计算属性：获取设置状态
+    /*  计算属性:获取设置状态 */
     const getSettingState = computed(() => useSettingStore().$state)
-    // 计算属性：获取工作台状态
+    /*  计算属性:获取工作台状态 */
     const getWorktabState = computed(() => useWorktabStore().$state)
 
     /**
@@ -90,10 +90,10 @@ export const useUserStore = defineStore(
       lockPassword.value = password
     }
 
-    /**
+    /* *
      * 设置令牌
      * @param newAccessToken 访问令牌
-     * @param newRefreshToken 刷新令牌（可选）
+     * @param newRefreshToken 刷新令牌(可选)
      */
     const setToken = (newAccessToken: string, newRefreshToken?: string) => {
       accessToken.value = newAccessToken

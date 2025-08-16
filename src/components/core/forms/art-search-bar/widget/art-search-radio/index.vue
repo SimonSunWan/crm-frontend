@@ -1,5 +1,5 @@
 <template>
-  <ElRadioGroup v-model="value" v-bind="config" @change="(val) => changeValue(val)">
+  <ElRadioGroup v-model="value" v-bind="config" @change="val => changeValue(val)">
     <ElRadio v-for="v in options" :key="v.value" :value="v.value">{{ v.label }}</ElRadio>
   </ElRadioGroup>
 </template>
@@ -19,7 +19,7 @@
     (e: 'update:value', value: ValueVO): void // 更新单选框值的事件
   }>()
 
-  // 计算属性:处理v-model双向绑定
+  // 计算属性: 处理v-model双向绑定
   const value = computed({
     get: () => prop.value as string,
     set: (value: ValueVO) => emit('update:value', value)
@@ -30,7 +30,7 @@
     ...(prop.item.config || {}) // 合并自定义配置
   })
 
-  // 计算属性:处理选项数据
+  // 计算属性: 处理选项数据
   const options = computed(() => {
     if (prop.item.options) {
       // 判断options是数组还是函数

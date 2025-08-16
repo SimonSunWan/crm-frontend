@@ -21,7 +21,7 @@
     icon?: string
     /** 按钮样式类 */
     iconClass?: BgColorEnum
-    /** icon 颜色 */
+    /** icon颜色 */
     iconColor?: string
     /** 按钮背景色 */
     buttonBgColor?: string

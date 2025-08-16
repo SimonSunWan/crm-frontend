@@ -8,8 +8,8 @@
     <img class="left-img" src="@imgs/login/lf_icon2.webp" />
 
     <div class="text-wrap">
-      <h1> {{ $t('login.leftView.title') }} </h1>
-      <p> {{ $t('login.leftView.subTitle') }} </p>
+      <h1>{{ $t('login.leftView.title') }}</h1>
+      <p>{{ $t('login.leftView.subTitle') }}</p>
     </div>
   </div>
 </template>
