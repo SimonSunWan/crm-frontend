@@ -1,6 +1,6 @@
 // scripts/clean-dev.ts
-import fs from 'fs/promises'
-import path from 'path'
+import { promises as fs } from 'fs'
+import * as path from 'path'
 
 // 现代化颜色主题
 const theme = {
