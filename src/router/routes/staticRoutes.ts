@@ -25,43 +25,15 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     meta: { title: 'menus.forgetPassword.title', isHideTab: true, noLogin: true, setTheme: true }
   },
   {
-    path: '/exception',
-    component: () => import('@views/index/index.vue'),
-    name: 'Exception',
-    meta: { title: 'menus.exception.title' },
-    children: [
-      {
-        path: RoutesAlias.Exception403,
-        name: 'Exception403',
-        component: () => import('@views/exception/403/index.vue'),
-        meta: { title: '403' }
-      },
-      {
-        path: '/:catchAll(.*)',
-        name: 'Exception404',
-        component: () => import('@views/exception/404/index.vue'),
-        meta: { title: '404' }
-      },
-      {
-        path: RoutesAlias.Exception500,
-        name: 'Exception500',
-        component: () => import('@views/exception/500/index.vue'),
-        meta: { title: '500' }
-      }
-    ]
+    path: '/:catchAll(.*)',
+    name: 'Exception404',
+    component: () => import('@views/exception/404/index.vue'),
+    meta: { title: '404' }
   },
   {
-    path: '/outside',
-    component: () => import('@views/index/index.vue'),
-    name: 'Outside',
-    meta: { title: 'menus.outside.title' },
-    children: [
-      {
-        path: '/outside/iframe/:path',
-        name: 'Iframe',
-        component: () => import('@/views/outside/Iframe.vue'),
-        meta: { title: 'iframe' }
-      }
-    ]
+    path: RoutesAlias.Exception500,
+    name: 'Exception500',
+    component: () => import('@views/exception/500/index.vue'),
+    meta: { title: '500' }
   }
 ]

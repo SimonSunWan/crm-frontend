@@ -189,9 +189,7 @@ function convertRouteComponent(
   const isFirstLevel =
     depth === 0 && route.children?.length === 0 && component !== RoutesAlias.Layout
 
-  if (route.meta.isIframe) {
-    handleIframeRoute(converted, route, iframeRoutes)
-  } else if (isFirstLevel) {
+  if (isFirstLevel) {
     handleLayoutRoute(converted, route, component as string)
   } else {
     handleNormalRoute(converted, component as string, String(route.name))
@@ -205,19 +203,6 @@ function convertRouteComponent(
   }
 
   return converted
-}
-
-/**
- * 处理 iframe 类型路由
- */
-function handleIframeRoute(
-  converted: ConvertedRoute,
-  route: AppRouteRecord,
-  iframeRoutes: AppRouteRecord[]
-): void {
-  converted.path = `/outside/iframe/${String(route.name)}`
-  converted.component = () => import('@/views/outside/Iframe.vue')
-  iframeRoutes.push(route)
 }
 
 /**

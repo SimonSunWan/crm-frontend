@@ -4,25 +4,6 @@
       <h2 class="box-title">关于项目</h2>
       <p>{{ systemName }} 是一款专注于用户体验和视觉设计的后台管理系统模版</p>
       <p>使用了 Vue3、TypeScript、Vite、Element Plus 等前沿技术</p>
-
-      <div class="button-wrap">
-        <div class="btn art-custom-card" @click="goPage(WEB_LINKS.DOCS)">
-          <span>项目官网</span>
-          <i class="iconfont-sys">&#xe703;</i>
-        </div>
-        <div class="btn art-custom-card" @click="goPage(WEB_LINKS.INTRODUCE)">
-          <span>文档</span>
-          <i class="iconfont-sys">&#xe703;</i>
-        </div>
-        <div class="btn art-custom-card" @click="goPage(WEB_LINKS.GITHUB_HOME)">
-          <span>Github</span>
-          <i class="iconfont-sys">&#xe703;</i>
-        </div>
-        <div class="btn art-custom-card" @click="goPage(WEB_LINKS.BLOG)">
-          <span>博客</span>
-          <i class="iconfont-sys">&#xe703;</i>
-        </div>
-      </div>
     </div>
     <img class="right-img" src="@imgs/draw/draw1.png" alt="draw1" />
   </div>
@@ -30,13 +11,8 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import { WEB_LINKS } from '@/utils/constants'
 
   const systemName = AppConfig.systemInfo.name
-
-  const goPage = (url: string) => {
-    window.open(url)
-  }
 </script>
 
 <style lang="scss" scoped>

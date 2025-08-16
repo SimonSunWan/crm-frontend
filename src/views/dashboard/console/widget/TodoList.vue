@@ -2,7 +2,7 @@
   <div class="card art-custom-card">
     <div class="card-header">
       <div class="title">
-        <h4 class="box-title">代办事项</h4>
+        <h4 class="box-title">待办事项</h4>
         <p class="subtitle">待处理<span class="text-danger">3</span></p>
       </div>
     </div>
