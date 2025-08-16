@@ -103,5 +103,72 @@ export const asyncRoutes: AppRouteRecord[] = [
         }
       }
     ]
+  },
+  {
+    path: '/result',
+    name: 'Result',
+    component: RoutesAlias.Layout,
+    meta: {
+      title: 'menus.result.title',
+      icon: '&#xe715;'
+    },
+    children: [
+      {
+        path: 'success',
+        name: 'ResultSuccess',
+        component: RoutesAlias.Success,
+        meta: {
+          title: 'menus.result.success',
+          keepAlive: true
+        }
+      },
+      {
+        path: 'fail',
+        name: 'ResultFail',
+        component: RoutesAlias.Fail,
+        meta: {
+          title: 'menus.result.fail',
+          keepAlive: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/exception',
+    name: 'Exception',
+    component: RoutesAlias.Layout,
+    meta: {
+      title: 'menus.exception.title',
+      icon: '&#xe820;'
+    },
+    children: [
+      {
+        path: '403',
+        name: '403',
+        component: RoutesAlias.Exception403,
+        meta: {
+          title: 'menus.exception.forbidden',
+          keepAlive: true
+        }
+      },
+      {
+        path: '404',
+        name: '404',
+        component: RoutesAlias.Exception404,
+        meta: {
+          title: 'menus.exception.notFound',
+          keepAlive: true
+        }
+      },
+      {
+        path: '500',
+        name: '500',
+        component: RoutesAlias.Exception500,
+        meta: {
+          title: 'menus.exception.serverError',
+          keepAlive: true
+        }
+      }
+    ]
   }
 ]

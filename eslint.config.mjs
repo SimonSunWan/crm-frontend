@@ -1,20 +1,20 @@
-// 从 URL 和路径模块中导入必要的功能
+// 从URL和路径模块中导入必要的功能
 import fs from 'fs'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 
-// 从 ESLint 插件中导入推荐配置
+// 从ESLint插件中导入推荐配置
 import pluginJs from '@eslint/js'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
-// 使用 import.meta.url 获取当前模块的路径
+// 使用import.meta.url获取当前模块的路径
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// 读取 .auto-import.json 文件的内容，并将其解析为 JSON 对象
+// 读取.auto-import.json文件的内容, 并将其解析为JSON对象
 const autoImportConfig = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, '.auto-import.json'), 'utf-8')
 )
@@ -39,14 +39,13 @@ export default [
   ...pluginVue.configs['flat/essential'],
   // 自定义规则
   {
-    // 针对所有 JavaScript、TypeScript 和 Vue 文件应用以下配置
+    // 针对所有JavaScript、TypeScript和Vue文件应用以下配置
     files: ['**/*.{js,mjs,cjs,ts,vue}'],
-
     languageOptions: {
       globals: {
-        // 合并从 autoImportConfig 中读取的全局变量配置
+        // 合并从autoImportConfig中读取的全局变量配置
         ...autoImportConfig.globals,
-        // TypeScript 全局命名空间
+        // TypeScript全局命名空间
         Api: 'readonly',
         Form: 'readonly'
       }
@@ -54,14 +53,14 @@ export default [
     rules: {
       quotes: ['error', 'single'], // 使用单引号
       semi: ['error', 'never'], // 语句末尾不加分号
-      'no-var': 'error', // 要求使用 let 或 const 而不是 var
-      '@typescript-eslint/no-explicit-any': 'off', // 禁用 any 检查
-      'vue/multi-word-component-names': 'off', // 禁用对 Vue 组件名称的多词要求检查
+      'no-var': 'error', // 要求使用let或const而不是var
+      '@typescript-eslint/no-explicit-any': 'off', // 禁用any检查
+      'vue/multi-word-component-names': 'off', // 禁用对vue组件名称的多词要求检查
       'no-multiple-empty-lines': ['warn', { max: 1 }], // 不允许多个空行
       'no-unexpected-multiline': 'error' // 禁止空余的多行
     }
   },
-  // vue 规则
+  // vue规则
   {
     files: ['**/*.vue'],
     languageOptions: {
@@ -79,6 +78,6 @@ export default [
       'src/utils/console.ts'
     ]
   },
-  // prettier 配置
+  // prettier配置
   eslintPluginPrettierRecommended
 ]

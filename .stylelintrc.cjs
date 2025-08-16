@@ -27,7 +27,7 @@ module.exports = {
     'no-descending-specificity': null, // 允许无降序特异性
     'no-empty-source': null, // 允许空样式
     'property-no-vendor-prefix': null, // 允许属性前缀
-    // 允许 global 、export 、deep伪类
+    // 允许global、export、deep伪类
     'selector-pseudo-class-no-unknown': [
       true,
       {
