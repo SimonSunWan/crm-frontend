@@ -41,6 +41,7 @@
 <style lang="scss" scoped>
   .state-page {
     display: flex;
+    height: 100vh;
     background-color: transparent !important;
     border: 0 !important;
 
