@@ -11,7 +11,7 @@ $transition: (
   fade-easing: ease // 淡入淡出专用的缓动函数
 );
 
-// 抽取配置值函数，提高可复用性
+// 抽取配置值函数, 提高可复用性
 @function transition-config($key) {
   @return map.get($transition, $key);
 }

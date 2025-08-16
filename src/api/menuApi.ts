@@ -16,7 +16,6 @@ export const menuService = {
       const menuList = menuData.map((route) => menuDataToRouter(route))
       // 模拟接口延迟
       await new Promise((resolve) => setTimeout(resolve, delay))
-
       return { menuList }
     } catch (error) {
       throw error instanceof Error ? error : new Error('获取菜单失败')

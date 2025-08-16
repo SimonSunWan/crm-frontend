@@ -6,7 +6,8 @@ export class UserService {
     return request.post<Api.Auth.LoginResponse>({
       url: '/api/auth/login',
       params
-      // showErrorMessage: false // 不显示错误消息
+      // 不显示错误消息
+      // showErrorMessage: false
     })
   }
 

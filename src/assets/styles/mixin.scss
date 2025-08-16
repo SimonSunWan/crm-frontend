@@ -1,4 +1,4 @@
-// sass 混合宏（函数）
+// sass 混合宏(函数)
 
 /**
 * 溢出省略号
@@ -120,7 +120,7 @@
   }
 }
 
-//背景透明，文字不透明。兼容IE8
+// 背景透明, 文字不透明; 兼容IE8
 @mixin betterTransparentize($color, $alpha) {
   $c: rgba($color, $alpha);
   $ie_c: ie_hex_str($c);
@@ -132,7 +132,7 @@
   -ms-filter: 'progid:DXImageTransform.Microsoft.gradient(startColorstr=#{$ie_c}, endColorstr=#{$ie_c})';
 }
 
-//添加浏览器前缀
+// 添加浏览器前缀
 @mixin browserPrefix($propertyName, $value) {
   @each $prefix in -webkit-, -moz-, -ms-, -o-, '' {
     #{$prefix}#{$propertyName}: $value;
