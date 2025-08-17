@@ -6,11 +6,6 @@
     </div>
     <img class="left-bg" src="@imgs/login/lf_bg.webp" />
     <img class="left-img" src="@imgs/login/lf_icon2.webp" />
-
-    <div class="text-wrap">
-      <h1>{{ $t('login.leftView.title') }}</h1>
-      <p>{{ $t('login.leftView.subTitle') }}</p>
-    </div>
   </div>
 </template>
 
@@ -61,33 +56,10 @@
       margin-top: 15vh;
     }
 
-    .text-wrap {
-      position: absolute;
-      bottom: 80px;
-      width: 100%;
-      text-align: center;
-
-      h1 {
-        font-size: 26px;
-        font-weight: 400;
-        color: #f9f9f9;
-      }
-
-      p {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #c4cada;
-      }
-    }
-
     @media only screen and (max-width: $device-notebook) {
       .left-img {
         width: 480px;
         margin-top: 10vh;
-      }
-
-      .text-wrap {
-        bottom: 40px;
       }
     }
 
