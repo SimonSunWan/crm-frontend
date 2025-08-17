@@ -9,13 +9,8 @@ export enum RoutesAlias {
   ForgetPassword = '/auth/forget-password', // 忘记密码
 
   // 异常页面
-  Exception403 = '/exception/403', // 403
   Exception404 = '/exception/404', // 404
   Exception500 = '/exception/500', // 500
-
-  // 结果页面
-  Success = '/result/success', // 成功
-  Fail = '/result/fail', // 失败
 
   // 仪表板
   Dashboard = '/dashboard/console', // 工作台

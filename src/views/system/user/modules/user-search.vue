@@ -40,7 +40,6 @@
 
   // 搜索处理
   const handleSearch = () => {
-    console.log('搜索参数:', searchFormState.value)
     emit('search', searchFormState.value)
   }
 

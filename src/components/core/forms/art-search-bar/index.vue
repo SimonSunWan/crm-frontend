@@ -261,7 +261,6 @@
 
       .form-buttons {
         display: flex;
-        gap: 8px;
       }
 
       .filter-toggle {

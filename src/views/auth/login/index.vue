@@ -250,11 +250,10 @@
     } catch (error) {
       // 处理 HttpError
       if (error instanceof HttpError) {
-        // console.log(error.code)
+        console.error(error.code)
       } else {
         // 处理非 HttpError
         ElMessage.error('登录失败，请稍后重试')
-        console.error('[Login] Unexpected error:', error)
       }
     } finally {
       loading.value = false

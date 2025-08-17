@@ -158,7 +158,7 @@
         toLogin()
       }, 1000)
     } catch (error) {
-      console.log('验证失败', error)
+      console.error('验证失败:', error)
     }
   }
 

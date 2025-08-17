@@ -81,7 +81,6 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
   }
 
   if (typeof response !== 'object') {
-    console.warn('[tableUtils] 无法识别的响应格式:', response)
     return { records: [], total: 0 }
   }
 
@@ -107,11 +106,6 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
       records = res.data as T[]
       total = records.length
     }
-  }
-
-  /* 如果还是没有找到,使用兜底 */
-  if (records.length === 0) {
-    console.warn('[tableUtils] 无法识别的响应格式:', response)
   }
 
   const result: ApiResponse<T> = { records, total }
