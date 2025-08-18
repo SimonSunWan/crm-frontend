@@ -12,7 +12,7 @@ declare namespace Api {
       // 状态码
       code: number
       // 消息
-      msg: string
+      message?: string
       // 数据
       data: T
     }
@@ -41,14 +41,13 @@ declare namespace Api {
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      userName: string
+      user_name: string
       password: string
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      token: string
-      refreshToken: string
+      access_token: string
     }
   }
 
@@ -56,13 +55,14 @@ declare namespace Api {
   namespace User {
     /** 用户信息 */
     interface UserInfo {
-      userId: number
-      userName: string
-      roles: string[]
-      buttons: string[]
-      avatar?: string
-      email?: string
-      phone?: string
+      id: number
+      user_name: string
+      full_name: string
+      email: string
+      is_active: boolean
+      created_at: string
+      updated_at: string | null
+      roles?: string[] // 可选的角色字段
     }
 
     /** 用户列表数据 */

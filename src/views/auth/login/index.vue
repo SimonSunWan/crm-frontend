@@ -230,18 +230,18 @@
       // 登录请求
       const { username, password } = formData
 
-      const { token, refreshToken } = await UserService.login({
-        userName: username,
+      const { access_token } = await UserService.login({
+        user_name: username,
         password
       })
 
       // 验证token
-      if (!token) {
+      if (!access_token) {
         throw new Error('Login failed - no token received')
       }
 
       // 存储token和用户信息
-      userStore.setToken(token, refreshToken)
+      userStore.setToken(access_token)
       const userInfo = await UserService.getUserInfo()
       userStore.setUserInfo(userInfo)
       userStore.setLoginStatus(true)
@@ -252,7 +252,7 @@
     } catch (error) {
       // 处理 HttpError
       if (error instanceof HttpError) {
-        // console.log(error.code)
+        ElMessage.error(error.message || '登录失败，请稍后重试')
       } else {
         // 处理非 HttpError
         ElMessage.error('登录失败，请稍后重试')
