@@ -19,7 +19,7 @@
       >
         <template #suffix>
           <div class="search-keydown">
-            <span>ESC</span>
+            <i class="iconfont-sys">&#xe6e6;</i>
           </div>
         </template>
       </ElInput>
@@ -61,13 +61,17 @@
       <template #footer>
         <div class="dialog-footer">
           <div>
+            <i class="iconfont-sys">&#xe6e6;</i>
+            <span>{{ $t('search.selectKeydown') }}</span>
+          </div>
+          <div>
             <i class="iconfont-sys">&#xe864;</i>
             <i class="iconfont-sys">&#xe867;</i>
             <span>{{ $t('search.switchKeydown') }}</span>
           </div>
           <div>
-            <i class="iconfont-sys">&#xe6e6;</i>
-            <span>{{ $t('search.selectKeydown') }}</span>
+            <i class="iconfont-sys esc"><p>ESC</p></i>
+            <span>{{ $t('search.exitKeydown') }}</span>
           </div>
         </div>
       </template>
@@ -101,7 +105,7 @@
   const highlightedIndex = ref(0)
   const historyHIndex = ref(0)
   const searchResultScrollbar = ref<ScrollbarInstance>()
-  const isKeyboardNavigating = ref(false) /* 新增状态:是否正在使用键盘导航 */
+  const isKeyboardNavigating = ref(false) // 新增状态：是否正在使用键盘导航
 
   // 生命周期钩子
   onMounted(() => {
@@ -124,7 +128,7 @@
       focusInput()
     }
 
-    /* 当搜索对话框打开时,处理方向键和回车键 */
+    // 当搜索对话框打开时，处理方向键和回车键
     if (showSearchDialog.value) {
       if (event.key === 'ArrowUp') {
         event.preventDefault()
@@ -192,7 +196,7 @@
         (historyHIndex.value - 1 + historyResult.value.length) % historyResult.value.length
       scrollToHighlightedHistoryItem()
     }
-    /* 延迟重置键盘导航状态,防止立即被 hover 覆盖 */
+    // 延迟重置键盘导航状态，防止立即被 hover 覆盖
     setTimeout(() => {
       isKeyboardNavigating.value = false
     }, 100)
@@ -329,7 +333,7 @@
     historyHIndex.value = 0
   }
 
-  /* 修改 hover 高亮逻辑,只有在非键盘导航时才生效 */
+  // 修改 hover 高亮逻辑，只有在非键盘导航时才生效
   const highlightOnHover = (index: number) => {
     if (!isKeyboardNavigating.value && searchVal.value) {
       highlightedIndex.value = index

@@ -1,13 +1,11 @@
-<!-- 折线图, 支持多组数据, 支持阶梯式动画效果 -->
+<!-- 折线图，支持多组数据，支持阶梯式动画效果 -->
 <template>
   <div
     ref="chartRef"
     class="art-line-chart"
     :style="{ height: props.height }"
     v-loading="props.loading"
-  >
-    <ArtChartEmpty v-if="isEmpty" />
-  </div>
+  ></div>
 </template>
 
 <script setup lang="ts">
@@ -47,7 +45,7 @@
     legendPosition: 'bottom'
   })
 
-  // 使用基础的useChart hook
+  // 使用基础的 useChart hook
   const {
     chartRef,
     isDark,
@@ -106,7 +104,7 @@
     )
   })
 
-  // 缓存计算的最大值, 避免重复计算
+  // 缓存计算的最大值，避免重复计算
   const maxValue = computed(() => {
     if (isMultipleData.value) {
       const multiData = props.data as LineDataItem[]
@@ -157,6 +155,7 @@
 
   // 生成区域样式
   const generateAreaStyle = (item: LineDataItem, color: string) => {
+    // 如果有 areaStyle 配置，或者显式开启了区域颜色，则显示区域样式
     if (!item.areaStyle && !item.showAreaColor && !props.showAreaColor) return undefined
 
     const areaConfig = item.areaStyle || {}
@@ -300,18 +299,16 @@
 
   // 更新图表
   const updateChart = (options: EChartsOption) => {
-    if (!isEmpty.value) {
-      initChart(options)
-    }
+    initChart(options, isEmpty.value)
   }
 
-  // 初始化动画函数
+  // 初始化动画函数（优化多数据阶梯式动画效果）
   const initChartWithAnimation = () => {
     if (!isEmpty.value) {
       clearAnimationTimer()
       isAnimating.value = true
 
-      // 如果是多数据情况, 使用阶梯式动画
+      // 如果是多数据情况，使用阶梯式动画
       if (isMultipleData.value) {
         const multiData = props.data as LineDataItem[]
 
@@ -362,11 +359,11 @@
 
   // 处理图表进入可视区域时的动画
   const handleChartVisible = () => {
-    // 当图表变为可见时, 也使用相同的动画逻辑
+    // 当图表变为可见时，也使用相同的动画逻辑
     initChartWithAnimation()
   }
 
-  // 优化监听器, 减少不必要的重新渲染
+  // 监听数据变化 - 优化监听器，减少不必要的重新渲染
   watch(
     [() => props.data, () => props.xAxisData, () => props.colors],
     () => {
@@ -378,14 +375,14 @@
     { deep: true }
   )
 
-  // 监听主题变化
+  // 监听主题变化 - 使用setOption更新而不是重新渲染
   watch(isDark, () => {
     // 获取图表实例
     const chartInstance =
       (chartRef.value as any)?.__echart__ || echarts.getInstanceByDom(chartRef.value as HTMLElement)
 
     if (chartInstance && !isEmpty.value) {
-      // 重新生成配置并更新图表, 避免重新渲染
+      // 重新生成配置并更新图表，避免重新渲染
       const newOptions = generateChartOptions(false)
       chartInstance.setOption(newOptions)
     }

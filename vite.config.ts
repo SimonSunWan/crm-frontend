@@ -11,7 +11,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default ({ mode }: { mode: string }) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
-  const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_URL } = env
+  const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
 
   console.log(`🚀 API_URL = ${VITE_API_URL}`)
   console.log(`🚀 VERSION = ${VITE_VERSION}`)
@@ -22,10 +22,10 @@ export default ({ mode }: { mode: string }) => {
     },
     base: VITE_BASE_URL,
     server: {
-      port: parseInt(VITE_PORT),
+      port: Number(VITE_PORT),
       proxy: {
         '/api': {
-          target: VITE_API_URL,
+          target: VITE_API_PROXY_URL,
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, '')
         }
@@ -52,8 +52,8 @@ export default ({ mode }: { mode: string }) => {
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true, // 生产环境去除console
-          drop_debugger: true // 生产环境去除debugger
+          drop_console: true, // 生产环境去除 console
+          drop_debugger: true // 生产环境去除 debugger
         }
       },
       rollupOptions: {
@@ -71,7 +71,7 @@ export default ({ mode }: { mode: string }) => {
     },
     plugins: [
       vue(),
-      // 自动导入components下面的组件, 无需import引入
+      // 自动导入 components 下面的组件, 无需 import 引入
       Components({
         deep: true,
         extensions: ['vue'],
@@ -95,7 +95,7 @@ export default ({ mode }: { mode: string }) => {
         disable: false, // 是否禁用
         algorithm: 'gzip', // 压缩算法
         ext: '.gz', // 压缩后的文件名后缀
-        threshold: 10240, // 只有大小大于该值的资源会被处理; 10240B=10KB
+        threshold: 10240, // 只有大小大于该值的资源会被处理 10240B = 10KB
         deleteOriginFile: false // 压缩后是否删除原文件
       }),
       vueDevTools()

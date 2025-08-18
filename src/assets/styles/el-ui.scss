@@ -1,4 +1,4 @@
-// 优化Element Plus组件库默认样式
+// 优化 Element Plus 组件库默认样式
 
 :root {
   // 系统主色
@@ -7,13 +7,18 @@
   --el-color-black: white !important;
   // 按钮粗度
   --el-font-weight-primary: 400 !important;
+
   --el-component-custom-height: 36px !important;
+
   --el-component-size: var(--el-component-custom-height) !important;
+
   // 边框、按钮圆角...
   --el-border-radius-base: calc(var(--custom-radius) / 3 + 2px) !important;
+
   --el-border-radius-small: calc(var(--custom-radius) / 3 + 4px) !important;
   --el-messagebox-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
   --el-popover-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
+
   .region .el-radio-button__original-radio:checked + .el-radio-button__inner {
     color: var(--main-color);
   }
@@ -24,12 +29,12 @@
   --el-datepicker-inrange-bg-color: rgba(var(--art-gray-200-rgb), 0.6) !important;
 }
 
-// el-card背景色跟系统背景色保持一致
+// el-card 背景色跟系统背景色保持一致
 html.dark .el-card {
   --el-card-bg-color: var(--art-main-bg-color) !important;
 }
 
-// 修改el-pagination大小
+// 修改 el-pagination 大小
 .el-pagination--default {
   & {
     --el-pagination-button-width: 32px !important;
@@ -55,32 +60,32 @@ html.dark .el-card {
   padding: 0 10px !important;
 }
 
-// 优化菜单折叠展开动画(提升动画流畅度)
+// 优化菜单折叠展开动画
 .el-menu.el-menu--inline {
   transition: max-height 0.26s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-// 优化菜单item hover动画(提升鼠标跟手感)
+// 优化菜单 item hover 动画
 .el-sub-menu__title,
 .el-menu-item {
   transition: background-color 0s !important;
 }
 
-// 修改el-button高度
+// 修改 el-button 高度
 .el-button--default {
   height: var(--el-component-custom-height) !important;
 }
 
-// 修改el-select高度
+// 修改 el-select 高度
 .el-select--default {
   .el-select__wrapper {
     min-height: var(--el-component-custom-height) !important;
   }
 }
 
-// 修改el-checkbox-button高度
+// 修改 el-checkbox-button 高度
 .el-checkbox-button--default .el-checkbox-button__inner,
-// 修改el-radio-button高度
+// 修改 el-radio-button 高度
 .el-radio-button--default .el-radio-button__inner {
   padding: 10px 15px !important;
 }
@@ -136,7 +141,7 @@ html.dark .el-card {
   }
 }
 
-// ✅el-message样式优化
+// el-message 样式优化
 .el-message {
   background-color: var(--art-main-bg-color) !important;
   border: 0 !important;
@@ -151,7 +156,7 @@ html.dark .el-card {
   }
 }
 
-// 修改el-dropdown样式
+// 修改 el-dropdown 样式
 .el-dropdown-menu {
   padding: 6px !important;
   border-radius: 10px !important;
@@ -168,7 +173,7 @@ html.dark .el-card {
   }
 }
 
-// 隐藏select、dropdown的三角
+// 隐藏 select、dropdown 的三角
 .el-select__popper,
 .el-dropdown__popper {
   margin-top: -6px !important;
@@ -238,28 +243,55 @@ html.dark .el-card {
   }
 }
 
+.el-radio--default {
+  // 优化单选按钮大小
+  .el-radio__input {
+    .el-radio__inner {
+      width: 16px;
+      height: 16px;
+
+      &::after {
+        width: 6px;
+        height: 6px;
+      }
+    }
+  }
+}
+
 .el-checkbox {
   .el-checkbox__inner {
-    width: 18px !important;
-    height: 18px !important;
+    border-radius: 2px !important;
+  }
+}
+
+// 优化复选框样式
+.el-checkbox--default {
+  .el-checkbox__inner {
+    width: 16px !important;
+    height: 16px !important;
     border-radius: 4px !important;
 
     &::before {
       content: '';
       height: 4px !important;
-      top: 6px !important;
+      top: 5px !important;
       background-color: #fff !important;
       transform: scale(0.6) !important;
     }
+  }
 
-    &::after {
-      width: 4px;
-      height: 8px;
-      bottom: 0px;
-      margin: auto;
-      border: 2px solid var(--el-checkbox-checked-icon-color);
-      border-left: 0;
-      border-top: 0;
+  .is-checked {
+    .el-checkbox__inner {
+      &::after {
+        width: 3px;
+        height: 8px;
+        margin: auto;
+        border: 2px solid var(--el-checkbox-checked-icon-color);
+        border-left: 0;
+        border-top: 0;
+        transform: translate(-45%, -60%) rotate(45deg) scale(0.86) !important;
+        transform-origin: center;
+      }
     }
   }
 }
@@ -268,7 +300,7 @@ html.dark .el-card {
   font-size: 22px !important;
 }
 
-// 修改el-message-box样式
+// 修改 el-message-box 样式
 .el-message-box__headerbtn .el-message-box__close,
 .el-dialog__headerbtn .el-dialog__close {
   color: var(--art-gray-500) !important;
@@ -297,12 +329,12 @@ html.dark .el-card {
   margin: -3px 0 0 2px;
 }
 
-// 去除el-dropdown鼠标放上去出现的边框
+// 去除 el-dropdown 鼠标放上去出现的边框
 .el-tooltip__trigger:focus-visible {
   outline: unset;
 }
 
-// ipad表单右侧按钮优化
+// ipad 表单右侧按钮优化
 @media screen and (max-width: $device-ipad-pro) {
   .el-table-fixed-column--right {
     padding-right: 0 !important;
@@ -318,12 +350,12 @@ html.dark .el-card {
   border-radius: 10px !important;
 }
 
-// 修改dialog动画
+// 修改 dialog 动画
 .dialog-fade-enter-active {
   .el-dialog:not(.is-draggable) {
     animation: dialog-open 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
 
-    // 修复el-dialog动画后宽度不自适应问题
+    // 修复 el-dialog 动画后宽度不自适应问题
     .el-select__selected-item {
       display: inline-block;
     }
@@ -373,7 +405,7 @@ html.dark .el-card {
   }
 }
 
-// 修改el-select样式
+// 修改 el-select 样式
 .el-select__popper:not(.el-tree-select__popper) {
   .el-select-dropdown__list {
     padding: 5px !important;
@@ -406,7 +438,7 @@ html.dark .el-card {
   }
 }
 
-// 修改el-tree-select样式
+// 修改 el-tree-select 样式
 .el-tree-select__popper {
   .el-select-dropdown__list {
     padding: 5px !important;
@@ -428,4 +460,16 @@ html.dark .el-card {
 .el-button > span {
   position: relative;
   z-index: 10;
+}
+
+// 优化颜色选择器圆角
+.el-color-picker__color {
+  border-radius: 2px !important;
+}
+
+// 优化日期时间选择器底部圆角
+.el-picker-panel {
+  .el-picker-panel__footer {
+    border-radius: 0 0 var(--el-border-radius-base) var(--el-border-radius-base);
+  }
 }

@@ -2,7 +2,7 @@
   <div class="menu-page art-full-height">
     <!-- 搜索栏 -->
     <ArtSearchBar
-      v-model:filter="formFilters"
+      v-model="formFilters"
       :items="formItems"
       :showExpand="false"
       @reset="handleReset"
@@ -105,8 +105,8 @@
                 </ElFormItem>
               </ElCol>
               <ElCol :span="5">
-                <ElFormItem label="是否显示" prop="isHidden">
-                  <ElSwitch v-model="form.isHidden"></ElSwitch>
+                <ElFormItem label="是否显示" prop="isHide">
+                  <ElSwitch v-model="form.isHide"></ElSwitch>
                 </ElFormItem>
               </ElCol>
               <ElCol :span="5">
@@ -168,7 +168,6 @@
   import { ElPopover, ElButton } from 'element-plus'
   import { AppRouteRecord } from '@/types/router'
   import { useAuth } from '@/composables/useAuth'
-  import { SearchFormItem } from '@/types'
 
   defineOptions({ name: 'Menus' })
 
@@ -205,24 +204,24 @@
   }
 
   // 表单配置项
-  const formItems: SearchFormItem[] = [
+  const formItems = computed(() => [
     {
       label: '菜单名称',
-      prop: 'name',
+      key: 'name',
       type: 'input',
-      config: {
+      props: {
         clearable: true
       }
     },
     {
       label: '路由地址',
-      prop: 'route',
+      key: 'route',
       type: 'input',
-      config: {
+      props: {
         clearable: true
       }
     }
-  ]
+  ])
 
   // 构建菜单类型标签
   const buildMenuTypeTag = (row: AppRouteRecord) => {
@@ -340,7 +339,7 @@
       width: 180,
       formatter: (row: AppRouteRecord) => {
         return h('div', [
-          /* 这里写两组权限标识判断是为了方便演示,在实际开发中可以删除其中一组 */
+          // 这里写两组权限标识判断是为了方便演示，在实际开发中可以删除其中一组
           // 前端模式权限标识
           hasAuth('B_CODE1') &&
             h(ArtButtonTable, {
@@ -393,7 +392,7 @@
     sort: 1,
     isMenu: true,
     keepAlive: true,
-    isHidden: true,
+    isHide: true,
     link: '',
     isIframe: false,
     // 权限 (修改这部分)
@@ -433,7 +432,7 @@
 
   // 过滤后的表格数据
   const filteredTableData = computed(() => {
-    /* 深拷贝函数,避免修改原数据 */
+    // 深拷贝函数，避免修改原数据
     const deepClone = (obj: any): any => {
       if (obj === null || typeof obj !== 'object') return obj
       if (obj instanceof Date) return new Date(obj)
@@ -453,11 +452,11 @@
       const results: AppRouteRecord[] = []
 
       for (const item of items) {
-        /* 获取搜索关键词,转换为小写并去除首尾空格 */
+        // 获取搜索关键词，转换为小写并去除首尾空格
         const searchName = appliedFilters.name?.toLowerCase().trim() || ''
         const searchRoute = appliedFilters.route?.toLowerCase().trim() || ''
 
-        /* 获取菜单标题和路径,确保它们存在 */
+        // 获取菜单标题和路径，确保它们存在
         const menuTitle = formatMenuTitle(item.meta?.title || '').toLowerCase()
         const menuPath = (item.path || '').toLowerCase()
 
@@ -465,10 +464,10 @@
         const nameMatch = !searchName || menuTitle.includes(searchName)
         const routeMatch = !searchRoute || menuPath.includes(searchRoute)
 
-        /* 如果有子菜单,递归搜索 */
+        // 如果有子菜单，递归搜索
         if (item.children && item.children.length > 0) {
           const matchedChildren = searchMenu(item.children)
-          /* 如果子菜单有匹配项,保留当前菜单并更新子菜单 */
+          // 如果子菜单有匹配项，保留当前菜单并更新子菜单
           if (matchedChildren.length > 0) {
             const clonedItem = deepClone(item)
             clonedItem.children = matchedChildren
@@ -537,7 +536,7 @@
           form.sort = row.meta.sort || 1
           form.isMenu = row.meta.isMenu
           form.keepAlive = row.meta.keepAlive
-          form.isHidden = row.meta.isHidden || true
+          form.isHide = row.meta.isHide || true
           form.isEnable = row.meta.isEnable || true
           form.link = row.meta.link
           form.isIframe = row.meta.isIframe || false
@@ -563,7 +562,7 @@
       sort: 1,
       isMenu: true,
       keepAlive: true,
-      isHidden: true,
+      isHide: true,
       link: '',
       isIframe: false,
       // 权限
@@ -606,7 +605,7 @@
     }
   }
 
-  /* 修改计算属性,增加锁定控制参数 */
+  // 修改计算属性，增加锁定控制参数
   const disableMenuType = computed(() => {
     // 编辑权限时锁定为权限类型
     if (isEdit.value && labelPosition.value === 'button') return true
