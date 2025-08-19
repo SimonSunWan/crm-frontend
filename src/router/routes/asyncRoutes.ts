@@ -9,7 +9,7 @@ export const asyncRoutes: AppRouteRecord[] = [
     meta: {
       title: 'menus.dashboard.title',
       icon: '&#xe721;',
-      roles: ['R_SUPER', 'R_ADMIN']
+      roles: ['SUPER']
     },
     children: [
       {
@@ -31,7 +31,7 @@ export const asyncRoutes: AppRouteRecord[] = [
     meta: {
       title: 'menus.system.title',
       icon: '&#xe7b9;',
-      roles: ['R_SUPER', 'R_ADMIN']
+      roles: ['SUPER']
     },
     children: [
       {
@@ -41,7 +41,7 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.system.user',
           keepAlive: true,
-          roles: ['R_SUPER', 'R_ADMIN']
+          roles: ['SUPER']
         }
       },
       {
@@ -51,7 +51,7 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.system.role',
           keepAlive: true,
-          roles: ['R_SUPER']
+          roles: ['SUPER']
         }
       },
       {
@@ -72,7 +72,7 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.system.menu',
           keepAlive: true,
-          roles: ['R_SUPER'],
+          roles: ['SUPER'],
           authList: [
             {
               title: '新增',
