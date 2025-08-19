@@ -39,11 +39,12 @@
   import { UserService } from '@/api/usersApi'
   import UserSearch from './modules/user-search.vue'
   import UserDialog from './modules/user-dialog.vue'
+  import type { ApiResponse } from '@/utils/table/tableCache'
 
   defineOptions({ name: 'User' })
 
   type UserListItem = Api.User.UserListItem
-  const { getUserList } = UserService
+  const { getUserList, deleteUser } = UserService
 
   const dialogType = ref<Form.DialogType>('add')
   const dialogVisible = ref(false)
@@ -52,9 +53,8 @@
 
   const searchForm = ref({
     name: undefined,
-    level: 'vip',
-    date: undefined,
-    daterange: undefined,
+    phone: undefined,
+    email: undefined,
     status: undefined
   })
 
@@ -128,52 +128,64 @@
           prop: 'operation',
           label: '操作',
           width: 120,
-          fixed: 'right', // 固定列
-          formatter: row =>
-            h('div', [
+          fixed: 'right',
+          formatter: row => {
+            // 用户角色包含SUPER不显示操作按钮
+            if (row.roles && row.roles.includes('SUPER')) {
+              return h('div', {}, '-')
+            }
+
+            return h('div', [
               h(ArtButtonTable, {
                 type: 'edit',
                 onClick: () => showDialog('edit', row)
               }),
               h(ArtButtonTable, {
                 type: 'delete',
-                onClick: () => deleteUser(row)
+                onClick: () => handleDeleteUser(row)
               })
             ])
+          }
         }
       ]
     },
-    // 数据处理
     transform: {
-      // 数据转换器 - 替换头像
       dataTransformer: (records: any) => {
-        // 类型守卫检查
         if (!Array.isArray(records)) {
           console.warn('数据转换器: 期望数组类型，实际收到:', typeof records)
           return []
         }
 
-        // 使用本地头像替换接口返回的头像
         return records.map((item: any, index: number) => {
           return {
             ...item,
             avatar: ACCOUNT_TABLE_DATA[index % ACCOUNT_TABLE_DATA.length].avatar
           }
         })
+      },
+      responseAdapter: (response: any): ApiResponse<UserListItem> => {
+        // 处理后端的ApiResponse格式
+        if (response) {
+          const { records, total, current, size } = response
+          return {
+            records: records || [],
+            total: total || 0,
+            current: current || 1,
+            size: size || 20
+          }
+        }
+        return { records: [], total: 0, current: 1, size: 20 }
       }
     }
   })
 
   /**
    * 搜索处理
-   * @param params 参数
    */
   const handleSearch = (params: Record<string, any>) => {
-    // 处理日期区间参数，把 daterange 转换为 startTime 和 endTime
     const { daterange, ...filtersParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
 
-    // 搜索参数赋值
     Object.assign(searchParams, { ...filtersParams, startTime, endTime })
     getData()
   }
@@ -193,15 +205,23 @@
   /**
    * 删除用户
    */
-  const deleteUser = (row: UserListItem): void => {
-    console.log('删除用户:', row)
-    ElMessageBox.confirm(`确定要注销该用户吗？`, '注销用户', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'error'
-    }).then(() => {
-      ElMessage.success('注销成功')
-    })
+  const handleDeleteUser = async (row: UserListItem): Promise<void> => {
+    try {
+      await ElMessageBox.confirm(`确定要删除用户 "${row.userName}" 吗？`, '删除用户', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+
+      await deleteUser(row.id)
+      ElMessage.success('删除成功')
+      getData()
+    } catch (error: any) {
+      if (error !== 'cancel') {
+        console.error('删除失败:', error)
+        ElMessage.error(error?.message || '删除失败')
+      }
+    }
   }
 
   /**
@@ -211,6 +231,7 @@
     try {
       dialogVisible.value = false
       currentUserData.value = {}
+      getData()
     } catch (error) {
       console.error('提交失败:', error)
     }

@@ -69,9 +69,9 @@ declare namespace Api {
     /** 用户列表数据 */
     interface UserListData {
       records: UserListItem[]
+      total: number
       current: number
       size: number
-      total: number
     }
 
     /** 用户列表项 */
@@ -87,6 +87,27 @@ declare namespace Api {
       phone: string
       email: string
       roles: string[]
+    }
+
+    /** 创建用户参数 */
+    interface CreateUserParams {
+      userName: string
+      nickName?: string
+      phone: string
+      email: string
+      password: string
+      roles?: string[]
+      status?: boolean
+    }
+
+    /** 更新用户参数 */
+    interface UpdateUserParams {
+      userName?: string
+      nickName?: string
+      phone?: string
+      email?: string
+      roles?: string[]
+      status?: boolean
     }
   }
 }
