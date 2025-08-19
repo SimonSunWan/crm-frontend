@@ -88,6 +88,30 @@ export const asyncRoutes: AppRouteRecord[] = [
             }
           ]
         }
+      },
+      {
+        path: 'dictionary',
+        name: 'Dictionary',
+        component: RoutesAlias.Dictionary,
+        meta: {
+          title: 'menus.system.dictionary',
+          keepAlive: true,
+          roles: ['SUPER'],
+          authList: [
+            {
+              title: '新增',
+              authMark: 'add'
+            },
+            {
+              title: '编辑',
+              authMark: 'edit'
+            },
+            {
+              title: '删除',
+              authMark: 'delete'
+            }
+          ]
+        }
       }
     ]
   }

@@ -110,4 +110,81 @@ declare namespace Api {
       status?: boolean
     }
   }
+
+  /** 字典类型 */
+  namespace Dictionary {
+    /** 字典类型项 */
+    interface DictionaryTypeItem {
+      id: number
+      name: string
+      code: string
+      description?: string
+      status: boolean
+      createBy?: string
+      createTime?: string
+      updateBy?: string
+      updateTime?: string
+    }
+
+    /** 字典类型列表数据 */
+    interface DictionaryTypeListData {
+      records: DictionaryTypeItem[]
+      total: number
+      current: number
+      size: number
+    }
+
+    /** 创建字典类型参数 */
+    interface CreateDictionaryTypeParams {
+      name: string
+      code: string
+      description?: string
+    }
+
+    /** 更新字典类型参数 */
+    interface UpdateDictionaryTypeParams {
+      name?: string
+      code?: string
+      description?: string
+      status?: boolean
+    }
+
+    /** 字典枚举项 */
+    interface DictionaryEnumItem {
+      id: number
+      typeId: number
+      keyValue: string
+      dictValue: string
+      sortOrder: number
+      status: boolean
+      createBy?: string
+      createTime?: string
+      updateBy?: string
+      updateTime?: string
+    }
+
+    /** 字典枚举列表数据 */
+    interface DictionaryEnumListData {
+      records: DictionaryEnumItem[]
+      total: number
+      current: number
+      size: number
+    }
+
+    /** 创建字典枚举参数 */
+    interface CreateDictionaryEnumParams {
+      typeId: number
+      keyValue: string
+      dictValue: string
+      sortOrder?: number
+    }
+
+    /** 更新字典枚举参数 */
+    interface UpdateDictionaryEnumParams {
+      keyValue?: string
+      dictValue?: string
+      sortOrder?: number
+      status?: boolean
+    }
+  }
 }
