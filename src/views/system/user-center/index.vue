@@ -5,7 +5,7 @@
         <div class="user-wrap box-style">
           <img class="bg" src="@imgs/user/bg.webp" />
           <img class="avatar" src="@imgs/user/avatar.webp" />
-          <h2 class="name">{{ userInfo.user_name }}</h2>
+          <h2 class="name">{{ userInfo.userName }}</h2>
           <p class="des">Vue3 Admin 是一款漂亮的后台管理系统模版.</p>
 
           <div class="outer-info">

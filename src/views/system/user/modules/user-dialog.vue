@@ -12,12 +12,7 @@
       <ElFormItem label="手机号" prop="phone">
         <ElInput v-model="formData.phone" />
       </ElFormItem>
-      <ElFormItem label="性别" prop="gender">
-        <ElSelect v-model="formData.gender">
-          <ElOption label="男" value="男" />
-          <ElOption label="女" value="女" />
-        </ElSelect>
-      </ElFormItem>
+
       <ElFormItem label="角色" prop="role">
         <ElSelect v-model="formData.role" multiple>
           <ElOption
@@ -75,21 +70,16 @@
   const formData = reactive({
     username: '',
     phone: '',
-    gender: '男',
     role: [] as string[]
   })
 
   // 表单验证规则
   const rules: FormRules = {
-    username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
+    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
     phone: [
       { required: true, message: '请输入手机号', trigger: 'blur' },
       { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
     ],
-    gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
     role: [{ required: true, message: '请选择角色', trigger: 'blur' }]
   }
 
@@ -100,9 +90,8 @@
 
     Object.assign(formData, {
       username: isEdit ? row.userName || '' : '',
-      phone: isEdit ? row.userPhone || '' : '',
-      gender: isEdit ? row.userGender || '男' : '男',
-      role: isEdit ? (Array.isArray(row.userRoles) ? row.userRoles : []) : []
+      phone: isEdit ? row.phone || '' : '',
+      role: isEdit ? (Array.isArray(row.roles) ? row.roles : []) : []
     })
   }
 

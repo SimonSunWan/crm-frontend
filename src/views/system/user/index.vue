@@ -1,21 +1,15 @@
 <!-- 用户管理 -->
-<!-- art-full-height 自动计算出页面剩余高度 -->
-<!-- art-table-card 一个符合系统样式的 class，同时自动撑满剩余高度 -->
-<!-- 更多 useTable 使用示例请移步至 功能示例 下面的 高级表格示例 -->
 <template>
   <div class="user-page art-full-height">
-    <!-- 搜索栏 -->
     <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
 
     <ElCard class="art-table-card" shadow="never">
-      <!-- 表格头部 -->
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
           <ElButton @click="showDialog('add')" v-ripple>新增用户</ElButton>
         </template>
       </ArtTableHeader>
 
-      <!-- 表格 -->
       <ArtTable
         :loading="loading"
         :data="data"
@@ -27,7 +21,6 @@
       >
       </ArtTable>
 
-      <!-- 用户弹窗 -->
       <UserDialog
         v-model:visible="dialogVisible"
         :type="dialogType"
@@ -41,7 +34,7 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
-  import { ElMessageBox, ElMessage, ElTag, ElImage } from 'element-plus'
+  import { ElMessageBox, ElMessage, ElTag } from 'element-plus'
   import { useTable } from '@/composables/useTable'
   import { UserService } from '@/api/usersApi'
   import UserSearch from './modules/user-search.vue'
@@ -52,15 +45,11 @@
   type UserListItem = Api.User.UserListItem
   const { getUserList } = UserService
 
-  // 弹窗相关
   const dialogType = ref<Form.DialogType>('add')
   const dialogVisible = ref(false)
   const currentUserData = ref<Partial<UserListItem>>({})
-
-  // 选中行
   const selectedRows = ref<UserListItem[]>([])
 
-  // 搜索表单
   const searchForm = ref({
     name: undefined,
     level: 'vip',
@@ -69,20 +58,14 @@
     status: undefined
   })
 
-  // 用户状态配置
   const USER_STATUS_CONFIG = {
-    '1': { type: 'success' as const, text: '在线' },
-    '2': { type: 'info' as const, text: '离线' },
-    '3': { type: 'warning' as const, text: '异常' },
-    '4': { type: 'danger' as const, text: '注销' }
+    true: { type: 'success' as const, text: '启用' },
+    false: { type: 'danger' as const, text: '禁用' }
   } as const
 
-  /**
-   * 获取用户状态配置
-   */
-  const getUserStatusConfig = (status: string) => {
+  const getUserStatusConfig = (status: boolean) => {
     return (
-      USER_STATUS_CONFIG[status as keyof typeof USER_STATUS_CONFIG] || {
+      USER_STATUS_CONFIG[(status + '') as keyof typeof USER_STATUS_CONFIG] || {
         type: 'info' as const,
         text: '未知'
       }
@@ -102,7 +85,6 @@
     handleCurrentChange,
     refreshData
   } = useTable<UserListItem>({
-    // 核心配置
     core: {
       apiFn: getUserList,
       apiParams: {
@@ -110,39 +92,14 @@
         size: 20,
         ...searchForm.value
       },
-      // 排除 apiParams 中的属性
       excludeParams: ['daterange'],
       columnsFactory: () => [
-        { type: 'selection' }, // 勾选列
-        { type: 'index', width: 60, label: '序号' }, // 序号
-        {
-          prop: 'avatar',
-          label: '用户名',
-          width: 280,
-          formatter: row => {
-            return h('div', { class: 'user', style: 'display: flex; align-items: center' }, [
-              h(ElImage, {
-                class: 'avatar',
-                src: row.avatar,
-                previewSrcList: [row.avatar],
-                // 图片预览是否插入至 body 元素上，用于解决表格内部图片预览样式异常
-                previewTeleported: true
-              }),
-              h('div', {}, [
-                h('p', { class: 'user-name' }, row.userName),
-                h('p', { class: 'email' }, row.userEmail)
-              ])
-            ])
-          }
-        },
-        {
-          prop: 'userGender',
-          label: '性别',
-          sortable: true,
-          // checked: false, // 隐藏列
-          formatter: row => row.userGender
-        },
-        { prop: 'userPhone', label: '手机号' },
+        { type: 'selection' },
+        { type: 'index', width: 60, label: '序号' },
+        { prop: 'userName', label: '用户名' },
+        { prop: 'nickName', label: '姓名' },
+        { prop: 'phone', label: '手机号' },
+        { prop: 'email', label: '邮箱' },
         {
           prop: 'status',
           label: '状态',
@@ -152,9 +109,20 @@
           }
         },
         {
-          prop: 'createTime',
-          label: '创建日期',
-          sortable: true
+          prop: 'roles',
+          label: '角色',
+          formatter: row => {
+            if (!row.roles || row.roles.length === 0) {
+              return '-'
+            }
+            return h(
+              'div',
+              {},
+              row.roles.map(role =>
+                h(ElTag, { type: 'info', size: 'small', style: 'margin-right: 4px;' }, () => role)
+              )
+            )
+          }
         },
         {
           prop: 'operation',

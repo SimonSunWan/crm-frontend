@@ -41,13 +41,14 @@ declare namespace Api {
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      user_name: string
+      userName: string
       password: string
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      access_token: string
+      accessToken: string
+      tokenType: string
     }
   }
 
@@ -56,7 +57,7 @@ declare namespace Api {
     /** 用户信息 */
     interface UserInfo {
       id: number
-      user_name: string
+      userName: string
       full_name: string
       email: string
       is_active: boolean
@@ -76,18 +77,16 @@ declare namespace Api {
     /** 用户列表项 */
     interface UserListItem {
       id: number
-      avatar: string
       createBy: string
       createTime: string
       updateBy: string
       updateTime: string
-      status: '1' | '2' | '3' | '4' // 1: 在线 2: 离线 3: 异常 4: 注销
+      status: boolean
       userName: string
-      userGender: string
       nickName: string
-      userPhone: string
-      userEmail: string
-      userRoles: string[]
+      phone: string
+      email: string
+      roles: string[]
     }
   }
 }
