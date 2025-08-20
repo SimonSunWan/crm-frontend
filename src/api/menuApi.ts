@@ -1,133 +1,153 @@
 import { AppRouteRecord } from '@/types/router'
 import http from '@/utils/http'
 
-interface MenuResponse {
-  menuList: AppRouteRecord[]
+export interface Menu {
+  id: number
+  name: string
+  path: string
+  component: string
+  redirect: string
+  title: string
+  icon: string
+  sort: number
+  isHide: boolean
+  keepAlive: boolean
+  isIframe: boolean
+  link: string
+  isEnable: boolean
+  menuType: string
+  parentId?: number
+  roles: string
+  authName: string
+  authMark: string
+  authSort: number
+  children?: Menu[]
 }
 
-interface MenuListResponse {
-  records: any[]
+export interface MenuCreate {
+  name: string
+  path: string
+  title: string
+  icon?: string
+  sort?: number
+  isHide?: boolean
+  keepAlive?: boolean
+  isIframe?: boolean
+  link?: string
+  isEnable?: boolean
+  menuType?: string
+  parentId?: number
+  roles?: string
+  authName?: string
+  authMark?: string
+  authSort?: number
+}
+
+export interface MenuUpdate {
+  name?: string
+  path?: string
+  title?: string
+  icon?: string
+  sort?: number
+  isHide?: boolean
+  keepAlive?: boolean
+  isIframe?: boolean
+  link?: string
+  isEnable?: boolean
+  menuType?: string
+  parentId?: number
+  roles?: string
+  authName?: string
+  authMark?: string
+  authSort?: number
+  updateBy?: string
+}
+
+export interface MenuListResponse {
+  records: Menu[]
   total: number
   current: number
   size: number
 }
 
-interface ApiResponse<T = any> {
-  code: number
-  message: string
-  data: T
+// 获取菜单列表
+export function getMenus(params?: {
+  current?: number
+  size?: number
+  name?: string
+  path?: string
+  menuType?: string
+}) {
+  return http.get<MenuListResponse>({
+    url: '/menus/',
+    params
+  })
 }
 
-// 菜单接口
-export const menuService = {
-  async getMenuList(delay = 300): Promise<MenuResponse> {
-    try {
-      // 调用后端接口获取菜单数据
-      const response = await http.get<ApiResponse<MenuListResponse>>({ url: '/menus/' })
+// 获取菜单树
+export function getMenuTree() {
+  return http.get<Menu[]>({
+    url: '/menus/tree'
+  })
+}
 
-      if (response.code === 200) {
-        // 将后端数据转换为前端需要的格式
-        const menuList = this.convertBackendToFrontend(response.data.records)
-        return { menuList }
-      } else {
-        throw new Error(response.message || '获取菜单失败')
-      }
-    } catch (error) {
-      // 如果后端接口失败，回退到前端静态数据
-      console.warn('后端菜单接口调用失败，使用前端静态数据:', error)
-      const { asyncRoutes } = await import('@/router/routes/asyncRoutes')
-      const { menuDataToRouter } = await import('@/router/utils/menuToRouter')
+// 获取导航菜单
+export function getNavigationMenus() {
+  return http.get<Menu[]>({
+    url: '/menus/navigation'
+  })
+}
 
-      const menuData = asyncRoutes
-      const menuList = menuData.map(route => menuDataToRouter(route))
-      await new Promise(resolve => setTimeout(resolve, delay))
-      return { menuList }
-    }
-  },
+// 获取单个菜单
+export function getMenu(id: number) {
+  return http.get<Menu>({
+    url: `/menus/${id}`
+  })
+}
 
-  async getMenuTree(): Promise<AppRouteRecord[]> {
-    try {
-      const response = await http.get<ApiResponse<AppRouteRecord[]>>({ url: '/menus/tree' })
-      if (response.code === 200) {
-        return this.convertBackendToFrontend(response.data)
-      }
-      throw new Error(response.message || '获取菜单树失败')
-    } catch (error) {
-      console.warn('获取菜单树失败:', error)
-      return []
-    }
-  },
+// 创建菜单
+export function createMenu(data: MenuCreate) {
+  return http.post<Menu>({
+    url: '/menus/',
+    data
+  })
+}
 
-  async getNavigationMenus(): Promise<AppRouteRecord[]> {
-    try {
-      const response = await http.get<ApiResponse<AppRouteRecord[]>>({ url: '/menus/navigation' })
-      if (response.code === 200) {
-        return this.convertBackendToFrontend(response.data)
-      }
-      throw new Error(response.message || '获取导航菜单失败')
-    } catch (error) {
-      console.warn('获取导航菜单失败:', error)
-      return []
-    }
-  },
+// 更新菜单
+export function updateMenu(id: number, data: MenuUpdate) {
+  return http.put<Menu>({
+    url: `/menus/${id}`,
+    data
+  })
+}
 
-  async createMenu(menuData: any): Promise<any> {
-    try {
-      const response = await http.post<ApiResponse>({ url: '/menus/', data: menuData })
-      if (response.code === 200) {
-        return response.data
-      }
-      throw new Error(response.message || '创建菜单失败')
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('创建菜单失败')
-    }
-  },
+// 删除菜单
+export function deleteMenu(id: number) {
+  return http.del({
+    url: `/menus/${id}`
+  })
+}
 
-  async updateMenu(menuId: number, menuData: any): Promise<any> {
-    try {
-      const response = await http.put<ApiResponse>({ url: `/menus/${menuId}`, data: menuData })
-      if (response.code === 200) {
-        return response.data
-      }
-      throw new Error(response.message || '更新菜单失败')
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('更新菜单失败')
-    }
-  },
-
-  async deleteMenu(menuId: number): Promise<any> {
-    try {
-      const response = await http.del<ApiResponse>({ url: `/menus/${menuId}` })
-      if (response.code === 200) {
-        return response.data
-      }
-      throw new Error(response.message || '删除菜单失败')
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('删除菜单失败')
-    }
-  },
-
-  // 将后端数据格式转换为前端需要的格式
-  convertBackendToFrontend(backendMenus: any[]): AppRouteRecord[] {
-    return backendMenus.map(menu => ({
-      id: menu.id,
-      name: menu.name,
-      path: menu.path,
-      component: menu.component,
-      redirect: menu.redirect,
-      meta: {
-        title: menu.title,
-        icon: menu.icon,
-        sort: menu.sort,
-        isHide: menu.isHide,
-        keepAlive: menu.isKeepAlive,
-        isIframe: menu.isIframe,
-        link: menu.link,
-        isEnable: menu.isEnable,
-        roles: menu.roles ? menu.roles.split(',') : [],
-        authList: menu.authList || []
-      },
-      children: menu.children ? this.convertBackendToFrontend(menu.children) : []
-    }))
+// 数据转换函数
+export function convertMenuToRoute(menu: Menu): AppRouteRecord {
+  return {
+    id: menu.id,
+    name: menu.name,
+    path: menu.path,
+    component: menu.component,
+    redirect: menu.redirect,
+    meta: {
+      title: menu.title,
+      icon: menu.icon,
+      sort: menu.sort,
+      isHide: menu.isHide,
+      keepAlive: menu.keepAlive,
+      isIframe: menu.isIframe,
+      link: menu.link,
+      isEnable: menu.isEnable,
+      roles: menu.roles ? menu.roles.split(',') : [],
+      authList: []
+    },
+    children: menu.children ? menu.children.map(convertMenuToRoute) : []
   }
 }

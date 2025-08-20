@@ -165,10 +165,10 @@
   import { formatMenuTitle } from '@/router/utils/utils'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/composables/useTableColumns'
-  import { ElPopover, ElButton } from 'element-plus'
+  import { ElButton } from 'element-plus'
   import { AppRouteRecord } from '@/types/router'
   import { useAuth } from '@/composables/useAuth'
-  import { menuService } from '@/api/menuApi'
+  import { getMenus, createMenu, updateMenu, deleteMenu, convertMenuToRoute } from '@/api/menuApi'
 
   defineOptions({ name: 'Menus' })
 
@@ -275,48 +275,28 @@
       }
     },
     {
-      prop: 'meta.authList',
-      label: '可操作权限',
+      prop: 'meta.icon',
+      label: '图标',
+      width: 80,
       formatter: (row: AppRouteRecord) => {
-        return h(
-          'div',
-          {},
-          row.meta.authList?.map((item: { title: string; authMark: string }, index: number) => {
-            return h(
-              ElPopover,
-              {
-                placement: 'top-start',
-                title: '操作',
-                width: 200,
-                trigger: 'click',
-                key: index
-              },
-              {
-                default: () =>
-                  h('div', { style: 'margin: 0; text-align: right' }, [
-                    h(
-                      ElButton,
-                      {
-                        size: 'small',
-                        type: 'primary',
-                        onClick: () => showModel('button', item)
-                      },
-                      { default: () => '编辑' }
-                    ),
-                    h(
-                      ElButton,
-                      {
-                        size: 'small',
-                        type: 'danger',
-                        onClick: () => deleteAuth()
-                      },
-                      { default: () => '删除' }
-                    )
-                  ]),
-                reference: () => h(ElButton, { class: 'small-btn' }, { default: () => item.title })
-              }
-            )
-          })
+        return row.meta?.icon ? h('i', { class: row.meta.icon }) : '-'
+      }
+    },
+    {
+      prop: 'meta.sort',
+      label: '排序',
+      width: 80,
+      formatter: (row: AppRouteRecord) => {
+        return row.meta?.sort || 1
+      }
+    },
+    {
+      prop: 'meta.isEnable',
+      label: '状态',
+      width: 80,
+      formatter: (row: AppRouteRecord) => {
+        return h(ElTag, { type: row.meta?.isEnable ? 'success' : 'danger' }, () =>
+          row.meta?.isEnable ? '启用' : '禁用'
         )
       }
     },
@@ -355,7 +335,7 @@
           hasAuth('B_CODE3') &&
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => deleteMenu(row)
+              onClick: () => handleDeleteMenu(row)
             }),
           // 后端模式权限标识
           hasAuth('add') &&
@@ -371,7 +351,7 @@
           hasAuth('delete') &&
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => deleteMenu(row)
+              onClick: () => handleDeleteMenu(row)
             })
         ])
       }
@@ -427,8 +407,14 @@
   const getTableData = async () => {
     loading.value = true
     try {
-      const response = await menuService.getMenuList()
-      tableData.value = response.menuList
+      const response = await getMenus()
+      console.log('API响应:', response)
+      if (response.records) {
+        // 转换后端数据为前端格式
+        tableData.value = response.records.map(convertMenuToRoute)
+      } else {
+        tableData.value = []
+      }
     } catch (error) {
       console.error('获取菜单数据失败:', error)
       ElMessage.error('获取菜单数据失败')
@@ -538,7 +524,7 @@
               auth_sort: form.authSort
             }
 
-            await menuService.updateMenu(menuId, updateData)
+            await updateMenu(menuId, updateData)
             ElMessage.success('编辑成功')
           } else {
             // 新增菜单
@@ -559,7 +545,7 @@
               auth_sort: form.authSort
             }
 
-            await menuService.createMenu(createData)
+            await createMenu(createData)
             ElMessage.success('新增成功')
           }
 
@@ -635,7 +621,7 @@
     })
   }
 
-  const deleteMenu = async (row?: AppRouteRecord) => {
+  const handleDeleteMenu = async (row?: AppRouteRecord) => {
     try {
       await ElMessageBox.confirm('确定要删除该菜单吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
@@ -645,7 +631,7 @@
 
       if (row && row.id) {
         loading.value = true
-        await menuService.deleteMenu(row.id)
+        await deleteMenu(row.id)
         ElMessage.success('删除成功')
         getTableData() // 刷新数据
       }
@@ -656,22 +642,6 @@
       }
     } finally {
       loading.value = false
-    }
-  }
-
-  const deleteAuth = async () => {
-    try {
-      await ElMessageBox.confirm('确定要删除该权限吗？删除后无法恢复', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-
-      ElMessage.success('删除成功')
-    } catch (error) {
-      if (error !== 'cancel') {
-        ElMessage.error('删除失败')
-      }
     }
   }
 
@@ -695,7 +665,7 @@
   const toggleExpand = () => {
     isExpanded.value = !isExpanded.value
     nextTick(() => {
-      if (tableRef.value && filteredTableData.value) {
+      if (tableRef.value && tableData.value) {
         // 递归处理所有行的展开/收起状态
         const processRows = (rows: AppRouteRecord[]) => {
           rows.forEach(row => {
@@ -705,7 +675,7 @@
             }
           })
         }
-        processRows(filteredTableData.value)
+        processRows(tableData.value)
       }
     })
   }

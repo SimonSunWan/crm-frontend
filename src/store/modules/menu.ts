@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { AppRouteRecord } from '@/types/router'
 import { getFirstMenuPath } from '@/utils'
 import { HOME_PAGE_PATH } from '@/router'
-import { menuService } from '@/api/menuApi'
+import { getNavigationMenus, convertMenuToRoute } from '@/api/menuApi'
 
 /**
  * 菜单状态管理
@@ -33,8 +33,8 @@ export const useMenuStore = defineStore('menuStore', () => {
    */
   const fetchMenuList = async () => {
     try {
-      const response = await menuService.getNavigationMenus()
-      setMenuList(response)
+      const response = await getNavigationMenus()
+      setMenuList(response.map(convertMenuToRoute))
       return response
     } catch (error) {
       console.error('获取菜单列表失败:', error)
