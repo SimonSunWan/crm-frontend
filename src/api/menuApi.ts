@@ -10,17 +10,17 @@ export interface Menu {
   title: string
   icon: string
   sort: number
-  isHide: boolean
-  keepAlive: boolean
-  isIframe: boolean
+  is_hide: boolean
+  is_keep_alive: boolean
+  is_iframe: boolean
   link: string
-  isEnable: boolean
-  menuType: string
-  parentId?: number
+  is_enable: boolean
+  menu_type: string
+  parent_id?: number
   roles: string
-  authName: string
-  authMark: string
-  authSort: number
+  auth_name: string
+  auth_mark: string
+  auth_sort: number
   children?: Menu[]
 }
 
@@ -140,11 +140,11 @@ export function convertMenuToRoute(menu: Menu): AppRouteRecord {
       title: menu.title,
       icon: menu.icon,
       sort: menu.sort,
-      isHide: menu.isHide,
-      keepAlive: menu.keepAlive,
-      isIframe: menu.isIframe,
+      isHide: menu.is_hide,
+      keepAlive: menu.is_keep_alive,
+      isIframe: menu.is_iframe,
       link: menu.link,
-      isEnable: menu.isEnable,
+      isEnable: menu.is_enable,
       roles: menu.roles ? menu.roles.split(',') : [],
       authList: []
     },

@@ -29,11 +29,12 @@
 
       <ArtTable
         ref="tableRef"
-        rowKey="path"
+        rowKey="id"
         :loading="loading"
         :columns="columns"
-        :data="filteredTableData"
+        :data="tableData"
         :stripe="false"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       />
 
       <ElDialog :title="dialogTitle" v-model="dialogVisible" width="700px" align-center>
@@ -320,39 +321,18 @@
       width: 180,
       formatter: (row: AppRouteRecord) => {
         return h('div', [
-          // 这里写两组权限标识判断是为了方便演示，在实际开发中可以删除其中一组
-          // 前端模式权限标识
-          hasAuth('B_CODE1') &&
-            h(ArtButtonTable, {
-              type: 'add',
-              onClick: () => showModel('menu')
-            }),
-          hasAuth('B_CODE2') &&
-            h(ArtButtonTable, {
-              type: 'edit',
-              onClick: () => showDialog('edit', row)
-            }),
-          hasAuth('B_CODE3') &&
-            h(ArtButtonTable, {
-              type: 'delete',
-              onClick: () => handleDeleteMenu(row)
-            }),
-          // 后端模式权限标识
-          hasAuth('add') &&
-            h(ArtButtonTable, {
-              type: 'add',
-              onClick: () => showModel('menu')
-            }),
-          hasAuth('edit') &&
-            h(ArtButtonTable, {
-              type: 'edit',
-              onClick: () => showDialog('edit', row)
-            }),
-          hasAuth('delete') &&
-            h(ArtButtonTable, {
-              type: 'delete',
-              onClick: () => handleDeleteMenu(row)
-            })
+          h(ArtButtonTable, {
+            type: 'add',
+            onClick: () => showModel('menu', row, true) // 添加子菜单
+          }),
+          h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => showDialog('edit', row)
+          }),
+          h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => handleDeleteMenu(row)
+          })
         ])
       }
     }
@@ -365,6 +345,7 @@
   const dialogVisible = ref(false)
   const form = reactive({
     id: 0,
+    parentId: 0, // 父菜单ID
     // 菜单
     name: '',
     path: '',
@@ -408,15 +389,14 @@
     loading.value = true
     try {
       const response = await getMenus()
-      console.log('API响应:', response)
       if (response.records) {
-        // 转换后端数据为前端格式
+        // 转换后端数据为前端格式（保持树形结构）
         tableData.value = response.records.map(convertMenuToRoute)
       } else {
         tableData.value = []
       }
     } catch (error) {
-      console.error('获取菜单数据失败:', error)
+      console.error(error)
       ElMessage.error('获取菜单数据失败')
       // 回退到store中的数据
       tableData.value = menuList.value
@@ -425,70 +405,9 @@
     }
   }
 
-  // 过滤后的表格数据
-  const filteredTableData = computed(() => {
-    // 深拷贝函数，避免修改原数据
-    const deepClone = (obj: any): any => {
-      if (obj === null || typeof obj !== 'object') return obj
-      if (obj instanceof Date) return new Date(obj)
-      if (Array.isArray(obj)) return obj.map(item => deepClone(item))
-
-      const cloned: any = {}
-      for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          cloned[key] = deepClone(obj[key])
-        }
-      }
-      return cloned
-    }
-
-    // 递归搜索函数
-    const searchMenu = (items: AppRouteRecord[]): AppRouteRecord[] => {
-      const results: AppRouteRecord[] = []
-
-      for (const item of items) {
-        // 获取搜索关键词，转换为小写并去除首尾空格
-        const searchName = appliedFilters.name?.toLowerCase().trim() || ''
-        const searchRoute = appliedFilters.route?.toLowerCase().trim() || ''
-
-        // 获取菜单标题和路径，确保它们存在
-        const menuTitle = formatMenuTitle(item.meta?.title || '').toLowerCase()
-        const menuPath = (item.path || '').toLowerCase()
-
-        // 使用 includes 进行模糊匹配
-        const nameMatch = !searchName || menuTitle.includes(searchName)
-        const routeMatch = !searchRoute || menuPath.includes(searchRoute)
-
-        // 如果有子菜单，递归搜索
-        if (item.children && item.children.length > 0) {
-          const matchedChildren = searchMenu(item.children)
-          // 如果子菜单有匹配项，保留当前菜单并更新子菜单
-          if (matchedChildren.length > 0) {
-            const clonedItem = deepClone(item)
-            clonedItem.children = matchedChildren
-            results.push(clonedItem)
-            continue
-          }
-        }
-
-        // 当前菜单匹配条件则返回
-        if (nameMatch && routeMatch) {
-          results.push(deepClone(item))
-        }
-      }
-
-      return results
-    }
-
-    return searchMenu(tableData.value)
-  })
-
   const isEdit = ref(false)
   const formRef = ref<FormInstance>()
-  const dialogTitle = computed(() => {
-    const type = labelPosition.value === 'menu' ? '菜单' : '权限'
-    return isEdit.value ? `编辑${type}` : `新建${type}`
-  })
+  const dialogTitle = ref('新建菜单')
 
   const showDialog = (type: string, row: AppRouteRecord) => {
     showModel('menu', row, true)
@@ -540,6 +459,7 @@
               link: form.link,
               is_enable: form.isEnable,
               menu_type: labelPosition.value,
+              parent_id: form.parentId > 0 ? form.parentId : undefined, // 添加父菜单ID
               auth_name: form.authName,
               auth_mark: form.authLabel,
               auth_sort: form.authSort
@@ -552,7 +472,7 @@
           dialogVisible.value = false
           getTableData() // 刷新数据
         } catch (error) {
-          console.error('操作失败:', error)
+          console.error(error)
           ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
         } finally {
           loading.value = false
@@ -561,26 +481,32 @@
     })
   }
 
-  const showModel = (type: string, row?: any, lock: boolean = false) => {
+  const showModel = (type: string, row?: any, isSubMenu: boolean = false) => {
     dialogVisible.value = true
     labelPosition.value = type
     isEdit.value = false
-    lockMenuType.value = lock
+    lockMenuType.value = false
     resetForm()
 
-    if (row) {
+    if (isSubMenu && row) {
+      // 创建子菜单，设置父菜单ID
+      form.parentId = row.id
+      dialogTitle.value = `新建子菜单 - ${row.meta?.title || row.title || '菜单'}`
+    } else if (row) {
+      // 编辑现有菜单
       isEdit.value = true
       nextTick(() => {
         // 回显数据
         if (type === 'menu') {
           // 菜单数据回显
           form.id = row.id || 0
-          form.name = formatMenuTitle(row.meta?.title) || row.title || ''
+          form.parentId = row.parent_id || 0
+          form.name = row.meta?.title || row.title || ''
           form.path = row.path || ''
           form.label = row.name || ''
           form.icon = row.meta?.icon || ''
           form.sort = row.meta?.sort || 1
-          form.isMenu = row.meta?.isMenu || true
+          form.isMenu = true
           form.keepAlive = row.meta?.keepAlive || true
           form.isHide = row.meta?.isHide || false
           form.isEnable = row.meta?.isEnable || true
@@ -589,12 +515,15 @@
         } else {
           // 权限按钮数据回显
           form.id = row.id || 0
-          form.authName = row.title || row.authName || ''
-          form.authLabel = row.authMark || row.authLabel || ''
-          form.authIcon = row.icon || row.authIcon || ''
-          form.authSort = row.sort || row.authSort || 1
+          form.authName = row.auth_name || row.title || ''
+          form.authLabel = row.auth_mark || ''
+          form.authIcon = row.icon || ''
+          form.authSort = row.auth_sort || row.sort || 1
         }
       })
+    } else {
+      // 新建顶级菜单
+      dialogTitle.value = '新建菜单'
     }
   }
 
@@ -602,6 +531,7 @@
     formRef.value?.resetFields()
     Object.assign(form, {
       id: 0,
+      parentId: 0, // 重置父菜单ID
       // 菜单
       name: '',
       path: '',
@@ -637,7 +567,6 @@
       }
     } catch (error) {
       if (error !== 'cancel') {
-        console.error('删除失败:', error)
         ElMessage.error('删除失败')
       }
     } finally {
