@@ -9,6 +9,13 @@ export class DictionaryService {
     })
   }
 
+  // 根据字典编码获取字典数据
+  static getDictionaryByCode(code: string) {
+    return request.get<import('@/types/api/dictionary').DictionaryData>({
+      url: `/dictionary/public/by-code/${code}`
+    })
+  }
+
   // 创建字典类型
   static createDictionaryType(data: Api.Dictionary.CreateDictionaryTypeParams) {
     return request.post<Api.Dictionary.DictionaryTypeItem>({

@@ -81,7 +81,7 @@ declare namespace Api {
       createTime: string
       updateBy: string
       updateTime: string
-      status: boolean
+      status: string
       userName: string
       nickName: string
       phone: string
@@ -97,7 +97,7 @@ declare namespace Api {
       email: string
       password: string
       roles?: string[]
-      status?: boolean
+      status?: string
     }
 
     /** 更新用户参数 */
@@ -107,7 +107,7 @@ declare namespace Api {
       phone?: string
       email?: string
       roles?: string[]
-      status?: boolean
+      status?: string
     }
   }
 

@@ -7,11 +7,26 @@
     @reset="handleReset"
     @search="handleSearch"
   >
+    <!-- 自定义状态字典下拉框 -->
+    <template #status="{ modelValue }">
+      <art-select
+        :model-value="modelValue.status"
+        @update:model-value="
+          (value: string | string[] | undefined) =>
+            $emit('update:modelValue', { ...modelValue, status: value })
+        "
+        dict-code="USER_STATUS"
+        placeholder="请选择状态"
+        :clearable="true"
+        :filterable="true"
+      />
+    </template>
   </ArtSearchBar>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
+  import ArtSelect from '@/components/core/forms/art-select/index.vue'
 
   interface Props {
     modelValue: Record<string, any>
@@ -53,14 +68,7 @@
       label: '状态',
       key: 'status',
       type: 'select',
-      props: {
-        placeholder: '请选择状态',
-        clearable: true,
-        options: [
-          { label: '启用', value: true },
-          { label: '禁用', value: false }
-        ]
-      }
+      span: 6
     }
   ])
 

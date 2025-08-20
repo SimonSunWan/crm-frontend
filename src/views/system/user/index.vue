@@ -58,18 +58,14 @@
     status: undefined
   })
 
-  const USER_STATUS_CONFIG = {
-    true: { type: 'success' as const, text: '启用' },
-    false: { type: 'danger' as const, text: '禁用' }
-  } as const
+  const getUserStatusConfig = (status: string) => {
+    // 根据字典值获取状态配置
+    const statusMap: Record<string, { type: 'success' | 'danger' | 'info'; text: string }> = {
+      '1': { type: 'success', text: '启用' },
+      '2': { type: 'danger', text: '禁用' }
+    }
 
-  const getUserStatusConfig = (status: boolean) => {
-    return (
-      USER_STATUS_CONFIG[(status + '') as keyof typeof USER_STATUS_CONFIG] || {
-        type: 'info' as const,
-        text: '未知'
-      }
-    )
+    return statusMap[status] || { type: 'info', text: '未知' }
   }
 
   const {

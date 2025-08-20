@@ -52,6 +52,12 @@ export interface DictionaryEnumListData {
   size: number
 }
 
+// 根据字典编码获取的数据结构
+export interface DictionaryData {
+  type: DictionaryTypeItem
+  enums: DictionaryEnumItem[]
+}
+
 export interface CreateDictionaryEnumParams {
   typeId: number
   keyValue: string
