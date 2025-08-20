@@ -168,6 +168,7 @@
   import { ElPopover, ElButton } from 'element-plus'
   import { AppRouteRecord } from '@/types/router'
   import { useAuth } from '@/composables/useAuth'
+  import { menuService } from '@/api/menuApi'
 
   defineOptions({ name: 'Menus' })
 
@@ -354,7 +355,7 @@
           hasAuth('B_CODE3') &&
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => deleteMenu()
+              onClick: () => deleteMenu(row)
             }),
           // 后端模式权限标识
           hasAuth('add') &&
@@ -370,7 +371,7 @@
           hasAuth('delete') &&
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => deleteMenu()
+              onClick: () => deleteMenu(row)
             })
         ])
       }
@@ -383,6 +384,7 @@
 
   const dialogVisible = ref(false)
   const form = reactive({
+    id: 0,
     // 菜单
     name: '',
     path: '',
@@ -422,12 +424,19 @@
     getTableData()
   })
 
-  const getTableData = () => {
+  const getTableData = async () => {
     loading.value = true
-    setTimeout(() => {
+    try {
+      const response = await menuService.getMenuList()
+      tableData.value = response.menuList
+    } catch (error) {
+      console.error('获取菜单数据失败:', error)
+      ElMessage.error('获取菜单数据失败')
+      // 回退到store中的数据
       tableData.value = menuList.value
+    } finally {
       loading.value = false
-    }, 500)
+    }
   }
 
   // 过滤后的表格数据
@@ -507,10 +516,60 @@
     await formRef.value.validate(async valid => {
       if (valid) {
         try {
-          ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+          loading.value = true
+
+          if (isEdit.value) {
+            // 编辑菜单
+            const menuId = form.id || 0
+            const updateData = {
+              name: form.name,
+              path: form.path,
+              title: form.name,
+              icon: form.icon,
+              sort: form.sort,
+              is_hide: form.isHide,
+              is_keep_alive: form.keepAlive,
+              is_iframe: form.isIframe,
+              link: form.link,
+              is_enable: form.isEnable,
+              menu_type: labelPosition.value,
+              auth_name: form.authName,
+              auth_mark: form.authLabel,
+              auth_sort: form.authSort
+            }
+
+            await menuService.updateMenu(menuId, updateData)
+            ElMessage.success('编辑成功')
+          } else {
+            // 新增菜单
+            const createData = {
+              name: form.name,
+              path: form.path,
+              title: form.name,
+              icon: form.icon,
+              sort: form.sort,
+              is_hide: form.isHide,
+              is_keep_alive: form.keepAlive,
+              is_iframe: form.isIframe,
+              link: form.link,
+              is_enable: form.isEnable,
+              menu_type: labelPosition.value,
+              auth_name: form.authName,
+              auth_mark: form.authLabel,
+              auth_sort: form.authSort
+            }
+
+            await menuService.createMenu(createData)
+            ElMessage.success('新增成功')
+          }
+
           dialogVisible.value = false
-        } catch {
+          getTableData() // 刷新数据
+        } catch (error) {
+          console.error('操作失败:', error)
           ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
+        } finally {
+          loading.value = false
         }
       }
     })
@@ -529,23 +588,25 @@
         // 回显数据
         if (type === 'menu') {
           // 菜单数据回显
-          form.name = formatMenuTitle(row.meta.title)
-          form.path = row.path
-          form.label = row.name
-          form.icon = row.meta.icon
-          form.sort = row.meta.sort || 1
-          form.isMenu = row.meta.isMenu
-          form.keepAlive = row.meta.keepAlive
-          form.isHide = row.meta.isHide || true
-          form.isEnable = row.meta.isEnable || true
-          form.link = row.meta.link
-          form.isIframe = row.meta.isIframe || false
+          form.id = row.id || 0
+          form.name = formatMenuTitle(row.meta?.title) || row.title || ''
+          form.path = row.path || ''
+          form.label = row.name || ''
+          form.icon = row.meta?.icon || ''
+          form.sort = row.meta?.sort || 1
+          form.isMenu = row.meta?.isMenu || true
+          form.keepAlive = row.meta?.keepAlive || true
+          form.isHide = row.meta?.isHide || false
+          form.isEnable = row.meta?.isEnable || true
+          form.link = row.meta?.link || ''
+          form.isIframe = row.meta?.isIframe || false
         } else {
           // 权限按钮数据回显
-          form.authName = row.title
-          form.authLabel = row.authMark
-          form.authIcon = row.icon || ''
-          form.authSort = row.sort || 1
+          form.id = row.id || 0
+          form.authName = row.title || row.authName || ''
+          form.authLabel = row.authMark || row.authLabel || ''
+          form.authIcon = row.icon || row.authIcon || ''
+          form.authSort = row.sort || row.authSort || 1
         }
       })
     }
@@ -554,6 +615,7 @@
   const resetForm = () => {
     formRef.value?.resetFields()
     Object.assign(form, {
+      id: 0,
       // 菜单
       name: '',
       path: '',
@@ -573,7 +635,7 @@
     })
   }
 
-  const deleteMenu = async () => {
+  const deleteMenu = async (row?: AppRouteRecord) => {
     try {
       await ElMessageBox.confirm('确定要删除该菜单吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
@@ -581,11 +643,19 @@
         type: 'warning'
       })
 
-      ElMessage.success('删除成功')
+      if (row && row.id) {
+        loading.value = true
+        await menuService.deleteMenu(row.id)
+        ElMessage.success('删除成功')
+        getTableData() // 刷新数据
+      }
     } catch (error) {
       if (error !== 'cancel') {
+        console.error('删除失败:', error)
         ElMessage.error('删除失败')
       }
+    } finally {
+      loading.value = false
     }
   }
 

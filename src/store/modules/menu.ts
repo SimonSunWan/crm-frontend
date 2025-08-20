@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { AppRouteRecord } from '@/types/router'
 import { getFirstMenuPath } from '@/utils'
 import { HOME_PAGE_PATH } from '@/router'
+import { menuService } from '@/api/menuApi'
 
 /**
  * 菜单状态管理
@@ -25,6 +26,20 @@ export const useMenuStore = defineStore('menuStore', () => {
   const setMenuList = (list: AppRouteRecord[]) => {
     menuList.value = list
     setHomePath(homePath.value || getFirstMenuPath(list))
+  }
+
+  /**
+   * 从后端获取菜单列表
+   */
+  const fetchMenuList = async () => {
+    try {
+      const response = await menuService.getNavigationMenus()
+      setMenuList(response)
+      return response
+    } catch (error) {
+      console.error('获取菜单列表失败:', error)
+      return []
+    }
   }
 
   /**
@@ -81,6 +96,7 @@ export const useMenuStore = defineStore('menuStore', () => {
     setHomePath,
     addRemoveRouteFns,
     removeAllDynamicRoutes,
-    clearRemoveRouteFns
+    clearRemoveRouteFns,
+    fetchMenuList
   }
 })
