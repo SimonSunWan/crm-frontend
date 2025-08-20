@@ -355,7 +355,7 @@
     sort: 1,
     isMenu: true,
     keepAlive: true,
-    isHide: true,
+    isHide: false,
     link: '',
     isIframe: false,
     // 权限 (修改这部分)
@@ -451,6 +451,7 @@
               name: form.name,
               path: form.path,
               title: form.name,
+              component: form.path,
               icon: form.icon,
               sort: form.sort,
               is_hide: form.isHide,
@@ -540,7 +541,7 @@
       sort: 1,
       isMenu: true,
       keepAlive: true,
-      isHide: true,
+      isHide: false,
       link: '',
       isIframe: false,
       // 权限
