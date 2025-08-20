@@ -70,3 +70,18 @@ export function deleteRole(id: number) {
     url: `/roles/${id}`
   })
 }
+
+// 获取角色菜单权限
+export function getRoleMenus(roleId: number) {
+  return http.get<{ menuIds: number[] }>({
+    url: `/roles/${roleId}/menus`
+  })
+}
+
+// 更新角色菜单权限
+export function updateRoleMenus(roleId: number, menuIds: number[]) {
+  return http.post({
+    url: `/roles/${roleId}/menus`,
+    data: menuIds
+  })
+}

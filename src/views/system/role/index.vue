@@ -90,9 +90,8 @@
           ref="treeRef"
           :data="processedMenuList"
           show-checkbox
-          node-key="name"
+          node-key="id"
           :default-expand-all="isExpandAll"
-          :default-checked-keys="[1, 2, 3]"
           :props="defaultProps"
           @check="handleTreeCheck"
         >
@@ -130,6 +129,8 @@
     createRole,
     updateRole,
     deleteRole as deleteRoleApi,
+    getRoleMenus,
+    updateRoleMenus,
     type Role,
     type RoleCreate
   } from '@/api/rolesApi'
@@ -245,7 +246,7 @@
 
   const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
     if (item.key === 'permission') {
-      showPermissionDialog()
+      showPermissionDialog(row)
     } else if (item.key === 'edit') {
       showDialog('edit', row)
     } else if (item.key === 'delete') {
@@ -253,7 +254,26 @@
     }
   }
 
-  const showPermissionDialog = () => {
+  const showPermissionDialog = async (role?: Role) => {
+    if (role) {
+      currentEditRole.value = role
+      try {
+        // 获取角色的菜单权限
+        const response = await getRoleMenus(role.id)
+        if (response && response.menuIds) {
+          // 设置树组件的选中状态
+          nextTick(() => {
+            const tree = treeRef.value
+            if (tree) {
+              tree.setCheckedKeys(response.menuIds)
+            }
+          })
+        }
+      } catch (error) {
+        console.error(error)
+        ElMessage.error('获取角色菜单权限失败')
+      }
+    }
     permissionDialog.value = true
   }
 
@@ -305,9 +325,35 @@
     }
   }
 
-  const savePermission = () => {
-    ElMessage.success('权限保存成功')
-    permissionDialog.value = false
+  const savePermission = async () => {
+    if (!currentEditRole.value) {
+      ElMessage.error('请先选择角色')
+      return
+    }
+
+    try {
+      const tree = treeRef.value
+      if (!tree) {
+        ElMessage.error('树组件未初始化')
+        return
+      }
+
+      // 获取选中的菜单ID
+      const checkedKeys = tree.getCheckedKeys()
+      const halfCheckedKeys = tree.getHalfCheckedKeys()
+
+      // 合并完全选中和半选中的节点
+      const allCheckedKeys = [...checkedKeys, ...halfCheckedKeys]
+
+      // 保存角色菜单权限
+      await updateRoleMenus(currentEditRole.value.id, allCheckedKeys)
+
+      ElMessage.success('权限保存成功')
+      permissionDialog.value = false
+    } catch (error) {
+      console.error(error)
+      ElMessage.error('权限保存失败')
+    }
   }
 
   const toggleExpandAll = () => {
@@ -339,12 +385,12 @@
     isSelectAll.value = !isSelectAll.value
   }
 
-  const getAllNodeKeys = (nodes: any[]): string[] => {
-    const keys: string[] = []
+  const getAllNodeKeys = (nodes: any[]): number[] => {
+    const keys: number[] = []
     const traverse = (nodeList: any[]) => {
       nodeList.forEach(node => {
-        if (node.name) {
-          keys.push(node.name)
+        if (node.id) {
+          keys.push(node.id)
         }
         if (node.children && node.children.length > 0) {
           traverse(node.children)
