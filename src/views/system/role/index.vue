@@ -4,32 +4,32 @@
       <ElRow :gutter="12">
         <ElCol :xs="24" :sm="12" :lg="6">
           <ElFormItem>
-            <ElInput placeholder="请输入角色名称" v-model="form.roleName"></ElInput>
+            <ElInput placeholder="请输入角色名称" v-model="searchForm.roleName"></ElInput>
           </ElFormItem>
         </ElCol>
         <ElCol :xs="24" :sm="12" :lg="6">
           <ElFormItem>
-            <ElButton v-ripple>搜索</ElButton>
+            <ElButton v-ripple @click="getTableData">搜索</ElButton>
             <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
           </ElFormItem>
         </ElCol>
       </ElRow>
     </ElForm>
-    <ArtTable :data="roleList">
+    <ArtTable :data="roleList" v-loading="loading">
       <template #default>
         <ElTableColumn label="角色名称" prop="roleName" />
         <ElTableColumn label="角色编码" prop="roleCode" />
-        <ElTableColumn label="描述" prop="des" />
-        <ElTableColumn label="启用" prop="enable">
+        <ElTableColumn label="描述" prop="description" />
+        <ElTableColumn label="启用" prop="status">
           <template #default="scope">
-            <ElTag :type="scope.row.enable ? 'primary' : 'info'">
-              {{ scope.row.enable ? '启用' : '禁用' }}
+            <ElTag :type="scope.row.status ? 'primary' : 'info'">
+              {{ scope.row.status ? '启用' : '禁用' }}
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="创建时间" prop="date">
+        <ElTableColumn label="创建时间" prop="createTime">
           <template #default="scope">
-            {{ formatDate(scope.row.date) }}
+            {{ formatDate(scope.row.createTime) }}
           </template>
         </ElTableColumn>
         <ElTableColumn fixed="right" label="操作" width="100px">
@@ -63,11 +63,11 @@
         <ElFormItem label="角色编码" prop="roleCode">
           <ElInput v-model="form.roleCode" />
         </ElFormItem>
-        <ElFormItem label="描述" prop="roleStatus">
-          <ElInput v-model="form.des" type="textarea" :rows="3" />
+        <ElFormItem label="描述" prop="description">
+          <ElInput v-model="form.description" type="textarea" :rows="3" />
         </ElFormItem>
         <ElFormItem label="启用">
-          <ElSwitch v-model="form.enable" />
+          <ElSwitch v-model="form.status" />
         </ElFormItem>
       </ElForm>
       <template #footer>
@@ -124,8 +124,15 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
-  import { Role, ROLE_LIST_DATA } from '@/mock/temp/formData'
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
+  import {
+    getRoles,
+    createRole,
+    updateRole,
+    deleteRole as deleteRoleApi,
+    type Role,
+    type RoleCreate
+  } from '@/api/rolesApi'
 
   defineOptions({ name: 'Role' })
 
@@ -135,6 +142,7 @@
   const treeRef = ref()
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
+  const currentEditRole = ref<Role | null>(null)
 
   /* 处理菜单数据,将 authList 转换为子节点 */
   const processedMenuList = computed(() => {
@@ -169,29 +177,49 @@
   const formRef = ref<FormInstance>()
 
   const rules = reactive<FormRules>({
-    name: [
+    roleName: [
       { required: true, message: '请输入角色名称', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    des: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
+    roleCode: [
+      { required: true, message: '请输入角色编码', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ],
+    description: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
   })
 
-  const form = reactive<Role>({
+  const form = reactive<RoleCreate>({
     roleName: '',
     roleCode: '',
-    des: '',
-    date: '',
-    enable: true
+    description: '',
+    status: true
   })
 
   const roleList = ref<Role[]>([])
+  const loading = ref(false)
+  const searchForm = reactive({
+    roleName: ''
+  })
 
   onMounted(() => {
     getTableData()
   })
 
-  const getTableData = () => {
-    roleList.value = ROLE_LIST_DATA
+  const getTableData = async () => {
+    try {
+      loading.value = true
+      console.log('getTableData')
+      const response = await getRoles({
+        current: 1,
+        size: 100,
+        roleName: searchForm.roleName || undefined
+      })
+      if (response && response.records) {
+        roleList.value = response.records
+      }
+    } finally {
+      loading.value = false
+    }
   }
 
   const dialogType = ref('add')
@@ -201,17 +229,17 @@
     dialogType.value = type
 
     if (type === 'edit' && row) {
+      currentEditRole.value = row
       form.roleName = row.roleName
       form.roleCode = row.roleCode
-      form.des = row.des
-      form.date = row.date
-      form.enable = row.enable
+      form.description = row.description
+      form.status = row.status
     } else {
+      currentEditRole.value = null
       form.roleName = ''
       form.roleCode = ''
-      form.des = ''
-      form.date = ''
-      form.enable = true
+      form.description = ''
+      form.status = true
     }
   }
 
@@ -221,7 +249,7 @@
     } else if (item.key === 'edit') {
       showDialog('edit', row)
     } else if (item.key === 'delete') {
-      deleteRole()
+      deleteRole(row)
     }
   }
 
@@ -234,27 +262,47 @@
     label: (data: any) => formatMenuTitle(data.meta?.title) || ''
   }
 
-  const deleteRole = () => {
-    ElMessageBox.confirm('确定删除该角色吗？', '删除确认', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'error'
-    }).then(() => {
+  const deleteRole = async (row: Role) => {
+    try {
+      await ElMessageBox.confirm('确定删除该角色吗？', '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'error'
+      })
+
+      await deleteRoleApi(row.id)
       ElMessage.success('删除成功')
-    })
+      getTableData() // 刷新列表
+    } catch (error) {
+      if (error !== 'cancel') {
+        ElMessage.error('删除失败')
+      }
+    }
   }
 
   const handleSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
 
-    await formEl.validate(valid => {
-      if (valid) {
-        const message = dialogType.value === 'add' ? '新增成功' : '修改成功'
-        ElMessage.success(message)
-        dialogVisible.value = false
-        formEl.resetFields()
-      }
-    })
+    try {
+      await formEl.validate(async valid => {
+        if (valid) {
+          if (dialogType.value === 'add') {
+            await createRole(form)
+            ElMessage.success('新增成功')
+          } else {
+            if (currentEditRole.value) {
+              await updateRole(currentEditRole.value.id, form)
+              ElMessage.success('修改成功')
+            }
+          }
+          dialogVisible.value = false
+          formEl.resetFields()
+          getTableData() // 刷新列表
+        }
+      })
+    } catch (error) {
+      ElMessage.error(error as string)
+    }
   }
 
   const savePermission = () => {
