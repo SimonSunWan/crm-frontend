@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
   import { UserService } from '@/api/usersApi'
+  import { getAllRoles } from '@/api/rolesApi'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
 
@@ -64,11 +65,7 @@
   const emit = defineEmits<Emits>()
 
   // 角色列表数据
-  const roleList = ref([
-    { label: '管理员', value: 'admin' },
-    { label: '普通用户', value: 'user' },
-    { label: '访客', value: 'guest' }
-  ])
+  const roleList = ref<Array<{ label: string; value: string }>>([])
 
   // 对话框显示控制
   const dialogVisible = computed({
@@ -92,6 +89,22 @@
     roles: [] as string[],
     status: true
   })
+
+  // 获取角色列表
+  const fetchRoleList = async () => {
+    try {
+      const response = await getAllRoles()
+      if (response && Array.isArray(response)) {
+        roleList.value = response.map(role => ({
+          label: role.roleName,
+          value: role.roleCode
+        }))
+      }
+    } catch (error) {
+      console.error('获取角色列表失败:', error)
+      ElMessage.error('获取角色列表失败')
+    }
+  }
 
   // 表单验证规则
   const rules: FormRules = {
@@ -131,8 +144,11 @@
   // 统一监听对话框状态变化
   watch(
     () => [props.visible, props.type, props.userData],
-    ([visible]) => {
+    async ([visible]) => {
       if (visible) {
+        // 获取角色列表
+        await fetchRoleList()
+        // 初始化表单数据
         initFormData()
         nextTick(() => {
           formRef.value?.clearValidate()

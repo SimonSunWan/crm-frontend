@@ -158,7 +158,10 @@
           label: auth.title,
           authMark: auth.authMark,
           isAuth: true,
-          checked: auth.checked || false
+          checked: auth.checked || false,
+          // 添加原始数据，用于与后端数据匹配
+          originalAuthMark: auth.authMark,
+          parentMenuId: node.id
         }))
 
         processed.children = processed.children ? [...processed.children, ...authNodes] : authNodes

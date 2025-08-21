@@ -41,6 +41,13 @@ export function getRoles(params: { current?: number; size?: number; roleName?: s
   })
 }
 
+// 获取所有角色（不分页）
+export function getAllRoles() {
+  return http.get<Role[]>({
+    url: '/roles/all'
+  })
+}
+
 // 获取单个角色
 export function getRole(id: number) {
   return http.get<Role>({
@@ -79,9 +86,9 @@ export function getRoleMenus(roleId: number) {
 }
 
 // 更新角色菜单权限
-export function updateRoleMenus(roleId: number, menuIds: number[]) {
+export function updateRoleMenus(roleId: number, menuIds: (number | string)[]) {
   return http.post({
     url: `/roles/${roleId}/menus`,
-    data: menuIds
+    data: { menu_ids: menuIds }
   })
 }

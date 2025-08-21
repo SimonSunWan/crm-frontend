@@ -7,15 +7,13 @@
         <ElCard class="type-card" shadow="never">
           <template #header>
             <div class="card-header">
-              <span>字典分类管理</span>
+              <span>字典分类</span>
+              <ElButton type="primary" @click="showTypeDialog('add')" v-ripple> + 新增 </ElButton>
             </div>
           </template>
 
-          <!-- 添加字典类型 -->
-          <div class="add-type-section">
-            <ElButton type="primary" @click="showTypeDialog('add')" v-ripple>
-              + 添加字典分类
-            </ElButton>
+          <!-- 搜索字典类型 -->
+          <div class="search-type-section">
             <ElInput
               v-model="typeSearchKeyword"
               placeholder="请输入字典名称"
@@ -27,10 +25,6 @@
 
           <!-- 字典类型列表 -->
           <div class="type-list">
-            <div class="list-header">
-              <span>全部字典</span>
-              <i class="iconfont-sys">&#xe6b9;</i>
-            </div>
             <div class="type-items">
               <div
                 v-for="type in filteredTypes"
@@ -40,17 +34,8 @@
               >
                 <span class="type-name">{{ type.name }}</span>
                 <div class="type-actions">
-                  <ElButton
-                    type="primary"
-                    link
-                    size="small"
-                    @click.stop="showTypeDialog('edit', type)"
-                  >
-                    编辑
-                  </ElButton>
-                  <ElButton type="danger" link size="small" @click.stop="deleteType(type)">
-                    删除
-                  </ElButton>
+                  <ArtButtonTable type="edit" @click="showTypeDialog('edit', type)" />
+                  <ArtButtonTable type="delete" @click="deleteType(type)" />
                 </div>
               </div>
             </div>
@@ -58,20 +43,14 @@
         </ElCard>
       </div>
 
-      <!-- 右侧字典枚举管理 -->
+      <!-- 右侧字典枚举 -->
       <div class="right-panel">
         <ElCard class="enum-card" shadow="never">
           <template #header>
             <div class="card-header">
-              <span>字典枚举管理</span>
-              <ElButton
-                v-if="selectedType"
-                type="primary"
-                size="small"
-                @click="showEnumDialog('add')"
-                v-ripple
-              >
-                + 添加
+              <span>字典枚举</span>
+              <ElButton v-if="selectedType" type="primary" @click="showEnumDialog('add')" v-ripple>
+                + 新增
               </ElButton>
             </div>
           </template>
@@ -124,8 +103,8 @@
     <!-- 字典枚举弹窗 -->
     <ElDialog :title="enumDialogTitle" v-model="enumDialogVisible" width="500px" align-center>
       <ElForm ref="enumFormRef" :model="enumForm" :rules="enumRules" label-width="100px">
-        <ElFormItem label="键值" prop="keyValue">
-          <ElInput v-model="enumForm.keyValue" placeholder="请输入键值" />
+        <ElFormItem label="key值" prop="keyValue">
+          <ElInput v-model="enumForm.keyValue" placeholder="请输入key值" />
         </ElFormItem>
         <ElFormItem label="字典值" prop="dictValue">
           <ElInput v-model="enumForm.dictValue" placeholder="请输入字典值" />
@@ -133,7 +112,7 @@
         <ElFormItem label="排序" prop="sortOrder">
           <ElInputNumber
             v-model="enumForm.sortOrder"
-            :min="0"
+            :min="1"
             controls-position="right"
             style="width: 100%"
           />
@@ -154,6 +133,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { DictionaryService } from '@/api/dictionaryApi'
   import type { FormInstance, FormRules } from 'element-plus'
+  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
 
   defineOptions({ name: 'Dictionary' })
 
@@ -211,10 +191,9 @@
   })
 
   const enumColumns = [
-    { type: 'index' as const, width: 60, label: '序号' },
-    { prop: 'id', label: 'id', width: 80 },
     { prop: 'keyValue', label: 'key值' },
     { prop: 'dictValue', label: '字典值' },
+    { prop: 'sortOrder', width: 60, label: '排序' },
     {
       prop: 'operation',
       label: '操作',
@@ -222,26 +201,14 @@
       fixed: 'right' as const,
       formatter: (row: DictionaryEnumItem) => {
         return h('div', [
-          h(
-            ElButton,
-            {
-              type: 'primary',
-              link: true,
-              size: 'small',
-              onClick: () => showEnumDialog('edit', row)
-            },
-            () => '编辑'
-          ),
-          h(
-            ElButton,
-            {
-              type: 'danger',
-              link: true,
-              size: 'small',
-              onClick: () => deleteEnum(row)
-            },
-            () => '删除'
-          )
+          h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => showEnumDialog('edit', row)
+          }),
+          h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => deleteEnum(row)
+          })
         ])
       }
     }
@@ -258,7 +225,7 @@
   })
 
   const enumRules: FormRules = {
-    keyValue: [{ required: true, message: '请输入键值', trigger: 'blur' }],
+    keyValue: [{ required: true, message: '请输入key值', trigger: 'blur' }],
     dictValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
   }
 
@@ -436,7 +403,7 @@
         try {
           if (enumDialogType.value === 'add') {
             await createDictionaryEnum({
-              typeId: selectedType.value.id,
+              typeId: selectedType.value!.id,
               ...enumForm
             })
             ElMessage.success('创建成功')
@@ -496,29 +463,17 @@
         .type-card {
           height: 100%;
 
-          .add-type-section {
-            margin-bottom: 16px;
+          .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
 
-            .search-input {
-              margin-top: 12px;
-            }
+          .search-type-section {
+            margin-bottom: 16px;
           }
 
           .type-list {
-            .list-header {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 12px;
-              font-weight: 500;
-              color: var(--art-text-gray-800);
-
-              i {
-                font-size: 12px;
-                color: var(--art-text-gray-500);
-              }
-            }
-
             .type-items {
               .type-item {
                 display: flex;
@@ -551,6 +506,10 @@
                 .type-actions {
                   display: flex;
                   gap: 4px;
+
+                  :deep(.btn-text) {
+                    min-width: 0;
+                  }
                 }
               }
             }
