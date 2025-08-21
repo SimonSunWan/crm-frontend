@@ -254,6 +254,8 @@
     }
   }
 
+  const selectedMenuIds = ref<number[]>([])
+
   const showPermissionDialog = async (role?: Role) => {
     if (role) {
       currentEditRole.value = role
@@ -261,21 +263,34 @@
         // 获取角色的菜单权限
         const response = await getRoleMenus(role.id)
         if (response && response.menuIds) {
-          // 设置树组件的选中状态
-          nextTick(() => {
-            const tree = treeRef.value
-            if (tree) {
-              tree.setCheckedKeys(response.menuIds)
-            }
-          })
+          selectedMenuIds.value = response.menuIds
+        } else {
+          selectedMenuIds.value = []
         }
       } catch (error) {
         console.error(error)
         ElMessage.error('获取角色菜单权限失败')
+        selectedMenuIds.value = []
       }
     }
     permissionDialog.value = true
   }
+
+  // 监听弹窗显示状态、选中菜单ID和菜单数据的变化，设置树组件的选中状态
+  watch(
+    [permissionDialog, selectedMenuIds, processedMenuList],
+    ([dialogVisible, menuIds, menuList]) => {
+      if (dialogVisible && menuIds.length > 0 && menuList.length > 0) {
+        nextTick(() => {
+          const tree = treeRef.value
+          if (tree) {
+            tree.setCheckedKeys(menuIds)
+          }
+        })
+      }
+    },
+    { immediate: true }
+  )
 
   const defaultProps = {
     children: 'children',

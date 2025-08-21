@@ -184,13 +184,46 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
     }
   }
 
+  // 将后端原始字段添加到meta中，以便编辑时使用
+  const extendedMeta = {
+    ...meta,
+    // 添加后端原始字段
+    originalTitle: menu.title,
+    originalIcon: menu.icon,
+    originalSort: menu.sort,
+    originalIsHide: menu.isHide,
+    originalIsKeepAlive: menu.isKeepAlive,
+    originalIsIframe: menu.isIframe,
+    originalLink: menu.link,
+    originalIsEnable: menu.isEnable,
+    originalMenuType: menu.menuType,
+    originalParentId: menu.parentId,
+    originalAuthName: menu.authName,
+    originalAuthMark: menu.authMark,
+    originalAuthSort: menu.authSort
+  }
+
   return {
     id: menu.id,
     name: menu.name,
     path: menu.path,
     component: menu.component,
     redirect: menu.redirect,
-    meta: meta,
+    meta: extendedMeta,
     children: menu.children ? menu.children.map(convertMenuToRoute) : []
+  } as AppRouteRecord & {
+    title?: string
+    icon?: string
+    sort?: number
+    is_hide?: boolean
+    is_keep_alive?: boolean
+    is_iframe?: boolean
+    link?: string
+    is_enable?: boolean
+    menu_type?: string
+    parent_id?: number
+    auth_name?: string
+    auth_mark?: string
+    auth_sort?: number
   }
 }
