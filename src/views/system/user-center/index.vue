@@ -5,96 +5,47 @@
         <div class="user-wrap box-style">
           <img class="bg" src="@imgs/user/bg.webp" />
           <img class="avatar" src="@imgs/user/avatar.webp" />
-          <h2 class="name">{{ userInfo.userName }}</h2>
-          <p class="des">Vue3 Admin 是一款漂亮的后台管理系统模版.</p>
+          <h2 class="name">{{ userInfo.userName || '用户' }}</h2>
+          <p class="des">{{ userInfo.nickName }}</p>
 
           <div class="outer-info">
-            <div>
+            <div v-if="userInfo.phone">
+              <i class="iconfont-sys">&#xe70d;</i>
+              <span>{{ userInfo.phone }}</span>
+            </div>
+            <div v-if="userInfo.email">
               <i class="iconfont-sys">&#xe72e;</i>
-              <span>jdkjjfnndf@mall.com</span>
+              <span>{{ userInfo.email }}</span>
             </div>
-            <div>
-              <i class="iconfont-sys">&#xe608;</i>
-              <span>交互专家</span>
-            </div>
-            <div>
-              <i class="iconfont-sys">&#xe736;</i>
-              <span>广东省深圳市</span>
-            </div>
-            <div>
+            <div v-if="userInfo.roles && userInfo.roles.length > 0">
               <i class="iconfont-sys">&#xe811;</i>
-              <span>字节跳动－某某平台部－UED</span>
-            </div>
-          </div>
-
-          <div class="lables">
-            <h3>标签</h3>
-            <div>
-              <div v-for="item in lableList" :key="item">
-                {{ item }}
-              </div>
+              <el-tag v-for="role in userInfo.roles" :key="role" size="small">{{ role }}</el-tag>
             </div>
           </div>
         </div>
-
-        <!-- <el-carousel class="gallery" height="160px"
-          :interval="5000"
-          indicator-position="none"
-        >
-          <el-carousel-item class="item" v-for="item in galleryList" :key="item">
-            <img :src="item"/>
-          </el-carousel-item>
-        </el-carousel> -->
       </div>
       <div class="right-wrap">
         <div class="info box-style">
           <h1 class="title">基本设置</h1>
 
-          <ElForm
-            :model="form"
-            class="form"
-            ref="ruleFormRef"
-            :rules="rules"
-            label-width="86px"
-            label-position="top"
-          >
+          <ElForm :model="form" class="form" ref="ruleFormRef" :rules="rules" label-width="86px">
             <ElRow>
-              <ElFormItem label="姓名" prop="realName">
-                <el-input v-model="form.realName" :disabled="!isEdit" />
+              <ElFormItem label="用户名" prop="userName">
+                <el-input v-model="form.userName" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem label="性别" prop="sex" class="right-input">
-                <ElSelect v-model="form.sex" placeholder="Select" :disabled="!isEdit">
-                  <ElOption
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </ElSelect>
+              <ElFormItem label="昵称" prop="nickName" class="right-input">
+                <ElInput v-model="form.nickName" :disabled="!isEdit" />
               </ElFormItem>
             </ElRow>
 
             <ElRow>
-              <ElFormItem label="昵称" prop="nikeName">
-                <ElInput v-model="form.nikeName" :disabled="!isEdit" />
-              </ElFormItem>
-              <ElFormItem label="邮箱" prop="email" class="right-input">
+              <ElFormItem label="邮箱" prop="email">
                 <ElInput v-model="form.email" :disabled="!isEdit" />
               </ElFormItem>
-            </ElRow>
-
-            <ElRow>
-              <ElFormItem label="手机" prop="mobile">
-                <ElInput v-model="form.mobile" :disabled="!isEdit" />
-              </ElFormItem>
-              <ElFormItem label="地址" prop="address" class="right-input">
-                <ElInput v-model="form.address" :disabled="!isEdit" />
+              <ElFormItem label="手机" prop="phone" class="right-input">
+                <ElInput v-model="form.phone" :disabled="!isEdit" />
               </ElFormItem>
             </ElRow>
-
-            <ElFormItem label="个人介绍" prop="des" :style="{ height: '130px' }">
-              <ElInput type="textarea" :rows="4" v-model="form.des" :disabled="!isEdit" />
-            </ElFormItem>
 
             <div class="el-form-item-right">
               <ElButton type="primary" style="width: 90px" v-ripple @click="edit">
@@ -107,7 +58,7 @@
         <div class="info box-style" style="margin-top: 20px">
           <h1 class="title">更改密码</h1>
 
-          <ElForm :model="pwdForm" class="form" label-width="86px" label-position="top">
+          <ElForm :model="pwdForm" class="form" label-width="86px">
             <ElFormItem label="当前密码" prop="password">
               <ElInput
                 v-model="pwdForm.password"
@@ -149,7 +100,8 @@
 
 <script setup lang="ts">
   import { useUserStore } from '@/store/modules/user'
-  import { ElForm, FormInstance, FormRules } from 'element-plus'
+  import { UserService } from '@/api/usersApi'
+  import { ElForm, FormInstance, FormRules, ElMessage } from 'element-plus'
 
   defineOptions({ name: 'UserCenter' })
 
@@ -158,85 +110,135 @@
 
   const isEdit = ref(false)
   const isEditPwd = ref(false)
-  const date = ref('')
+  const loading = ref(false)
+
   const form = reactive({
-    realName: 'John Snow',
-    nikeName: '皮卡丘',
-    email: '59301283@mall.com',
-    mobile: '18888888888',
-    address: '广东省深圳市宝安区西乡街道101栋201',
-    sex: '2',
-    des: 'Vue3 Admin 是一款漂亮的后台管理系统模版.'
+    userName: '',
+    nickName: '',
+    email: '',
+    phone: ''
   })
 
   const pwdForm = reactive({
-    password: '123456',
-    newPassword: '123456',
-    confirmPassword: '123456'
+    password: '',
+    newPassword: '',
+    confirmPassword: ''
   })
 
   const ruleFormRef = ref<FormInstance>()
 
   const rules = reactive<FormRules>({
-    realName: [
-      { required: true, message: '请输入昵称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+    userName: [
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
-    nikeName: [
+    nickName: [
       { required: true, message: '请输入昵称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
-    email: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
-    mobile: [{ required: true, message: '请输入手机号码', trigger: 'blur' }],
-    address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
-    sex: [{ type: 'array', required: true, message: '请选择性别', trigger: 'blur' }]
+    email: [
+      { required: true, message: '请输入邮箱', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    ],
+    phone: [
+      { required: true, message: '请输入手机号码', trigger: 'blur' },
+      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码格式', trigger: 'blur' }
+    ]
   })
-
-  const options = [
-    {
-      value: '1',
-      label: '男'
-    },
-    {
-      value: '2',
-      label: '女'
-    }
-  ]
-
-  const lableList: Array<string> = ['专注设计', '很有想法', '辣~', '大长腿', '川妹子', '海纳百川']
 
   onMounted(() => {
-    getDate()
+    loadUserInfo()
   })
 
-  const getDate = () => {
-    const d = new Date()
-    const h = d.getHours()
-    let text = ''
-
-    if (h >= 6 && h < 9) {
-      text = '早上好'
-    } else if (h >= 9 && h < 11) {
-      text = '上午好'
-    } else if (h >= 11 && h < 13) {
-      text = '中午好'
-    } else if (h >= 13 && h < 18) {
-      text = '下午好'
-    } else if (h >= 18 && h < 24) {
-      text = '晚上好'
-    } else if (h >= 0 && h < 6) {
-      text = '很晚了，早点睡'
+  const loadUserInfo = async () => {
+    try {
+      loading.value = true
+      const data = await UserService.getUserInfo()
+      if (data) {
+        // 更新store中的用户信息
+        userStore.setUserInfo(data)
+        // 填充表单数据
+        form.userName = data.userName || ''
+        form.nickName = data.nickName || ''
+        form.email = data.email || ''
+        form.phone = data.phone || ''
+      }
+    } catch (error) {
+      console.error('获取用户信息失败:', error)
+      ElMessage.error('获取用户信息失败')
+    } finally {
+      loading.value = false
     }
-
-    date.value = text
   }
 
-  const edit = () => {
-    isEdit.value = !isEdit.value
+  const edit = async () => {
+    if (isEdit.value) {
+      // 保存操作
+      try {
+        await ruleFormRef.value?.validate()
+        loading.value = true
+
+        // 调用更新当前用户信息API
+        await UserService.updateCurrentUser({
+          userName: form.userName,
+          nickName: form.nickName,
+          email: form.email,
+          phone: form.phone
+        })
+
+        // 重新获取用户信息
+        await loadUserInfo()
+
+        ElMessage.success('保存成功')
+        isEdit.value = false
+      } catch (error) {
+        console.error('保存失败:', error)
+        ElMessage.error('保存失败')
+      } finally {
+        loading.value = false
+      }
+    } else {
+      // 编辑模式
+      isEdit.value = true
+    }
   }
 
-  const editPwd = () => {
-    isEditPwd.value = !isEditPwd.value
+  const editPwd = async () => {
+    if (isEditPwd.value) {
+      // 保存密码操作
+      if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+        ElMessage.error('两次输入的密码不一致')
+        return
+      }
+
+      if (pwdForm.newPassword.length < 6) {
+        ElMessage.error('新密码长度不能少于6位')
+        return
+      }
+
+      try {
+        loading.value = true
+
+        // 调用修改密码API
+        await UserService.changePassword(pwdForm.password, pwdForm.newPassword)
+
+        ElMessage.success('密码修改成功')
+        isEditPwd.value = false
+
+        // 清空密码表单
+        pwdForm.password = ''
+        pwdForm.newPassword = ''
+        pwdForm.confirmPassword = ''
+      } catch (error) {
+        console.error('修改密码失败:', error)
+        ElMessage.error('修改密码失败')
+      } finally {
+        loading.value = false
+      }
+    } else {
+      // 编辑密码模式
+      isEditPwd.value = true
+    }
   }
 </script>
 
@@ -279,7 +281,7 @@
 
         .user-wrap {
           position: relative;
-          height: 600px;
+          height: 528px;
           padding: 35px 40px;
           overflow: hidden;
           text-align: center;

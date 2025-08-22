@@ -60,7 +60,6 @@ export const asyncRoutes: AppRouteRecord[] = [
         component: RoutesAlias.UserCenter,
         meta: {
           title: 'menus.system.userCenter',
-          isHide: true,
           keepAlive: true,
           isHideTab: true
         }

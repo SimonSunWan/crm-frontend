@@ -16,6 +16,25 @@ export class UserService {
     })
   }
 
+  // 更新当前用户信息
+  static updateCurrentUser(data: Api.User.UpdateUserParams) {
+    return request.put<Api.User.UserInfo>({
+      url: '/users/me',
+      data
+    })
+  }
+
+  // 修改当前用户密码
+  static changePassword(currentPassword: string, newPassword: string) {
+    return request.put({
+      url: '/users/me/change-password',
+      data: {
+        current_password: currentPassword,
+        new_password: newPassword
+      }
+    })
+  }
+
   // 获取用户列表
   static getUserList(params: Api.Common.PaginatingSearchParams) {
     return request.get<Api.User.UserListData>({
