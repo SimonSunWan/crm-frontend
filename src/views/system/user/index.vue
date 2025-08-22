@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
-  import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { ElMessageBox, ElMessage, ElTag } from 'element-plus'
   import { useTable } from '@/composables/useTable'
   import { useAuth } from '@/composables/useAuth'
@@ -169,10 +168,10 @@
           return []
         }
 
-        return records.map((item: any, index: number) => {
+        return records.map((item: any) => {
           return {
             ...item,
-            avatar: ACCOUNT_TABLE_DATA[index % ACCOUNT_TABLE_DATA.length].avatar
+            avatar: ''
           }
         })
       },

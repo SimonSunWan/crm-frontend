@@ -65,7 +65,7 @@
                 <ElFormItem label="外部链接" prop="link">
                   <ElInput
                     v-model="form.link"
-                    placeholder="外部链接/内嵌地址(https://www.baidu.com)"
+                    placeholder="外部链接/内嵌地址(https://example.com)"
                   ></ElInput>
                 </ElFormItem>
               </ElCol>
