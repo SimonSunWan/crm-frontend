@@ -1,7 +1,3 @@
-/**
- * 系统配置
- * 包含:系统信息、系统主题、菜单主题、菜单布局、系统主色、系统主色列表、系统主色、系统其他项默认配置、快速入口配置
- */
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
 import { SystemConfig } from '@/types/config'
 import { configImages } from './assets/images'
@@ -9,20 +5,16 @@ import fastEnterConfig from './fastEnter'
 import { headerBarConfig } from './headerBar'
 
 const appConfig: SystemConfig = {
-  // 系统信息
   systemInfo: {
-    name: 'Vue3 Admin' // 系统名称
+    name: 'Vue3 Admin'
   },
-  // Element Plus 主题
   elementPlusTheme: {
     primary: '#5D87FF'
   },
-  // 系统主题
   systemThemeStyles: {
     [SystemThemeEnum.LIGHT]: { className: '' },
     [SystemThemeEnum.DARK]: { className: SystemThemeEnum.DARK }
   },
-  // 系统主题列表
   settingThemeList: [
     {
       name: 'Light',
@@ -49,14 +41,12 @@ const appConfig: SystemConfig = {
       img: configImages.themeStyles.system
     }
   ],
-  // 菜单布局列表
   menuLayoutList: [
     { name: 'Left', value: MenuTypeEnum.LEFT, img: configImages.menuLayouts.vertical },
     { name: 'Top', value: MenuTypeEnum.TOP, img: configImages.menuLayouts.horizontal },
     { name: 'Mixed', value: MenuTypeEnum.TOP_LEFT, img: configImages.menuLayouts.mixed },
     { name: 'Dual Column', value: MenuTypeEnum.DUAL_MENU, img: configImages.menuLayouts.dualColumn }
   ],
-  // 菜单主题列表
   themeList: [
     {
       theme: MenuThemeEnum.DESIGN,
@@ -117,7 +107,6 @@ const appConfig: SystemConfig = {
       rightLineColor: '#EDEEF0'
     }
   ],
-  // 系统主色
   systemMainColor: [
     '#5D87FF',
     '#B48DF3',
@@ -127,15 +116,12 @@ const appConfig: SystemConfig = {
     '#F9901F',
     '#FF80C8'
   ] as const,
-  // 系统其他项默认配置
   systemSetting: {
-    defaultMenuWidth: 240, // 菜单宽度
-    defaultCustomRadius: '0.75', // 自定义圆角
-    defaultTabStyle: 'tab-default' // 标签样式
+    defaultMenuWidth: 240,
+    defaultCustomRadius: '0.75',
+    defaultTabStyle: 'tab-default'
   },
-  // 快速入口配置
   fastEnter: fastEnterConfig,
-  // 顶部栏功能配置
   headerBar: headerBarConfig
 }
 

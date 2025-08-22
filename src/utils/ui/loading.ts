@@ -16,10 +16,6 @@ interface LoadingInstance {
 let loadingInstance: LoadingInstance | null = null
 
 export const loadingService = {
-  /**
-   * 显示 loading
-   * @returns 关闭 loading 的函数
-   */
   showLoading(): () => void {
     if (!loadingInstance) {
       loadingInstance = ElLoading.service(DEFAULT_LOADING_CONFIG)
@@ -27,9 +23,6 @@ export const loadingService = {
     return () => this.hideLoading()
   },
 
-  /**
-   * 隐藏 loading
-   */
   hideLoading(): void {
     if (loadingInstance) {
       loadingInstance.close()

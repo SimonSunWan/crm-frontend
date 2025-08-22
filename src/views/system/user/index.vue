@@ -61,7 +61,6 @@
   })
 
   const getUserStatusConfig = (status: any) => {
-    // 根据字典值获取状态配置
     const statusMap: Record<string, { type: 'success' | 'danger' | 'info'; text: string }> = {
       true: { type: 'success', text: '启用' },
       false: { type: 'danger', text: '禁用' }
@@ -132,14 +131,12 @@
           width: 120,
           fixed: 'right',
           formatter: row => {
-            // 用户角色包含SUPER不显示操作按钮
             if (row.roles && row.roles.includes('SUPER')) {
               return h('div', {}, '-')
             }
 
             const buttons = []
 
-            // 检查编辑权限
             if (hasAuth('edit')) {
               buttons.push(
                 h(ArtButtonTable, {
@@ -149,7 +146,6 @@
               )
             }
 
-            // 检查删除权限
             if (hasAuth('delete')) {
               buttons.push(
                 h(ArtButtonTable, {
@@ -159,7 +155,6 @@
               )
             }
 
-            // 如果没有权限显示任何按钮，返回 '-'
             if (buttons.length === 0) {
               return h('div', {}, '-')
             }
@@ -183,7 +178,6 @@
         })
       },
       responseAdapter: (response: any): ApiResponse<UserListItem> => {
-        // 处理后端的ApiResponse格式
         if (response) {
           const { records, total, current, size } = response
           return {
@@ -198,9 +192,6 @@
     }
   })
 
-  /**
-   * 搜索处理
-   */
   const handleSearch = (params: Record<string, any>) => {
     const { daterange, ...filtersParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
@@ -209,9 +200,6 @@
     getData()
   }
 
-  /**
-   * 显示用户弹窗
-   */
   const showDialog = (type: Form.DialogType, row?: UserListItem): void => {
     dialogType.value = type
     currentUserData.value = row || {}
@@ -220,9 +208,6 @@
     })
   }
 
-  /**
-   * 删除用户
-   */
   const handleDeleteUser = async (row: UserListItem): Promise<void> => {
     try {
       await ElMessageBox.confirm(`确定要删除用户 "${row.userName}" 吗？`, '删除用户', {
@@ -241,9 +226,6 @@
     }
   }
 
-  /**
-   * 处理弹窗提交事件
-   */
   const handleDialogSubmit = async () => {
     try {
       dialogVisible.value = false
@@ -254,9 +236,6 @@
     }
   }
 
-  /**
-   * 处理表格行选择变化
-   */
   const handleSelectionChange = (selection: UserListItem[]): void => {
     selectedRows.value = selection
   }

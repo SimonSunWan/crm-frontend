@@ -33,7 +33,6 @@ export interface RoleListResponse {
   size: number
 }
 
-// 获取角色列表
 export function getRoles(params: { current?: number; size?: number; roleName?: string }) {
   return http.get<RoleListResponse>({
     url: '/roles/',
@@ -41,21 +40,18 @@ export function getRoles(params: { current?: number; size?: number; roleName?: s
   })
 }
 
-// 获取所有角色（不分页）
 export function getAllRoles() {
   return http.get<Role[]>({
     url: '/roles/all'
   })
 }
 
-// 获取单个角色
 export function getRole(id: number) {
   return http.get<Role>({
     url: `/roles/${id}`
   })
 }
 
-// 创建角色
 export function createRole(data: RoleCreate) {
   return http.post<Role>({
     url: '/roles/',
@@ -63,7 +59,6 @@ export function createRole(data: RoleCreate) {
   })
 }
 
-// 更新角色
 export function updateRole(id: number, data: RoleUpdate) {
   return http.put<Role>({
     url: `/roles/${id}`,
@@ -71,7 +66,6 @@ export function updateRole(id: number, data: RoleUpdate) {
   })
 }
 
-// 删除角色
 export function deleteRole(id: number) {
   return http.del({
     url: `/roles/${id}`
@@ -98,14 +92,12 @@ export interface RoleMenusResponse {
   selectedIds: number[]
 }
 
-// 获取角色菜单权限
 export function getRoleMenus(roleId: number) {
   return http.get<RoleMenusResponse>({
     url: `/roles/${roleId}/menus`
   })
 }
 
-// 更新角色菜单权限
 export function updateRoleMenus(roleId: number, menuIds: number[]) {
   return http.post({
     url: `/roles/${roleId}/menus`,

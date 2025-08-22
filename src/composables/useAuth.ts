@@ -23,18 +23,11 @@ export const useAuth = () => {
     ? (route.meta.authList as AuthItem[])
     : []
 
-  /**
-   * 检查是否拥有某权限标识(前后端模式通用)
-   * @param auth 权限标识
-   * @returns 是否有权限
-   */
   const hasAuth = (auth: string): boolean => {
-    // 前端模式
     if (isFrontendMode.value) {
       return frontendAuthList.includes(auth)
     }
 
-    // 后端模式
     return backendAuthList.some(item => item?.authMark === auth)
   }
 

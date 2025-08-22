@@ -1,7 +1,3 @@
-/**
- * 动态路由处理
- * 根据接口返回的菜单列表注册动态路由
- */
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/router'
 import { saveIframeRoutes } from './menuToRouter'
@@ -9,42 +5,24 @@ import { RoutesAlias } from '../routesAlias'
 import { h } from 'vue'
 import { useMenuStore } from '@/store/modules/menu'
 
-/**
- * 动态导入 views 目录下所有 .vue 组件
- */
 const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
 
-/**
- * 注册异步路由
- * 将接口返回的菜单列表转换为 Vue Router 路由配置,并添加到传入的 router 实例中
- * @param router Vue Router 实例
- * @param menuList 接口返回的菜单列表
- */
 export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]): void {
-  // 用于局部收集 iframe 类型路由
   const iframeRoutes: AppRouteRecord[] = []
-  // 收集路由移除函数
   const removeRouteFns: (() => void)[] = []
 
-  // 检测菜单列表中是否有重复路由
   checkDuplicateRoutes(menuList)
 
-  /* 遍历菜单列表,注册路由 */
   menuList.forEach(route => {
-    // 只有还没注册过的路由才进行注册
     if (route.name && !router.hasRoute(route.name)) {
       const routeConfig = convertRouteComponent(route, iframeRoutes)
-      /* addRoute 返回移除函数,收集起来 */
       const removeRouteFn = router.addRoute(routeConfig as RouteRecordRaw)
       removeRouteFns.push(removeRouteFn)
     }
   })
 
-  // 将移除函数存储到 store 中
   const menuStore = useMenuStore()
   menuStore.addRemoveRouteFns(removeRouteFns)
-
-  // 保存 iframe 路由
   saveIframeRoutes(iframeRoutes)
 }
 

@@ -9,7 +9,6 @@ import designStyle from '@imgs/settings/menu_styles/design.png'
 import darkStyle from '@imgs/settings/menu_styles/dark.png'
 import lightStyle from '@imgs/settings/menu_styles/light.png'
 
-// 配置设置中心图片
 export const configImages = {
   themeStyles: {
     light: lightTheme,

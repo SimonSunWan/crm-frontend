@@ -18,7 +18,6 @@
               <i class="iconfont-sys">&#xe734;</i>
               <span>点击更换头像</span>
             </div>
-            <!-- 加载状态指示器 -->
             <div v-if="loading" class="avatar-loading">
               <i class="iconfont-sys">&#xe6b8;</i>
             </div>
@@ -179,47 +178,39 @@
     loadUserInfo()
   })
 
-  // 获取头像文字（取昵称或用户名的第一个字）
   const getAvatarText = (text: string) => {
     return text ? text.charAt(0).toUpperCase() : 'U'
   }
 
-  // 处理头像点击
   const handleAvatarClick = () => {
     avatarInputRef.value?.click()
   }
 
-  // 处理头像文件选择
   const handleAvatarChange = async (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
 
     if (!file) return
 
-    // 验证文件类型
     if (!file.type.startsWith('image/')) {
       ElMessage.error('请选择图片文件')
       return
     }
 
-    // 验证文件大小（限制为2MB）
     if (file.size > 2 * 1024 * 1024) {
       ElMessage.error('图片大小不能超过2MB')
       return
     }
 
-    // 创建图片预览
     const reader = new FileReader()
     reader.onload = e => {
       const img = new Image()
       img.onload = () => {
-        // 检查图片尺寸
         if (img.width < 100 || img.height < 100) {
           ElMessage.error('图片尺寸不能小于100x100像素')
           return
         }
 
-        // 如果图片尺寸合适，直接上传
         uploadAvatarFile(file)
       }
       img.src = e.target?.result as string
@@ -227,15 +218,12 @@
     reader.readAsDataURL(file)
   }
 
-  // 上传头像文件
   const uploadAvatarFile = async (file: File) => {
     try {
       loading.value = true
-      // 上传头像
       const response = await UserService.uploadAvatar(file)
 
       if (response.avatar_url) {
-        // 更新用户信息中的头像
         const updatedUserInfo = { ...userInfo.value, avatar: response.avatar_url }
         userStore.setUserInfo(updatedUserInfo as Api.User.UserInfo)
 
@@ -245,7 +233,6 @@
         ElMessage.error('头像上传失败：未获取到头像URL')
       }
     } catch (error: any) {
-      // 根据错误类型显示不同的错误信息
       if (error.response?.status === 413) {
         ElMessage.error('文件太大，请选择小于2MB的图片')
       } else if (error.response?.status === 415) {
@@ -257,7 +244,6 @@
       }
     } finally {
       loading.value = false
-      // 清空input值，允许重复选择同一文件
       if (avatarInputRef.value) avatarInputRef.value.value = ''
     }
   }
@@ -267,9 +253,7 @@
       loading.value = true
       const data = await UserService.getUserInfo()
       if (data) {
-        // 更新store中的用户信息
         userStore.setUserInfo(data)
-        // 填充表单数据
         form.userName = data.userName || ''
         form.nickName = data.nickName || ''
         form.email = data.email || ''
@@ -284,12 +268,10 @@
 
   const edit = async () => {
     if (isEdit.value) {
-      // 保存操作
       try {
         await ruleFormRef.value?.validate()
         loading.value = true
 
-        // 调用更新当前用户信息API
         await UserService.updateCurrentUser({
           userName: form.userName,
           nickName: form.nickName,
@@ -297,7 +279,6 @@
           phone: form.phone
         })
 
-        // 重新获取用户信息
         await loadUserInfo()
 
         ElMessage.success('保存成功')
@@ -308,14 +289,12 @@
         loading.value = false
       }
     } else {
-      // 编辑模式
       isEdit.value = true
     }
   }
 
   const editPwd = async () => {
     if (isEditPwd.value) {
-      // 保存密码操作
       if (pwdForm.newPassword !== pwdForm.confirmPassword) {
         ElMessage.error('两次输入的密码不一致')
         return
@@ -329,13 +308,11 @@
       try {
         loading.value = true
 
-        // 调用修改密码API
         await UserService.changePassword(pwdForm.password, pwdForm.newPassword)
 
         ElMessage.success('密码修改成功')
         isEditPwd.value = false
 
-        // 清空密码表单
         pwdForm.password = ''
         pwdForm.newPassword = ''
         pwdForm.confirmPassword = ''
@@ -345,7 +322,6 @@
         loading.value = false
       }
     } else {
-      // 编辑密码模式
       isEditPwd.value = true
     }
   }

@@ -83,7 +83,8 @@ export default [
           terms: ['todo', 'fixme'],
           location: 'anywhere'
         }
-      ]
+      ],
+      'no-empty': ['error', { allowEmptyCatch: true }]
     }
   },
   // vue规则

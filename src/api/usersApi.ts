@@ -1,7 +1,6 @@
 import request from '@/utils/http'
 
 export class UserService {
-  // 登录
   static login(params: Api.Auth.LoginParams) {
     return request.post<Api.Auth.LoginResponse>({
       url: '/auth/login',
@@ -9,14 +8,12 @@ export class UserService {
     })
   }
 
-  // 获取用户信息
   static getUserInfo() {
     return request.get<Api.User.UserInfo>({
       url: '/users/me'
     })
   }
 
-  // 更新当前用户信息
   static updateCurrentUser(data: Api.User.UpdateUserParams) {
     return request.put<Api.User.UserInfo>({
       url: '/users/me',
@@ -24,7 +21,6 @@ export class UserService {
     })
   }
 
-  // 修改当前用户密码
   static changePassword(currentPassword: string, newPassword: string) {
     return request.put({
       url: '/users/me/change-password',
@@ -35,7 +31,6 @@ export class UserService {
     })
   }
 
-  // 获取用户列表
   static getUserList(params: Api.Common.PaginatingSearchParams) {
     return request.get<Api.User.UserListData>({
       url: '/users/',
@@ -43,7 +38,6 @@ export class UserService {
     })
   }
 
-  // 创建用户
   static createUser(data: Api.User.CreateUserParams) {
     return request.post<Api.User.UserListItem>({
       url: '/users/',
@@ -51,14 +45,12 @@ export class UserService {
     })
   }
 
-  // 获取单个用户
   static getUserById(id: number) {
     return request.get<Api.User.UserListItem>({
       url: `/users/${id}`
     })
   }
 
-  // 更新用户
   static updateUser(id: number, data: Api.User.UpdateUserParams) {
     return request.put<Api.User.UserListItem>({
       url: `/users/${id}`,
@@ -66,14 +58,12 @@ export class UserService {
     })
   }
 
-  // 删除用户
   static deleteUser(id: number) {
     return request.del({
       url: `/users/${id}`
     })
   }
 
-  // 上传用户头像
   static uploadAvatar(file: File) {
     const formData = new FormData()
     formData.append('avatar', file)

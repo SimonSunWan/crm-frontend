@@ -2,18 +2,10 @@ import { App, Directive } from 'vue'
 import hljs from 'highlight.js'
 import { ElMessage } from 'element-plus'
 
-/**
- * 高亮代码
- * 插入行号、添加复制按钮、分片处理代码块,解决大数据量一次写入卡顿问题
- * 支持动态内容监听,确保所有代码块都能被正确处理
- */
-
-// 高亮代码
 function highlightCode(block: HTMLElement) {
   hljs.highlightElement(block)
 }
 
-// 插入行号
 function insertLineNumbers(block: HTMLElement) {
   const lines = block.innerHTML.split('\n')
   const numberedLines = lines
@@ -24,13 +16,11 @@ function insertLineNumbers(block: HTMLElement) {
   block.innerHTML = numberedLines
 }
 
-/* 添加复制按钮:调整 DOM 结构,将代码部分包裹在 .code-wrapper 内 */
 function addCopyButton(block: HTMLElement) {
   const copyButton = document.createElement('i')
   copyButton.className = 'copy-button iconfont-sys'
   copyButton.innerHTML = '&#xe7b2;'
   copyButton.onclick = () => {
-    /* 过滤掉行号,只复制代码内容 */
     const codeContent = block.innerText.replace(/^\d+\s+/gm, '')
     navigator.clipboard.writeText(codeContent).then(() => {
       ElMessage.success('复制成功')
@@ -40,7 +30,6 @@ function addCopyButton(block: HTMLElement) {
   const preElement = block.parentElement
   if (preElement) {
     let codeWrapper: HTMLElement
-    /* 如果代码块还没有被包裹,则创建包裹容器 */
     if (!block.parentElement.classList.contains('code-wrapper')) {
       codeWrapper = document.createElement('div')
       codeWrapper.className = 'code-wrapper'
@@ -49,12 +38,10 @@ function addCopyButton(block: HTMLElement) {
     } else {
       codeWrapper = block.parentElement
     }
-    /* 将复制按钮添加到 pre 元素(而非 codeWrapper 内),这样它不会随滚动条滚动 */
     preElement.appendChild(copyButton)
   }
 }
 
-// 检查代码块是否已经被处理过
 function isBlockProcessed(block: HTMLElement): boolean {
   return (
     block.hasAttribute('data-highlighted') ||
@@ -63,12 +50,10 @@ function isBlockProcessed(block: HTMLElement): boolean {
   )
 }
 
-// 标记代码块为已处理
 function markBlockAsProcessed(block: HTMLElement) {
   block.setAttribute('data-highlighted', 'true')
 }
 
-// 处理单个代码块
 function processBlock(block: HTMLElement) {
   if (isBlockProcessed(block)) {
     return
@@ -79,12 +64,9 @@ function processBlock(block: HTMLElement) {
     insertLineNumbers(block)
     addCopyButton(block)
     markBlockAsProcessed(block)
-  } catch {
-    // 处理代码块时出错
-  }
+  } catch {}
 }
 
-// 查找并处理所有代码块
 function processAllCodeBlocks(el: HTMLElement) {
   const blocks = Array.from(el.querySelectorAll<HTMLElement>('pre code'))
   const unprocessedBlocks = blocks.filter(block => !isBlockProcessed(block))
@@ -94,10 +76,8 @@ function processAllCodeBlocks(el: HTMLElement) {
   }
 
   if (unprocessedBlocks.length <= 10) {
-    /* 如果代码块数量少于等于10,直接处理所有代码块 */
     unprocessedBlocks.forEach(block => processBlock(block))
   } else {
-    // 定义每次处理的代码块数
     const batchSize = 10
     let currentIndex = 0
 
@@ -108,52 +88,43 @@ function processAllCodeBlocks(el: HTMLElement) {
         processBlock(block)
       })
 
-      // 更新索引并继续处理下一批
       currentIndex += batchSize
       if (currentIndex < unprocessedBlocks.length) {
-        // 使用 requestAnimationFrame 确保下一帧再处理
         requestAnimationFrame(processBatch)
       }
     }
 
-    // 开始处理第一批代码块
     processBatch()
   }
 }
 
-// 重试处理函数
 function retryProcessing(el: HTMLElement, maxRetries: number = 3, delay: number = 200) {
   let retryCount = 0
 
   const tryProcess = () => {
     processAllCodeBlocks(el)
 
-    // 检查是否还有未处理的代码块
     const remainingBlocks = Array.from(el.querySelectorAll<HTMLElement>('pre code')).filter(
       block => !isBlockProcessed(block)
     )
 
     if (remainingBlocks.length > 0 && retryCount < maxRetries) {
       retryCount++
-      setTimeout(tryProcess, delay * retryCount) // 递增延迟
+      setTimeout(tryProcess, delay * retryCount)
     }
   }
 
   tryProcess()
 }
 
-// 代码高亮、插入行号、复制按钮
 const highlightDirective: Directive<HTMLElement> = {
   mounted(el: HTMLElement) {
-    // 立即尝试处理一次
     processAllCodeBlocks(el)
 
-    /* 延迟处理,确保 v-html 内容已经渲染 */
     setTimeout(() => {
       retryProcessing(el)
     }, 100)
 
-    // 使用 MutationObserver 监听 DOM 变化
     const observer = new MutationObserver(mutations => {
       let hasNewCodeBlocks = false
 
@@ -162,7 +133,6 @@ const highlightDirective: Directive<HTMLElement> = {
           mutation.addedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as HTMLElement
-              // 检查新添加的节点是否包含代码块
               if (element.tagName === 'PRE' || element.querySelector('pre code')) {
                 hasNewCodeBlocks = true
               }
@@ -172,32 +142,26 @@ const highlightDirective: Directive<HTMLElement> = {
       })
 
       if (hasNewCodeBlocks) {
-        // 延迟处理新添加的代码块
         setTimeout(() => {
           processAllCodeBlocks(el)
         }, 50)
       }
     })
 
-    // 开始观察
     observer.observe(el, {
       childList: true,
       subtree: true
     })
-
-    /* 将 observer 存储到元素上,以便在 unmounted 时清理 */
     ;(el as any)._highlightObserver = observer
   },
 
   updated(el: HTMLElement) {
-    /* 当组件更新时,重新处理代码块 */
     setTimeout(() => {
       processAllCodeBlocks(el)
     }, 50)
   },
 
   unmounted(el: HTMLElement) {
-    // 清理 MutationObserver
     const observer = (el as any)._highlightObserver
     if (observer) {
       observer.disconnect()

@@ -70,7 +70,6 @@ export interface MenuListResponse {
   size: number
 }
 
-// 获取菜单列表
 export function getMenus(params?: {
   current?: number
   size?: number
@@ -84,28 +83,24 @@ export function getMenus(params?: {
   })
 }
 
-// 获取菜单树
 export function getMenuTree() {
   return http.get<Menu[]>({
     url: '/menus/tree'
   })
 }
 
-// 获取导航菜单
 export function getNavigationMenus() {
   return http.get<Menu[]>({
     url: '/menus/navigation'
   })
 }
 
-// 获取单个菜单
 export function getMenu(id: number) {
   return http.get<Menu>({
     url: `/menus/${id}`
   })
 }
 
-// 创建菜单
 export function createMenu(data: MenuCreate) {
   return http.post<Menu>({
     url: '/menus/',
@@ -113,7 +108,6 @@ export function createMenu(data: MenuCreate) {
   })
 }
 
-// 更新菜单
 export function updateMenu(id: number, data: MenuUpdate) {
   return http.put<Menu>({
     url: `/menus/${id}`,
@@ -121,16 +115,13 @@ export function updateMenu(id: number, data: MenuUpdate) {
   })
 }
 
-// 删除菜单
 export function deleteMenu(id: number) {
   return http.del({
     url: `/menus/${id}`
   })
 }
 
-// 数据转换函数
 export function convertMenuToRoute(menu: any): AppRouteRecord {
-  // 处理角色字段，支持字符串和数组两种格式
   let roles: string[] = []
   if (menu.roles) {
     if (typeof menu.roles === 'string') {
@@ -140,7 +131,6 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
     }
   }
 
-  // 处理meta字段，支持两种数据结构
   let meta = {
     title: '',
     icon: '',
@@ -154,7 +144,6 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
     authList: []
   }
 
-  // 如果后端返回的数据有meta字段，使用meta字段的数据
   if (menu.meta) {
     meta = {
       title: menu.meta.title || menu.title || '',
@@ -169,7 +158,6 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
       authList: menu.meta.authList || []
     }
   } else {
-    // 如果后端返回的数据没有meta字段，使用顶层字段
     meta = {
       title: menu.title || '',
       icon: menu.icon || '',
@@ -184,10 +172,8 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
     }
   }
 
-  // 将后端原始字段添加到meta中，以便编辑时使用
   const extendedMeta = {
     ...meta,
-    // 添加后端原始字段
     originalTitle: menu.title,
     originalIcon: menu.icon,
     originalSort: menu.sort,
