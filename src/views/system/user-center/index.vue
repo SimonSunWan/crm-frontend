@@ -30,10 +30,9 @@
             style="display: none"
             @change="handleAvatarChange"
           />
-          <h2 class="name">{{ userInfo.userName || '用户' }}</h2>
-          <p class="des">{{ userInfo.nickName }}</p>
-
           <div class="outer-info">
+            <h2 class="name">{{ userInfo.userName || '用户' }}</h2>
+            <p class="nick-name">{{ userInfo.nickName }}</p>
             <div v-if="userInfo.phone">
               <i class="iconfont-sys">&#xe70d;</i>
               <span>{{ userInfo.phone }}</span>
@@ -230,10 +229,6 @@
   const uploadAvatarFile = async (file: File) => {
     try {
       loading.value = true
-
-      // 显示上传进度提示
-      ElMessage.info('正在上传头像，请稍候...')
-
       // 上传头像
       const response = await UserService.uploadAvatar(file)
 
@@ -416,6 +411,7 @@
 
           .avatar-container {
             position: relative;
+            left: 30px;
             z-index: 10;
             width: 80px;
             height: 80px;
@@ -504,20 +500,19 @@
           }
 
           .name {
-            margin-top: 20px;
             font-size: 22px;
             font-weight: 400;
           }
 
-          .des {
-            margin-top: 20px;
+          .nick-name {
+            margin: 10px 0 30px;
             font-size: 14px;
           }
 
           .outer-info {
             width: 300px;
             margin: auto;
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: left;
 
             > div {

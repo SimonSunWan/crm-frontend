@@ -105,17 +105,21 @@
           }
         },
         {
-          prop: 'roles',
+          prop: 'roleNames',
           label: '角色',
           formatter: row => {
-            if (!row.roles || row.roles.length === 0) {
+            if (!row.roleNames || row.roleNames.length === 0) {
               return '-'
             }
             return h(
               'div',
               {},
-              row.roles.map(role =>
-                h(ElTag, { type: 'info', size: 'small', style: 'margin-right: 4px;' }, () => role)
+              row.roleNames.map(roleName =>
+                h(
+                  ElTag,
+                  { type: 'info', size: 'small', style: 'margin-right: 4px;' },
+                  () => roleName
+                )
               )
             )
           }

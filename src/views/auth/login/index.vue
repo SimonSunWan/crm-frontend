@@ -183,7 +183,7 @@
       userStore.setLoginStatus(true)
 
       // 登录成功处理
-      showLoginSuccessNotice()
+      showLoginSuccessNotice(userInfo)
       router.push('/')
     } catch (error) {
       // 处理 HttpError
@@ -206,14 +206,14 @@
   }
 
   // 登录成功提示
-  const showLoginSuccessNotice = () => {
+  const showLoginSuccessNotice = (userInfo: any) => {
     setTimeout(() => {
       ElNotification({
         title: t('login.success.title'),
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: `${t('login.success.message')}, ${userInfo.nickName}!`
       })
     }, 150)
   }

@@ -90,6 +90,7 @@ declare namespace Api {
       phone: string
       email: string
       roles: string[]
+      roleNames?: string[] // 角色名称数组
     }
 
     /** 创建用户参数 */
