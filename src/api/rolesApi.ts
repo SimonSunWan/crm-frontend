@@ -78,17 +78,37 @@ export function deleteRole(id: number) {
   })
 }
 
+export interface MenuNode {
+  id: number
+  name: string
+  title: string
+  path: string
+  icon: string
+  sort: number
+  menuType: string
+  authName: string
+  authMark: string
+  authSort: number
+  isEnable: boolean
+  children: MenuNode[]
+}
+
+export interface RoleMenusResponse {
+  menuTree: MenuNode[]
+  selectedIds: number[]
+}
+
 // 获取角色菜单权限
 export function getRoleMenus(roleId: number) {
-  return http.get<{ menuIds: number[] }>({
+  return http.get<RoleMenusResponse>({
     url: `/roles/${roleId}/menus`
   })
 }
 
 // 更新角色菜单权限
-export function updateRoleMenus(roleId: number, menuIds: (number | string)[]) {
+export function updateRoleMenus(roleId: number, menuIds: number[]) {
   return http.post({
     url: `/roles/${roleId}/menus`,
-    data: { menu_ids: menuIds }
+    data: { menuIds }
   })
 }

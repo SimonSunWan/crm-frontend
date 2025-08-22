@@ -81,26 +81,42 @@
     <ElDialog
       v-model="permissionDialog"
       title="菜单权限"
-      width="520px"
+      width="600px"
       align-center
       class="el-dialog-border"
     >
       <ElScrollbar height="70vh">
         <ElTree
           ref="treeRef"
-          :data="processedMenuList"
+          :key="`tree-${currentEditRole?.id || 'new'}`"
+          :data="menuTreeData"
           show-checkbox
           node-key="id"
+          check-strictly
           :default-expand-all="isExpandAll"
           :props="defaultProps"
           @check="handleTreeCheck"
         >
           <template #default="{ data }">
-            <div style="display: flex; align-items: center">
-              <span v-if="data.isAuth">
-                {{ data.label }}
-              </span>
-              <span v-else>{{ defaultProps.label(data) }}</span>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+              "
+            >
+              <div style="display: flex; align-items: center">
+                <span v-if="data.menuType === 'button'">{{ data.authName || data.title }}</span>
+                <span v-else>{{ data.title }}</span>
+              </div>
+              <ElTag
+                :type="data.menuType === 'button' ? 'danger' : 'primary'"
+                size="small"
+                style="margin-left: 8px"
+              >
+                {{ data.menuType === 'button' ? '权限' : '菜单' }}
+              </ElTag>
             </div>
           </template>
         </ElTree>
@@ -122,7 +138,6 @@
   import { useMenuStore } from '@/store/modules/menu'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { formatMenuTitle } from '@/router/utils/utils'
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import {
     getRoles,
@@ -132,7 +147,8 @@
     getRoleMenus,
     updateRoleMenus,
     type Role,
-    type RoleCreate
+    type RoleCreate,
+    type MenuNode
   } from '@/api/rolesApi'
 
   defineOptions({ name: 'Role' })
@@ -144,39 +160,8 @@
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
   const currentEditRole = ref<Role | null>(null)
-
-  /* 处理菜单数据,将 authList 转换为子节点 */
-  const processedMenuList = computed(() => {
-    const processNode = (node: any) => {
-      const processed = { ...node }
-
-      /* 如果有 authList,将其转换为子节点 */
-      if (node.meta && node.meta.authList && node.meta.authList.length) {
-        const authNodes = node.meta.authList.map((auth: any) => ({
-          id: `${node.id}_${auth.authMark}`,
-          name: `${node.name}_${auth.authMark}`,
-          label: auth.title,
-          authMark: auth.authMark,
-          isAuth: true,
-          checked: auth.checked || false,
-          // 添加原始数据，用于与后端数据匹配
-          originalAuthMark: auth.authMark,
-          parentMenuId: node.id
-        }))
-
-        processed.children = processed.children ? [...processed.children, ...authNodes] : authNodes
-      }
-
-      // 递归处理子节点
-      if (processed.children) {
-        processed.children = processed.children.map(processNode)
-      }
-
-      return processed
-    }
-
-    return menuList.value.map(processNode)
-  })
+  const menuTreeData = ref<MenuNode[]>([])
+  const selectedMenuIds = ref<number[]>([])
 
   const formRef = ref<FormInstance>()
 
@@ -257,37 +242,87 @@
     }
   }
 
-  const selectedMenuIds = ref<number[]>([])
-
   const showPermissionDialog = async (role?: Role) => {
     if (role) {
       currentEditRole.value = role
       try {
         // 获取角色的菜单权限
         const response = await getRoleMenus(role.id)
-        if (response && response.menuIds) {
-          selectedMenuIds.value = response.menuIds
+
+        if (response && response.menuTree && response.selectedIds) {
+          menuTreeData.value = response.menuTree
+          selectedMenuIds.value = response.selectedIds
+
+          // 设置树组件的选中状态
+          nextTick(() => {
+            const tree = treeRef.value
+            if (tree) {
+              tree.setCheckedKeys(response.selectedIds)
+            }
+          })
         } else {
+          menuTreeData.value = []
           selectedMenuIds.value = []
+
+          // 清空树组件的选中状态
+          nextTick(() => {
+            const tree = treeRef.value
+            if (tree) {
+              tree.setCheckedKeys([])
+            }
+          })
         }
       } catch (error) {
         console.error(error)
         ElMessage.error('获取角色菜单权限失败')
+        menuTreeData.value = []
         selectedMenuIds.value = []
+
+        // 清空树组件的选中状态
+        nextTick(() => {
+          const tree = treeRef.value
+          if (tree) {
+            tree.setCheckedKeys([])
+          }
+        })
       }
     }
     permissionDialog.value = true
   }
 
+  // 监听权限弹窗的关闭，清理相关状态
+  watch(permissionDialog, newValue => {
+    if (!newValue) {
+      // 弹窗关闭时，清理相关状态
+      currentEditRole.value = null
+      selectedMenuIds.value = []
+      menuTreeData.value = []
+      isSelectAll.value = false
+
+      // 重置树组件的选中状态
+      nextTick(() => {
+        const tree = treeRef.value
+        if (tree) {
+          tree.setCheckedKeys([])
+        }
+      })
+    }
+  })
+
   // 监听弹窗显示状态、选中菜单ID和菜单数据的变化，设置树组件的选中状态
   watch(
-    [permissionDialog, selectedMenuIds, processedMenuList],
+    [permissionDialog, selectedMenuIds, menuTreeData],
     ([dialogVisible, menuIds, menuList]) => {
-      if (dialogVisible && menuIds.length > 0 && menuList.length > 0) {
+      if (dialogVisible && menuList.length > 0) {
         nextTick(() => {
           const tree = treeRef.value
           if (tree) {
-            tree.setCheckedKeys(menuIds)
+            // 如果有选中的菜单ID，则设置选中状态；否则清空选中状态
+            if (menuIds.length > 0) {
+              tree.setCheckedKeys(menuIds)
+            } else {
+              tree.setCheckedKeys([])
+            }
           }
         })
       }
@@ -295,9 +330,71 @@
     { immediate: true }
   )
 
+  // 监听菜单数据变化，当菜单数据变化时，如果权限弹窗是打开的，需要重新获取角色权限
+  watch(
+    menuList,
+    async (newMenuList, oldMenuList) => {
+      // 检查菜单数据是否真的发生了变化（长度或内容变化）
+      if (permissionDialog.value && currentEditRole.value) {
+        const hasMenuChange =
+          !oldMenuList ||
+          newMenuList.length !== oldMenuList.length ||
+          JSON.stringify(newMenuList.map(m => m.id).sort()) !==
+            JSON.stringify(oldMenuList.map(m => m.id).sort())
+
+        if (hasMenuChange) {
+          try {
+            // 重新获取角色的菜单权限
+            const response = await getRoleMenus(currentEditRole.value.id)
+            if (response && response.menuTree && response.selectedIds) {
+              menuTreeData.value = response.menuTree
+              // 过滤掉已删除的菜单ID
+              const validSelectedIds = response.selectedIds.filter((id: number) => {
+                return newMenuList.some(menu => menu.id === id)
+              })
+              selectedMenuIds.value = validSelectedIds
+            } else {
+              menuTreeData.value = []
+              selectedMenuIds.value = []
+            }
+
+            // 更新树组件的选中状态
+            nextTick(() => {
+              const tree = treeRef.value
+              if (tree) {
+                if (selectedMenuIds.value.length > 0) {
+                  tree.setCheckedKeys(selectedMenuIds.value)
+                } else {
+                  tree.setCheckedKeys([])
+                }
+              }
+            })
+          } catch (error) {
+            console.error('重新获取角色菜单权限失败:', error)
+            // 如果获取失败，清空选中状态
+            menuTreeData.value = []
+            selectedMenuIds.value = []
+            nextTick(() => {
+              const tree = treeRef.value
+              if (tree) {
+                tree.setCheckedKeys([])
+              }
+            })
+          }
+        }
+      }
+    },
+    { deep: true }
+  )
+
   const defaultProps = {
     children: 'children',
-    label: (data: any) => formatMenuTitle(data.meta?.title) || ''
+    label: (data: any) => {
+      if (data.menuType === 'button') {
+        return data.authName || data.title || ''
+      }
+      return data.title || ''
+    }
   }
 
   const deleteRole = async (row: Role) => {
@@ -363,7 +460,26 @@
       // 合并完全选中和半选中的节点
       const allCheckedKeys = [...checkedKeys, ...halfCheckedKeys]
 
-      // 保存角色菜单权限
+      // 如果没有选中任何菜单，提示用户确认
+      if (allCheckedKeys.length === 0) {
+        try {
+          await ElMessageBox.confirm(
+            '当前没有选中任何菜单权限，这将清空该角色的所有权限。确定要继续吗？',
+            '确认清空权限',
+            {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+          )
+        } catch (confirmError) {
+          if (confirmError === 'cancel') {
+            return
+          }
+        }
+      }
+
+      // 直接使用选中的ID，包括菜单ID和权限ID
       await updateRoleMenus(currentEditRole.value.id, allCheckedKeys)
 
       ElMessage.success('权限保存成功')
@@ -393,21 +509,24 @@
 
     if (!isSelectAll.value) {
       /* 全选:获取所有节点的key并设置为选中 */
-      const allKeys = getAllNodeKeys(processedMenuList.value)
-      tree.setCheckedKeys(allKeys)
+      const allKeys = getAllNodeKeys(menuTreeData.value)
+      if (allKeys.length > 0) {
+        tree.setCheckedKeys(allKeys)
+        isSelectAll.value = true
+      }
     } else {
       /* 取消全选:清空所有选中 */
       tree.setCheckedKeys([])
+      isSelectAll.value = false
     }
-
-    isSelectAll.value = !isSelectAll.value
   }
 
-  const getAllNodeKeys = (nodes: any[]): number[] => {
+  const getAllNodeKeys = (nodes: MenuNode[]): number[] => {
     const keys: number[] = []
-    const traverse = (nodeList: any[]) => {
+    const traverse = (nodeList: MenuNode[]) => {
       nodeList.forEach(node => {
         if (node.id) {
+          // 直接使用节点的实际ID，无论是菜单还是权限按钮
           keys.push(node.id)
         }
         if (node.children && node.children.length > 0) {
@@ -425,10 +544,9 @@
 
     // 使用树组件的getCheckedKeys方法获取选中的节点
     const checkedKeys = tree.getCheckedKeys()
-    const allKeys = getAllNodeKeys(processedMenuList.value)
 
-    /* 判断是否全选:选中的节点数量等于总节点数量 */
-    isSelectAll.value = checkedKeys.length === allKeys.length && allKeys.length > 0
+    // 更新选中的菜单ID
+    selectedMenuIds.value = checkedKeys
   }
 
   const formatDate = (date: string) => {

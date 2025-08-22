@@ -505,7 +505,6 @@
 
                 .type-actions {
                   display: flex;
-                  gap: 4px;
 
                   :deep(.btn-text) {
                     min-width: 0;
