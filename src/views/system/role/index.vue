@@ -1,54 +1,49 @@
 <template>
-  <div class="page-content">
-    <ElForm>
-      <ElRow :gutter="12">
-        <ElCol :xs="24" :sm="12" :lg="6">
-          <ElFormItem>
-            <ElInput placeholder="请输入角色名称" v-model="searchForm.roleName"></ElInput>
-          </ElFormItem>
-        </ElCol>
-        <ElCol :xs="24" :sm="12" :lg="6">
-          <ElFormItem>
-            <ElButton v-ripple @click="getTableData">搜索</ElButton>
-            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-    </ElForm>
-    <ArtTable :data="roleList" v-loading="loading">
-      <template #default>
-        <ElTableColumn label="角色名称" prop="roleName" />
-        <ElTableColumn label="角色编码" prop="roleCode" />
-        <ElTableColumn label="描述" prop="description" />
-        <ElTableColumn label="启用" prop="status">
-          <template #default="scope">
-            <ElTag :type="scope.row.status ? 'primary' : 'info'">
-              {{ scope.row.status ? '启用' : '禁用' }}
-            </ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="创建时间" prop="createTime">
-          <template #default="scope">
-            {{ formatDate(scope.row.createTime) }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn fixed="right" label="操作" width="100px">
-          <template #default="scope">
-            <ElRow>
-              <!-- 可以在 list 中添加 auth 属性来控制按钮的权限, auth 属性值为权限标识 -->
-              <ArtButtonMore
-                :list="[
-                  { key: 'permission', label: '菜单权限' },
-                  { key: 'edit', label: '编辑角色' },
-                  { key: 'delete', label: '删除角色' }
-                ]"
-                @click="buttonMoreClick($event, scope.row)"
-              />
-            </ElRow>
-          </template>
-        </ElTableColumn>
-      </template>
-    </ArtTable>
+  <div class="role-page art-full-height">
+    <RoleSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></RoleSearch>
+
+    <ElCard class="art-table-card" shadow="never">
+      <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
+        <template #left>
+          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增角色</ElButton>
+        </template>
+      </ArtTableHeader>
+
+      <ArtTable :data="roleList" v-loading="loading">
+        <template #default>
+          <ElTableColumn label="角色名称" prop="roleName" />
+          <ElTableColumn label="角色编码" prop="roleCode" />
+          <ElTableColumn label="描述" prop="description" />
+          <ElTableColumn label="启用" prop="status">
+            <template #default="scope">
+              <ElTag :type="scope.row.status ? 'primary' : 'info'">
+                {{ scope.row.status ? '启用' : '禁用' }}
+              </ElTag>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn label="创建时间" prop="createTime">
+            <template #default="scope">
+              {{ formatDate(scope.row.createTime) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn fixed="right" label="操作" width="100px">
+            <template #default="scope">
+              <ElRow>
+                <!-- 可以在 list 中添加 auth 属性来控制按钮的权限, auth 属性值为权限标识 -->
+                <ArtButtonMore
+                  :list="[
+                    { key: 'permission', label: '菜单权限' },
+                    { key: 'edit', label: '编辑角色' },
+                    { key: 'delete', label: '删除角色' }
+                  ]"
+                  @click="buttonMoreClick($event, scope.row)"
+                />
+              </ElRow>
+            </template>
+          </ElTableColumn>
+        </template>
+      </ArtTable>
+    </ElCard>
 
     <ElDialog
       v-model="dialogVisible"
@@ -150,6 +145,7 @@
     type RoleCreate,
     type MenuNode
   } from '@/api/rolesApi'
+  import RoleSearch from './modules/role-search.vue'
 
   defineOptions({ name: 'Role' })
 
@@ -190,6 +186,9 @@
     roleName: ''
   })
 
+  // 表格列配置
+  const columnChecks = ref([])
+
   onMounted(() => {
     getTableData()
   })
@@ -198,17 +197,41 @@
     try {
       loading.value = true
       console.log('getTableData')
-      const response = await getRoles({
+      const params: any = {
         current: 1,
-        size: 100,
-        roleName: searchForm.roleName || undefined
-      })
+        size: 100
+      }
+
+      if (searchForm.roleName) {
+        params.roleName = searchForm.roleName
+      }
+
+      const response = await getRoles(params)
       if (response && response.records) {
         roleList.value = response.records
       }
     } finally {
       loading.value = false
     }
+  }
+
+  // 搜索处理
+  const handleSearch = (params: Record<string, any>) => {
+    Object.assign(searchForm, params)
+    getTableData()
+  }
+
+  // 重置搜索参数
+  const resetSearchParams = () => {
+    Object.assign(searchForm, {
+      roleName: ''
+    })
+    getTableData()
+  }
+
+  // 刷新数据
+  const refreshData = () => {
+    getTableData()
   }
 
   const dialogType = ref('add')
