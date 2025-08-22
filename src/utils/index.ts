@@ -32,3 +32,21 @@ export * from './http'
 
 // 验证相关
 export * from './validation'
+
+/**
+ * 获取完整的头像URL
+ * @param avatarPath 头像路径
+ * @returns 完整的头像URL
+ */
+export function getAvatarUrl(avatarPath?: string): string {
+  if (!avatarPath) return ''
+
+  // 如果已经是完整URL，直接返回
+  if (avatarPath.startsWith('http://') || avatarPath.startsWith('https://')) {
+    return avatarPath
+  }
+
+  // 如果是相对路径，加上API代理URL前缀
+  const apiProxyUrl = import.meta.env.VITE_API_PROXY_URL || ''
+  return `${apiProxyUrl}${avatarPath}`
+}

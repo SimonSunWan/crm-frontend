@@ -72,4 +72,17 @@ export class UserService {
       url: `/users/${id}`
     })
   }
+
+  // 上传用户头像
+  static uploadAvatar(file: File) {
+    const formData = new FormData()
+    formData.append('avatar', file)
+    return request.post<Api.User.AvatarUploadResponse>({
+      url: '/users/me/avatar',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
 }

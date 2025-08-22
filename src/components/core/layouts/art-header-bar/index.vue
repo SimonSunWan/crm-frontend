@@ -128,12 +128,21 @@
             popper-style="border: 1px solid var(--art-border-dashed-color); border-radius: calc(var(--custom-radius) / 2 + 4px); padding: 5px 16px; 5px 16px;"
           >
             <template #reference>
-              <img class="cover" src="@imgs/user/avatar.webp" alt="avatar" />
+              <div class="avatar-container">
+                <img
+                  v-if="userInfo.avatar"
+                  class="cover"
+                  :src="getAvatarUrl(userInfo.avatar)"
+                  alt="avatar"
+                />
+                <div v-else class="avatar-placeholder">
+                  {{ getAvatarText(userInfo.nickName || userInfo.userName || '用户') }}
+                </div>
+              </div>
             </template>
             <template #default>
               <div class="user-menu-box">
                 <div class="user-head">
-                  <img class="cover" src="@imgs/user/avatar.webp" style="float: left" />
                   <div class="user-wrap">
                     <span class="name">{{ userInfo.userName }}</span>
                     <span class="phone">{{ userInfo.nickName }}</span>
@@ -176,10 +185,11 @@
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
   import { languageOptions } from '@/locales'
-  import { mittBus } from '@/utils/sys'
+  import mittBus from '@/utils/sys/mittBus'
   import { themeAnimation } from '@/utils/theme/animation'
   import { useCommon } from '@/composables/useCommon'
   import { useHeaderBar } from '@/composables/useHeaderBar'
+  import { getAvatarUrl } from '@/utils'
 
   defineOptions({ name: 'ArtHeaderBar' })
 
@@ -193,6 +203,21 @@
   const settingStore = useSettingStore()
   const userStore = useUserStore()
   const menuStore = useMenuStore()
+
+  // 监听头像更新事件
+  onMounted(() => {
+    mittBus.on('user-avatar-updated', () => {
+      // 头像更新时，强制重新渲染
+      nextTick(() => {
+        // 可以在这里添加一些更新逻辑
+      })
+    })
+  })
+
+  // 获取头像文字（取昵称或用户名的第一个字符）
+  const getAvatarText = (text: string): string => {
+    return text ? text.charAt(0) : '用户'
+  }
 
   // 顶部栏功能配置
   const {

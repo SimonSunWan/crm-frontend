@@ -62,6 +62,7 @@ declare namespace Api {
       full_name: string
       email: string
       phone?: string
+      avatar?: string
       is_active: boolean
       created_at: string
       updated_at: string | null
@@ -106,10 +107,13 @@ declare namespace Api {
     interface UpdateUserParams {
       userName?: string
       nickName?: string
-      phone?: string
       email?: string
-      roles?: string[]
-      status?: string
+      phone?: string
+    }
+
+    /** 头像上传响应 */
+    interface AvatarUploadResponse {
+      avatar_url: string
     }
   }
 

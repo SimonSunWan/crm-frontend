@@ -18,7 +18,17 @@
     <div v-if="!isLock">
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="lock-content">
-          <img class="cover" src="@imgs/user/avatar.webp" alt="用户头像" />
+          <div class="avatar-container">
+            <img
+              v-if="userInfo.avatar"
+              class="cover"
+              :src="getAvatarUrl(userInfo.avatar)"
+              alt="用户头像"
+            />
+            <div v-else class="avatar-placeholder">
+              {{ getAvatarText(userInfo.nickName || userInfo.userName || '用户') }}
+            </div>
+          </div>
           <div class="username">{{ userInfo.userName }}</div>
           <ElForm ref="formRef" :model="formData" :rules="rules" @submit.prevent="handleLock">
             <ElFormItem prop="password">
@@ -48,7 +58,17 @@
     <!-- 解锁界面 -->
     <div v-else class="unlock-content">
       <div class="box">
-        <img class="cover" src="@imgs/user/avatar.webp" alt="用户头像" />
+        <div class="avatar-container">
+          <img
+            v-if="userInfo.avatar"
+            class="cover"
+            :src="getAvatarUrl(userInfo.avatar)"
+            alt="用户头像"
+          />
+          <div v-else class="avatar-placeholder">
+            {{ getAvatarText(userInfo.nickName || userInfo.userName || '用户') }}
+          </div>
+        </div>
         <div class="username">{{ userInfo.userName }}</div>
         <ElForm
           ref="unlockFormRef"
@@ -92,6 +112,7 @@
   import CryptoJS from 'crypto-js'
   import { useUserStore } from '@/store/modules/user'
   import { mittBus } from '@/utils/sys'
+  import { getAvatarUrl } from '@/utils'
 
   // 国际化
   const { t } = useI18n()
@@ -102,6 +123,11 @@
   // Store
   const userStore = useUserStore()
   const { info: userInfo, lockPassword, isLock } = storeToRefs(userStore)
+
+  // 获取头像文字（取昵称或用户名的第一个字）
+  const getAvatarText = (text: string): string => {
+    return text ? text.charAt(0) : '用户'
+  }
 
   // 响应式数据
   const visible = ref<boolean>(false)
@@ -479,10 +505,39 @@
       flex-direction: column;
       align-items: center;
 
-      .cover {
+      .avatar-container {
+        position: relative;
         width: 64px;
         height: 64px;
+        margin-bottom: 15px;
+        overflow: hidden;
         border-radius: 50%;
+
+        .cover {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .avatar-placeholder {
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          font-size: 24px;
+          font-weight: bold;
+          color: #333;
+          user-select: none;
+          background-color: #f0f0f0;
+          border-radius: 50%;
+        }
       }
 
       .username {
@@ -528,11 +583,39 @@
         background: rgb(255 255 255 / 90%);
         border-radius: 10px;
 
-        .cover {
+        .avatar-container {
+          position: relative;
           width: 64px;
           height: 64px;
-          margin-top: 20px;
+          margin-bottom: 15px;
+          overflow: hidden;
           border-radius: 50%;
+
+          .cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .avatar-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            user-select: none;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+          }
         }
 
         .username {

@@ -18,6 +18,8 @@ type Events = {
   openChat: void
   // 打开锁屏事件 - 无参数
   openLockScreen: void
+  // 用户头像更新事件 - 头像URL参数
+  'user-avatar-updated': string
 }
 
 // 创建类型安全的事件总线实例

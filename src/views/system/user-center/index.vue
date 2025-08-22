@@ -4,7 +4,32 @@
       <div class="left-wrap">
         <div class="user-wrap box-style">
           <img class="bg" src="@imgs/user/bg.webp" />
-          <img class="avatar" src="@imgs/user/avatar.webp" />
+          <div class="avatar-container">
+            <img
+              v-if="userInfo.avatar"
+              class="avatar"
+              :src="getAvatarUrl(userInfo.avatar)"
+              @click="handleAvatarClick"
+            />
+            <div v-else class="avatar-placeholder" @click="handleAvatarClick">
+              {{ getAvatarText(userInfo.nickName || userInfo.userName || '用户') }}
+            </div>
+            <div class="avatar-upload-overlay" @click="handleAvatarClick">
+              <i class="iconfont-sys">&#xe734;</i>
+              <span>点击更换头像</span>
+            </div>
+            <!-- 加载状态指示器 -->
+            <div v-if="loading" class="avatar-loading">
+              <i class="iconfont-sys">&#xe6b8;</i>
+            </div>
+          </div>
+          <input
+            ref="avatarInputRef"
+            type="file"
+            accept="image/*"
+            style="display: none"
+            @change="handleAvatarChange"
+          />
           <h2 class="name">{{ userInfo.userName || '用户' }}</h2>
           <p class="des">{{ userInfo.nickName }}</p>
 
@@ -102,6 +127,8 @@
   import { useUserStore } from '@/store/modules/user'
   import { UserService } from '@/api/usersApi'
   import { ElForm, FormInstance, FormRules, ElMessage } from 'element-plus'
+  import mittBus from '@/utils/sys/mittBus'
+  import { getAvatarUrl } from '@/utils'
 
   defineOptions({ name: 'UserCenter' })
 
@@ -111,6 +138,7 @@
   const isEdit = ref(false)
   const isEditPwd = ref(false)
   const loading = ref(false)
+  const avatarInputRef = ref<HTMLInputElement>()
 
   const form = reactive({
     userName: '',
@@ -149,6 +177,95 @@
   onMounted(() => {
     loadUserInfo()
   })
+
+  // 获取头像文字（取昵称或用户名的第一个字）
+  const getAvatarText = (text: string) => {
+    return text ? text.charAt(0).toUpperCase() : 'U'
+  }
+
+  // 处理头像点击
+  const handleAvatarClick = () => {
+    avatarInputRef.value?.click()
+  }
+
+  // 处理头像文件选择
+  const handleAvatarChange = async (event: Event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+
+    if (!file) return
+
+    // 验证文件类型
+    if (!file.type.startsWith('image/')) {
+      ElMessage.error('请选择图片文件')
+      return
+    }
+
+    // 验证文件大小（限制为2MB）
+    if (file.size > 2 * 1024 * 1024) {
+      ElMessage.error('图片大小不能超过2MB')
+      return
+    }
+
+    // 创建图片预览
+    const reader = new FileReader()
+    reader.onload = e => {
+      const img = new Image()
+      img.onload = () => {
+        // 检查图片尺寸
+        if (img.width < 100 || img.height < 100) {
+          ElMessage.error('图片尺寸不能小于100x100像素')
+          return
+        }
+
+        // 如果图片尺寸合适，直接上传
+        uploadAvatarFile(file)
+      }
+      img.src = e.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
+
+  // 上传头像文件
+  const uploadAvatarFile = async (file: File) => {
+    try {
+      loading.value = true
+
+      // 显示上传进度提示
+      ElMessage.info('正在上传头像，请稍候...')
+
+      // 上传头像
+      const response = await UserService.uploadAvatar(file)
+
+      if (response.avatar_url) {
+        // 更新用户信息中的头像
+        const updatedUserInfo = { ...userInfo.value, avatar: response.avatar_url }
+        userStore.setUserInfo(updatedUserInfo as Api.User.UserInfo)
+
+        ElMessage.success('头像上传成功')
+        mittBus.emit('user-avatar-updated', response.avatar_url)
+      } else {
+        ElMessage.error('头像上传失败：未获取到头像URL')
+      }
+    } catch (error: any) {
+      console.error('头像上传失败:', error)
+
+      // 根据错误类型显示不同的错误信息
+      if (error.response?.status === 413) {
+        ElMessage.error('文件太大，请选择小于2MB的图片')
+      } else if (error.response?.status === 415) {
+        ElMessage.error('不支持的图片格式，请选择JPG、PNG或GIF格式')
+      } else if (error.response?.status === 401) {
+        ElMessage.error('登录已过期，请重新登录')
+      } else {
+        ElMessage.error(`头像上传失败：${error.message || '未知错误'}`)
+      }
+    } finally {
+      loading.value = false
+      // 清空input值，允许重复选择同一文件
+      if (avatarInputRef.value) avatarInputRef.value.value = ''
+    }
+  }
 
   const loadUserInfo = async () => {
     try {
@@ -297,15 +414,93 @@
             object-fit: cover;
           }
 
-          .avatar {
+          .avatar-container {
             position: relative;
             z-index: 10;
             width: 80px;
             height: 80px;
             margin-top: 120px;
-            object-fit: cover;
+            overflow: hidden;
+            cursor: pointer;
             border: 2px solid #fff;
             border-radius: 50%;
+            transition: transform 0.3s ease;
+
+            &:hover {
+              transform: scale(1.05);
+            }
+
+            .avatar {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+
+            .avatar-placeholder {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              font-size: 28px;
+              font-weight: bold;
+              color: #fff;
+              text-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+              background: var(--el-color-primary);
+            }
+
+            .avatar-upload-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              font-size: 12px;
+              color: #fff;
+              cursor: pointer;
+              background-color: rgb(0 0 0 / 60%);
+              border-radius: 50%;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+
+              i {
+                margin-bottom: 4px;
+                font-size: 24px;
+              }
+
+              span {
+                font-size: 10px;
+                line-height: 1.2;
+                text-align: center;
+              }
+
+              &:hover {
+                opacity: 1;
+              }
+            }
+
+            .avatar-loading {
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 10;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              background-color: rgb(0 0 0 / 60%);
+              border-radius: 50%;
+
+              i {
+                font-size: 30px;
+                color: #fff;
+              }
+            }
           }
 
           .name {
