@@ -41,7 +41,21 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.system.user',
           keepAlive: true,
-          roles: ['SUPER']
+          roles: ['SUPER'],
+          authList: [
+            {
+              title: '新增',
+              authMark: 'add'
+            },
+            {
+              title: '编辑',
+              authMark: 'edit'
+            },
+            {
+              title: '删除',
+              authMark: 'delete'
+            }
+          ]
         }
       },
       {
@@ -51,7 +65,21 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: {
           title: 'menus.system.role',
           keepAlive: true,
-          roles: ['SUPER']
+          roles: ['SUPER'],
+          authList: [
+            {
+              title: '新增',
+              authMark: 'add'
+            },
+            {
+              title: '编辑',
+              authMark: 'edit'
+            },
+            {
+              title: '删除',
+              authMark: 'delete'
+            }
+          ]
         }
       },
       {

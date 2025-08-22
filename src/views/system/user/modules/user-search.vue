@@ -6,28 +6,11 @@
     :rules="rules"
     @reset="handleReset"
     @search="handleSearch"
-  >
-    <!-- 自定义状态字典下拉框 -->
-    <template #status="{ modelValue }">
-      <art-select
-        :model-value="modelValue.status"
-        @update:model-value="
-          (value: string | string[] | undefined) =>
-            $emit('update:modelValue', { ...modelValue, status: value })
-        "
-        dict-code="USER_STATUS"
-        placeholder="请选择状态"
-        :clearable="true"
-        :filterable="true"
-      />
-    </template>
-  </ArtSearchBar>
+  ></ArtSearchBar>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import ArtSelect from '@/components/core/forms/art-select/index.vue'
-
   interface Props {
     modelValue: Record<string, any>
   }
@@ -38,6 +21,11 @@
   }
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
+
+  const statusOptions = [
+    { label: '启用', value: true },
+    { label: '禁用', value: false }
+  ]
 
   // 表单数据双向绑定
   const searchBarRef = ref()
@@ -68,7 +56,9 @@
       label: '状态',
       key: 'status',
       type: 'select',
-      span: 6
+      props: {
+        options: statusOptions
+      }
     }
   ])
 

@@ -6,7 +6,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton @click="showDialog('add')" v-ripple>新增用户</ElButton>
+          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增用户</ElButton>
         </template>
       </ArtTableHeader>
 
@@ -36,6 +36,7 @@
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { ElMessageBox, ElMessage, ElTag } from 'element-plus'
   import { useTable } from '@/composables/useTable'
+  import { useAuth } from '@/composables/useAuth'
   import { UserService } from '@/api/usersApi'
   import UserSearch from './modules/user-search.vue'
   import UserDialog from './modules/user-dialog.vue'
@@ -45,6 +46,7 @@
 
   type UserListItem = Api.User.UserListItem
   const { getUserList, deleteUser } = UserService
+  const { hasAuth } = useAuth()
 
   const dialogType = ref<Form.DialogType>('add')
   const dialogVisible = ref(false)
@@ -58,14 +60,14 @@
     status: undefined
   })
 
-  const getUserStatusConfig = (status: string) => {
+  const getUserStatusConfig = (status: any) => {
     // 根据字典值获取状态配置
     const statusMap: Record<string, { type: 'success' | 'danger' | 'info'; text: string }> = {
-      '1': { type: 'success', text: '启用' },
-      '2': { type: 'danger', text: '禁用' }
+      true: { type: 'success', text: '启用' },
+      false: { type: 'danger', text: '禁用' }
     }
 
-    return statusMap[status] || { type: 'info', text: '未知' }
+    return statusMap[status + ''] || { type: 'info', text: '未知' }
   }
 
   const {
@@ -135,16 +137,34 @@
               return h('div', {}, '-')
             }
 
-            return h('div', [
-              h(ArtButtonTable, {
-                type: 'edit',
-                onClick: () => showDialog('edit', row)
-              }),
-              h(ArtButtonTable, {
-                type: 'delete',
-                onClick: () => handleDeleteUser(row)
-              })
-            ])
+            const buttons = []
+
+            // 检查编辑权限
+            if (hasAuth('edit')) {
+              buttons.push(
+                h(ArtButtonTable, {
+                  type: 'edit',
+                  onClick: () => showDialog('edit', row)
+                })
+              )
+            }
+
+            // 检查删除权限
+            if (hasAuth('delete')) {
+              buttons.push(
+                h(ArtButtonTable, {
+                  type: 'delete',
+                  onClick: () => handleDeleteUser(row)
+                })
+              )
+            }
+
+            // 如果没有权限显示任何按钮，返回 '-'
+            if (buttons.length === 0) {
+              return h('div', {}, '-')
+            }
+
+            return h('div', buttons)
           }
         }
       ]

@@ -67,6 +67,7 @@ declare namespace Api {
       created_at: string
       updated_at: string | null
       roles?: string[] // 可选的角色字段
+      roleNames?: string[] // 可选的角色名称字段
     }
 
     /** 用户列表数据 */

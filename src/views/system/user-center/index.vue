@@ -41,9 +41,11 @@
               <i class="iconfont-sys">&#xe72e;</i>
               <span>{{ userInfo.email }}</span>
             </div>
-            <div v-if="userInfo.roles && userInfo.roles.length > 0">
+            <div v-if="userInfo.roleNames && userInfo.roleNames.length > 0">
               <i class="iconfont-sys">&#xe811;</i>
-              <el-tag v-for="role in userInfo.roles" :key="role" size="small">{{ role }}</el-tag>
+              <el-tag v-for="role in userInfo.roleNames" :key="role" size="small">{{
+                role
+              }}</el-tag>
             </div>
           </div>
         </div>
@@ -63,11 +65,11 @@
             </ElRow>
 
             <ElRow>
-              <ElFormItem label="邮箱" prop="email">
-                <ElInput v-model="form.email" :disabled="!isEdit" />
-              </ElFormItem>
-              <ElFormItem label="手机" prop="phone" class="right-input">
+              <ElFormItem label="手机" prop="phone">
                 <ElInput v-model="form.phone" :disabled="!isEdit" />
+              </ElFormItem>
+              <ElFormItem label="邮箱" prop="email" class="right-input">
+                <ElInput v-model="form.email" :disabled="!isEdit" />
               </ElFormItem>
             </ElRow>
 

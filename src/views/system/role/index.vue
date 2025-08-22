@@ -81,7 +81,7 @@
     <ElDialog
       v-model="permissionDialog"
       title="菜单权限"
-      width="600px"
+      width="500px"
       align-center
       class="el-dialog-border"
     >
@@ -113,7 +113,7 @@
               <ElTag
                 :type="data.menuType === 'button' ? 'danger' : 'primary'"
                 size="small"
-                style="margin-left: 8px"
+                style="margin-right: 10px"
               >
                 {{ data.menuType === 'button' ? '权限' : '菜单' }}
               </ElTag>
@@ -571,6 +571,15 @@
       overflow: hidden;
       vertical-align: -8px;
       fill: currentcolor;
+    }
+  }
+
+  :deep(.el-dialog-border) {
+    .el-tree {
+      .el-tree-node__content {
+        height: 30px;
+        line-height: 30px;
+      }
     }
   }
 </style>
