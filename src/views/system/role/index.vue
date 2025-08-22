@@ -29,7 +29,6 @@
           <ElTableColumn fixed="right" label="操作" width="100px">
             <template #default="scope">
               <ElRow>
-                <!-- 可以在 list 中添加 auth 属性来控制按钮的权限, auth 属性值为权限标识 -->
                 <ArtButtonMore
                   :list="[
                     { key: 'permission', label: '菜单权限' },
@@ -186,7 +185,6 @@
     roleName: ''
   })
 
-  // 表格列配置
   const columnChecks = ref([])
 
   onMounted(() => {
@@ -214,13 +212,11 @@
     }
   }
 
-  // 搜索处理
   const handleSearch = (params: Record<string, any>) => {
     Object.assign(searchForm, params)
     getTableData()
   }
 
-  // 重置搜索参数
   const resetSearchParams = () => {
     Object.assign(searchForm, {
       roleName: ''
@@ -228,7 +224,6 @@
     getTableData()
   }
 
-  // 刷新数据
   const refreshData = () => {
     getTableData()
   }
@@ -268,14 +263,12 @@
     if (role) {
       currentEditRole.value = role
       try {
-        // 获取角色的菜单权限
         const response = await getRoleMenus(role.id)
 
         if (response && response.menuTree && response.selectedIds) {
           menuTreeData.value = response.menuTree
           selectedMenuIds.value = response.selectedIds
 
-          // 设置树组件的选中状态
           nextTick(() => {
             const tree = treeRef.value
             if (tree) {
@@ -286,7 +279,6 @@
           menuTreeData.value = []
           selectedMenuIds.value = []
 
-          // 清空树组件的选中状态
           nextTick(() => {
             const tree = treeRef.value
             if (tree) {
@@ -299,7 +291,6 @@
         menuTreeData.value = []
         selectedMenuIds.value = []
 
-        // 清空树组件的选中状态
         nextTick(() => {
           const tree = treeRef.value
           if (tree) {
@@ -311,16 +302,13 @@
     permissionDialog.value = true
   }
 
-  // 监听权限弹窗的关闭，清理相关状态
   watch(permissionDialog, newValue => {
     if (!newValue) {
-      // 弹窗关闭时，清理相关状态
       currentEditRole.value = null
       selectedMenuIds.value = []
       menuTreeData.value = []
       isSelectAll.value = false
 
-      // 重置树组件的选中状态
       nextTick(() => {
         const tree = treeRef.value
         if (tree) {
@@ -330,7 +318,6 @@
     }
   })
 
-  // 监听弹窗显示状态、选中菜单ID和菜单数据的变化，设置树组件的选中状态
   watch(
     [permissionDialog, selectedMenuIds, menuTreeData],
     ([dialogVisible, menuIds, menuList]) => {
@@ -338,7 +325,6 @@
         nextTick(() => {
           const tree = treeRef.value
           if (tree) {
-            // 如果有选中的菜单ID，则设置选中状态；否则清空选中状态
             if (menuIds.length > 0) {
               tree.setCheckedKeys(menuIds)
             } else {
@@ -351,11 +337,9 @@
     { immediate: true }
   )
 
-  // 监听菜单数据变化，当菜单数据变化时，如果权限弹窗是打开的，需要重新获取角色权限
   watch(
     menuList,
     async (newMenuList, oldMenuList) => {
-      // 检查菜单数据是否真的发生了变化（长度或内容变化）
       if (permissionDialog.value && currentEditRole.value) {
         const hasMenuChange =
           !oldMenuList ||
@@ -365,11 +349,9 @@
 
         if (hasMenuChange) {
           try {
-            // 重新获取角色的菜单权限
             const response = await getRoleMenus(currentEditRole.value.id)
             if (response && response.menuTree && response.selectedIds) {
               menuTreeData.value = response.menuTree
-              // 过滤掉已删除的菜单ID
               const validSelectedIds = response.selectedIds.filter((id: number) => {
                 return newMenuList.some(menu => menu.id === id)
               })
@@ -379,7 +361,6 @@
               selectedMenuIds.value = []
             }
 
-            // 更新树组件的选中状态
             nextTick(() => {
               const tree = treeRef.value
               if (tree) {
@@ -391,7 +372,6 @@
               }
             })
           } catch {
-            // 如果获取失败，清空选中状态
             menuTreeData.value = []
             selectedMenuIds.value = []
             nextTick(() => {
@@ -427,7 +407,7 @@
 
       await deleteRoleApi(row.id)
       ElMessage.success('删除成功')
-      getTableData() // 刷新列表
+      getTableData()
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error('删除失败')
@@ -452,7 +432,7 @@
           }
           dialogVisible.value = false
           formEl.resetFields()
-          getTableData() // 刷新列表
+          getTableData()
         }
       })
     } catch {
@@ -473,14 +453,11 @@
         return
       }
 
-      // 获取选中的菜单ID
       const checkedKeys = tree.getCheckedKeys()
       const halfCheckedKeys = tree.getHalfCheckedKeys()
 
-      // 合并完全选中和半选中的节点
       const allCheckedKeys = [...checkedKeys, ...halfCheckedKeys]
 
-      // 如果没有选中任何菜单，提示用户确认
       if (allCheckedKeys.length === 0) {
         try {
           await ElMessageBox.confirm(
@@ -499,7 +476,6 @@
         }
       }
 
-      // 直接使用选中的ID，包括菜单ID和权限ID
       await updateRoleMenus(currentEditRole.value.id, allCheckedKeys)
 
       ElMessage.success('权限保存成功')
@@ -513,7 +489,6 @@
     const tree = treeRef.value
     if (!tree) return
 
-    // 使用store.nodesMap直接控制所有节点的展开状态
     const nodes = tree.store.nodesMap
     for (const node in nodes) {
       nodes[node].expanded = !isExpandAll.value
@@ -527,14 +502,12 @@
     if (!tree) return
 
     if (!isSelectAll.value) {
-      /* 全选:获取所有节点的key并设置为选中 */
       const allKeys = getAllNodeKeys(menuTreeData.value)
       if (allKeys.length > 0) {
         tree.setCheckedKeys(allKeys)
         isSelectAll.value = true
       }
     } else {
-      /* 取消全选:清空所有选中 */
       tree.setCheckedKeys([])
       isSelectAll.value = false
     }
@@ -545,7 +518,6 @@
     const traverse = (nodeList: MenuNode[]) => {
       nodeList.forEach(node => {
         if (node.id) {
-          // 直接使用节点的实际ID，无论是菜单还是权限按钮
           keys.push(node.id)
         }
         if (node.children && node.children.length > 0) {
@@ -561,10 +533,8 @@
     const tree = treeRef.value
     if (!tree) return
 
-    // 使用树组件的getCheckedKeys方法获取选中的节点
     const checkedKeys = tree.getCheckedKeys()
 
-    // 更新选中的菜单ID
     selectedMenuIds.value = checkedKeys
   }
 

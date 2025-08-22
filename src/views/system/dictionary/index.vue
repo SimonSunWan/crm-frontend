@@ -1,8 +1,6 @@
-<!-- 字典管理 -->
 <template>
   <div class="dictionary-page art-full-height">
     <div class="dictionary-layout">
-      <!-- 左侧字典类型管理 -->
       <div class="left-panel">
         <ElCard class="type-card" shadow="never">
           <template #header>
@@ -12,7 +10,6 @@
             </div>
           </template>
 
-          <!-- 搜索字典类型 -->
           <div class="search-type-section">
             <ElInput
               v-model="typeSearchKeyword"
@@ -23,7 +20,6 @@
             />
           </div>
 
-          <!-- 字典类型列表 -->
           <div class="type-list">
             <div class="type-items">
               <div
@@ -43,7 +39,6 @@
         </ElCard>
       </div>
 
-      <!-- 右侧字典枚举 -->
       <div class="right-panel">
         <ElCard class="enum-card" shadow="never">
           <template #header>
@@ -55,7 +50,6 @@
             </div>
           </template>
 
-          <!-- 字典枚举表格 -->
           <div v-if="selectedType" class="enum-table">
             <ArtTable
               :loading="enumLoading"
@@ -73,7 +67,6 @@
       </div>
     </div>
 
-    <!-- 字典类型弹窗 -->
     <ElDialog :title="typeDialogTitle" v-model="typeDialogVisible" width="500px" align-center>
       <ElForm ref="typeFormRef" :model="typeForm" :rules="typeRules" label-width="100px">
         <ElFormItem label="字典名称" prop="name">
@@ -100,7 +93,6 @@
       </template>
     </ElDialog>
 
-    <!-- 字典枚举弹窗 -->
     <ElDialog :title="enumDialogTitle" v-model="enumDialogVisible" width="500px" align-center>
       <ElForm ref="enumFormRef" :model="enumForm" :rules="enumRules" label-width="100px">
         <ElFormItem label="key值" prop="keyValue">
@@ -151,7 +143,6 @@
     deleteDictionaryEnum
   } = DictionaryService
 
-  // 字典类型相关
   const typeData = ref<DictionaryTypeItem[]>([])
   const filteredTypes = ref<DictionaryTypeItem[]>([])
   const selectedType = ref<DictionaryTypeItem | null>(null)
@@ -181,7 +172,6 @@
     return typeDialogType.value === 'add' ? '新增字典分类' : '编辑字典分类'
   })
 
-  // 字典枚举相关
   const enumLoading = ref(false)
   const enumData = ref<DictionaryEnumItem[]>([])
   const enumPagination = reactive({
@@ -233,7 +223,6 @@
     return enumDialogType.value === 'add' ? '新增字典枚举' : '编辑字典枚举'
   })
 
-  // 获取字典类型列表
   const getTypeData = async () => {
     try {
       const response = await getDictionaryTypes({
@@ -247,7 +236,6 @@
     }
   }
 
-  // 过滤字典类型
   const filterTypes = () => {
     if (!typeSearchKeyword.value) {
       filteredTypes.value = [...typeData.value]
@@ -258,13 +246,11 @@
     }
   }
 
-  // 选择字典类型
   const selectType = (type: DictionaryTypeItem) => {
     selectedType.value = type
     getEnumData()
   }
 
-  // 获取字典枚举列表
   const getEnumData = async () => {
     if (!selectedType.value) return
 
@@ -283,7 +269,6 @@
     }
   }
 
-  // 字典类型分页处理
   const handleEnumSizeChange = (size: number) => {
     enumPagination.size = size
     enumPagination.current = 1
@@ -295,7 +280,6 @@
     getEnumData()
   }
 
-  // 显示字典类型弹窗
   const showTypeDialog = (type: 'add' | 'edit', typeData?: DictionaryTypeItem) => {
     typeDialogType.value = type
     typeDialogVisible.value = true
@@ -306,7 +290,6 @@
         code: typeData.code,
         description: typeData.description || ''
       })
-      // 保存当前编辑的类型ID
       currentEditTypeId.value = typeData.id
     } else {
       Object.assign(typeForm, {
@@ -318,7 +301,6 @@
     }
   }
 
-  // 提交字典类型表单
   const submitTypeForm = async () => {
     if (!typeFormRef.value) return
 
@@ -341,7 +323,6 @@
     })
   }
 
-  // 删除字典类型
   const deleteType = async (type: DictionaryTypeItem) => {
     try {
       await ElMessageBox.confirm(`确定要删除字典分类 "${type.name}" 吗？`, '删除字典分类', {
@@ -365,7 +346,6 @@
     }
   }
 
-  // 显示字典枚举弹窗
   const showEnumDialog = (type: 'add' | 'edit', enumData?: DictionaryEnumItem) => {
     if (!selectedType.value) {
       ElMessage.warning('请先选择字典分类')
@@ -392,7 +372,6 @@
     }
   }
 
-  // 提交字典枚举表单
   const submitEnumForm = async () => {
     if (!enumFormRef.value || !selectedType.value) return
 
@@ -418,7 +397,6 @@
     })
   }
 
-  // 删除字典枚举
   const deleteEnum = async (enumItem: DictionaryEnumItem) => {
     try {
       await ElMessageBox.confirm(
@@ -441,7 +419,6 @@
     }
   }
 
-  // 初始化
   onMounted(() => {
     getTypeData()
   })

@@ -64,10 +64,8 @@
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
 
-  // 角色列表数据
   const roleList = ref<Array<{ label: string; value: string }>>([])
 
-  // 对话框显示控制
   const dialogVisible = computed({
     get: () => props.visible,
     set: value => emit('update:visible', value)
@@ -75,11 +73,9 @@
 
   const dialogType = computed(() => props.type)
 
-  // 表单实例
   const formRef = ref<FormInstance>()
   const loading = ref(false)
 
-  // 表单数据
   const formData = reactive({
     userName: '',
     nickName: '',
@@ -90,7 +86,6 @@
     status: true
   })
 
-  // 获取角色列表
   const fetchRoleList = async () => {
     try {
       const response = await getAllRoles()
@@ -105,7 +100,6 @@
     }
   }
 
-  // 表单验证规则
   const rules: FormRules = {
     userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
     nickName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
@@ -124,7 +118,6 @@
     roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
   }
 
-  // 初始化表单数据
   const initFormData = () => {
     const isEdit = props.type === 'edit' && props.userData
     const row = props.userData
@@ -140,14 +133,11 @@
     })
   }
 
-  // 统一监听对话框状态变化
   watch(
     () => [props.visible, props.type, props.userData],
     async ([visible]) => {
       if (visible) {
-        // 获取角色列表
         await fetchRoleList()
-        // 初始化表单数据
         initFormData()
         nextTick(() => {
           formRef.value?.clearValidate()
@@ -157,7 +147,6 @@
     { immediate: true }
   )
 
-  // 提交表单
   const handleSubmit = async () => {
     if (!formRef.value) return
 

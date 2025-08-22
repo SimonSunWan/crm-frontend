@@ -22,17 +22,14 @@
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
 
-  // 表单数据双向绑定
   const searchBarRef = ref()
   const formData = computed({
     get: () => props.modelValue,
     set: val => emit('update:modelValue', val)
   })
 
-  // 校验规则
   const rules = {}
 
-  // 表单配置
   const formItems = computed(() => [
     {
       label: '角色名称',
@@ -43,7 +40,6 @@
     }
   ])
 
-  // 事件
   function handleReset() {
     emit('reset')
   }

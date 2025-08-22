@@ -151,16 +151,13 @@
 
   const loading = ref(false)
 
-  // 登录
   const handleSubmit = async () => {
     if (!formRef.value) return
 
     try {
-      // 表单验证
       const valid = await formRef.value.validate()
       if (!valid) return
 
-      // 拖拽验证
       if (!isPassing.value) {
         isClickPass.value = true
         return
@@ -168,7 +165,6 @@
 
       loading.value = true
 
-      // 登录请求
       const { username, password } = formData
 
       const { accessToken, tokenType } = await UserService.login({
@@ -176,21 +172,17 @@
         password
       })
 
-      // 存储token和用户信息
       userStore.setToken(`${tokenType} ${accessToken}`)
       const userInfo = await UserService.getUserInfo()
       userStore.setUserInfo(userInfo)
       userStore.setLoginStatus(true)
 
-      // 登录成功处理
       showLoginSuccessNotice(userInfo)
       router.push('/')
     } catch (error) {
-      // 处理 HttpError
       if (error instanceof HttpError) {
         ElMessage.error(error.message || '登录失败，请稍后重试')
       } else {
-        // 处理非 HttpError
         ElMessage.error('登录失败，请稍后重试')
       }
     } finally {
@@ -199,12 +191,10 @@
     }
   }
 
-  // 重置拖拽验证
   const resetDragVerify = () => {
     dragVerify.value.reset()
   }
 
-  // 登录成功提示
   const showLoginSuccessNotice = (userInfo: any) => {
     setTimeout(() => {
       ElNotification({
@@ -217,7 +207,6 @@
     }, 150)
   }
 
-  // 切换语言
   const { locale } = useI18n()
 
   const changeLanguage = (lang: LanguageEnum) => {

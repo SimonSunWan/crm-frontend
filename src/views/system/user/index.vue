@@ -1,4 +1,3 @@
-<!-- 用户管理 -->
 <template>
   <div class="user-page art-full-height">
     <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
@@ -231,9 +230,7 @@
       dialogVisible.value = false
       currentUserData.value = {}
       getData()
-    } catch {
-      // 处理错误
-    }
+    } catch {}
   }
 
   const handleSelectionChange = (selection: UserListItem[]): void => {

@@ -1,6 +1,5 @@
 <template>
   <div class="menu-page art-full-height">
-    <!-- 搜索栏 -->
     <ArtSearchBar
       v-model="formFilters"
       :items="formItems"
@@ -10,17 +9,14 @@
     ></ArtSearchBar>
 
     <ElCard class="art-table-card" shadow="never">
-      <!-- 表格头部 -->
       <ArtTableHeader :showZebra="false" v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
-          <!-- 按钮权限：后端控制模式，使用自定义指令 -->
           <ElButton v-auth="'add'" @click="showModel('menu', null, true)" v-ripple>
             添加菜单
           </ElButton>
           <ElButton @click="toggleExpand" v-ripple>
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>
-          <!-- 按钮权限：前端控制模式，使用 hasAuth 方法 -->
           <ElButton v-if="hasAuth('add')" @click="showModel('menu', null, true)" v-ripple>
             添加菜单
           </ElButton>
@@ -169,33 +165,26 @@
 
   const loading = ref(false)
 
-  // 定义表单搜索初始值
   const initialSearchState = {
     name: '',
     route: ''
   }
 
-  // 响应式表单数据
   const formFilters = reactive({ ...initialSearchState })
 
-  // 增加实际应用的搜索条件状态
   const appliedFilters = reactive({ ...initialSearchState })
 
-  // 重置表单
   const handleReset = () => {
     Object.assign(formFilters, { ...initialSearchState })
     Object.assign(appliedFilters, { ...initialSearchState })
     getTableData()
   }
 
-  // 搜索处理
   const handleSearch = () => {
-    // 将当前输入的筛选条件应用到实际搜索
     Object.assign(appliedFilters, { ...formFilters })
     getTableData()
   }
 
-  // 表单配置项
   const formItems = computed(() => [
     {
       label: '名称',
@@ -215,36 +204,30 @@
     }
   ])
 
-  // 构建类型标签
   const buildMenuTypeTag = (row: AppRouteRecord) => {
-    // 检查是否为权限按钮
     if (row.meta?.originalMenuType === 'button') {
-      return 'danger' // 权限按钮使用红色
+      return 'danger'
     }
 
-    // 检查是否有子菜单
     if (row.children && row.children.length > 0) {
       const hasRealMenu = row.children.some(
         (child: AppRouteRecord) => child.meta?.originalMenuType !== 'button'
       )
-      return hasRealMenu ? 'info' : 'primary' // 目录用蓝色，只有权限的子菜单用主色
+      return hasRealMenu ? 'info' : 'primary'
     }
 
-    // 其他类型
     if (row.meta?.link && row.meta?.isIframe) {
-      return 'success' // 内嵌链接用绿色
+      return 'success'
     } else if (row.path) {
-      return 'primary' // 普通菜单用主色
+      return 'primary'
     } else if (row.meta?.link) {
-      return 'warning' // 外链用橙色
+      return 'warning'
     }
 
-    return 'primary' // 默认用主色
+    return 'primary'
   }
 
-  // 构建类型文本
   const buildMenuTypeText = (row: AppRouteRecord) => {
-    // 检查是否为权限按钮
     if (row.meta?.originalMenuType === 'button') {
       return '权限'
     }
@@ -263,14 +246,12 @@
     }
   }
 
-  // 动态列配置
   const { columnChecks, columns } = useTableColumns(() => [
     {
       prop: 'meta.title',
       label: '名称',
       minWidth: 120,
       formatter: (row: AppRouteRecord) => {
-        // 如果是权限按钮，显示名称
         if (row.meta?.originalMenuType === 'button') {
           return row.meta?.originalAuthName || row.meta?.title || ''
         }
@@ -295,11 +276,9 @@
       prop: 'authMark',
       label: '权限标识',
       formatter: (row: AppRouteRecord) => {
-        // 如果是权限按钮，显示权限标识
         if (row.meta?.originalMenuType === 'button') {
           return row.meta?.originalAuthMark || ''
         }
-        // 如果是菜单，显示菜单的权限标识
         return row.meta?.originalAuthMark || row.meta?.authMark || ''
       }
     },
@@ -309,7 +288,6 @@
       width: 80,
       formatter: (row: AppRouteRecord) => {
         if (!row.meta?.icon) return '-'
-        // 将HTML实体编码转换为实际的Unicode字符
         const iconText = row.meta.icon.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
           return String.fromCharCode(parseInt(hex, 16))
         })
@@ -343,7 +321,7 @@
         return h('div', [
           h(ArtButtonTable, {
             type: 'add',
-            onClick: () => showModel('menu', row, true) // 添加子菜单
+            onClick: () => showModel('menu', row, true)
           }),
           h(ArtButtonTable, {
             type: 'edit',
@@ -365,8 +343,7 @@
   const dialogVisible = ref(false)
   const form = reactive({
     id: 0,
-    parentId: 0, // 父菜单ID
-    // 菜单
+    parentId: 0,
     name: '',
     path: '',
     icon: '',
@@ -376,7 +353,6 @@
     keepAlive: true,
     link: '',
     isIframe: false,
-    // 权限 (修改这部分)
     authName: '',
     authLabel: '',
     authIcon: '',
@@ -411,32 +387,27 @@
   const getTableData = async () => {
     loading.value = true
     try {
-      // 构建筛选参数
       const params: any = {
         current: 1,
         size: 100
       }
 
-      // 添加名称筛选
       if (appliedFilters.name && appliedFilters.name.trim()) {
         params.name = appliedFilters.name.trim()
       }
 
-      // 添加路由地址筛选
       if (appliedFilters.route && appliedFilters.route.trim()) {
         params.path = appliedFilters.route.trim()
       }
 
       const response = await getMenus(params)
       if (response.records) {
-        // 转换后端数据为前端格式（保持树形结构）
         tableData.value = response.records.map(convertMenuToRoute)
       } else {
         tableData.value = []
       }
     } catch {
       ElMessage.error('获取菜单数据失败')
-      // 回退到store中的数据
       tableData.value = menuList.value
     } finally {
       loading.value = false
@@ -462,7 +433,6 @@
           loading.value = true
 
           if (isEdit.value) {
-            // 编辑菜单
             const menuId = form.id || 0
             const updateData = {
               name: form.name,
@@ -483,7 +453,6 @@
             await updateMenu(menuId, updateData)
             ElMessage.success('编辑成功')
           } else {
-            // 新增菜单或权限按钮
             const createData = {
               name: labelPosition.value === 'button' ? form.authName : form.name,
               path: labelPosition.value === 'button' ? '' : form.path,
@@ -496,7 +465,7 @@
               link: form.link,
               is_enable: form.isEnable,
               menu_type: labelPosition.value,
-              parent_id: form.parentId > 0 ? form.parentId : undefined, // 添加父菜单ID
+              parent_id: form.parentId > 0 ? form.parentId : undefined,
               auth_name: form.authName,
               auth_mark: form.authLabel,
               auth_sort: form.authSort
@@ -508,7 +477,7 @@
           }
 
           dialogVisible.value = false
-          getTableData() // 刷新数据
+          getTableData()
         } catch {
           const itemType = labelPosition.value === 'button' ? '权限' : '菜单'
           ElMessage.error(`${isEdit.value ? '编辑' : '新增'}${itemType}失败`)
@@ -526,24 +495,18 @@
     resetForm()
 
     if (isSubMenu && row) {
-      // 创建子菜单，设置父菜单ID
       form.parentId = row.id
       dialogTitle.value = `新建子菜单 - ${row.meta?.title || row.title || '菜单'}`
       labelPosition.value = 'menu'
     } else if (row && type === 'edit') {
-      // 编辑现有菜单
       isEdit.value = true
 
-      // 根据类型设置标签位置
       const menuType = row.meta?.originalMenuType || 'menu'
       labelPosition.value = menuType
 
-      // 设置对话框标题
       dialogTitle.value = `编辑${menuType === 'menu' ? '菜单' : '权限'}`
 
-      // 回显数据
       if (menuType === 'menu') {
-        // 菜单数据回显
         form.id = row.id || 0
         form.parentId = row.meta?.originalParentId || 0
         form.name = row.meta?.originalTitle || row.meta?.title || ''
@@ -571,7 +534,6 @@
               ? row.meta.isIframe
               : false
       } else {
-        // 权限按钮数据回显
         form.id = row.id || 0
         form.authName = row.meta?.originalAuthName || row.meta?.title || ''
         form.authLabel = row.meta?.originalAuthMark || ''
@@ -579,7 +541,6 @@
         form.authSort = row.meta?.originalAuthSort || row.meta?.sort || 1
       }
     } else {
-      // 新建顶级菜单
       dialogTitle.value = '新建菜单'
       labelPosition.value = 'menu'
     }
@@ -589,8 +550,7 @@
     formRef.value?.resetFields()
     Object.assign(form, {
       id: 0,
-      parentId: 0, // 重置父菜单ID
-      // 菜单
+      parentId: 0,
       name: '',
       path: '',
       icon: '',
@@ -599,7 +559,6 @@
       keepAlive: true,
       link: '',
       isIframe: false,
-      // 权限按钮
       authName: '',
       authLabel: '',
       authIcon: '',
@@ -624,7 +583,7 @@
         const isButton = row?.meta?.originalMenuType === 'button'
         const itemType = isButton ? '权限' : '菜单'
         ElMessage.success(`删除${itemType}成功`)
-        getTableData() // 刷新数据
+        getTableData()
       }
     } catch (error) {
       if (error !== 'cancel') {
@@ -637,18 +596,13 @@
     }
   }
 
-  // 修改计算属性，增加锁定控制参数
   const disableMenuType = computed(() => {
-    // 编辑权限时锁定为权限类型
     if (isEdit.value && labelPosition.value === 'button') return true
-    // 编辑菜单时锁定为类型
     if (isEdit.value && labelPosition.value === 'menu') return true
-    // 顶部添加菜单按钮时锁定为类型
     if (!isEdit.value && labelPosition.value === 'menu' && lockMenuType.value) return true
     return false
   })
 
-  // 添加一个控制变量
   const lockMenuType = ref(false)
 
   const isExpanded = ref(false)
@@ -658,7 +612,6 @@
     isExpanded.value = !isExpanded.value
     nextTick(() => {
       if (tableRef.value && tableData.value) {
-        // 递归处理所有行的展开/收起状态
         const processRows = (rows: AppRouteRecord[]) => {
           rows.forEach(row => {
             if (row.children && row.children.length > 0) {

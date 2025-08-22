@@ -151,15 +151,12 @@
       await formRef.value.validate()
       loading.value = true
 
-      // 模拟注册请求
       setTimeout(() => {
         loading.value = false
         ElMessage.success('注册成功')
         toLogin()
       }, 1000)
-    } catch {
-      // 验证失败
-    }
+    } catch {}
   }
 
   const toLogin = () => {
