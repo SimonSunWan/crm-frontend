@@ -274,8 +274,8 @@
       const imageUrls = [bp, sd, yd]
       try {
         await Promise.all(imageUrls.map(url => this.preloadImage(url)))
-      } catch (error) {
-        console.error('Image preloading failed:', error)
+      } catch {
+        // 图片预加载失败
       }
     }
 

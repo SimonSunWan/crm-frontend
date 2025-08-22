@@ -105,8 +105,8 @@
       const navigationPath = firstValidChild ? buildFullPath(firstValidChild.path) : item.path
 
       await router.push(navigationPath)
-    } catch (error) {
-      console.error('导航失败:', error)
+    } catch {
+      // 导航失败
     }
   }
 </script>

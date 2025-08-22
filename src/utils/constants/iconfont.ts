@@ -42,19 +42,16 @@ export function extractIconClasses(): IconfontType[] {
             iconInfos.push(iconInfo)
           }
         })
-      } catch (error) {
-        const styleSheetError: StyleSheetError = { sheet, error }
+      } catch {
+        const styleSheetError: StyleSheetError = { sheet, error: null }
         if (!processedErrors.has(styleSheetError)) {
-          console.warn('Cannot read cssRules from stylesheet:', {
-            error,
-            sheetHref: sheet.href
-          })
+          // 无法读取样式表规则
           processedErrors.add(styleSheetError)
         }
       }
     })
-  } catch (error) {
-    console.error('Failed to process stylesheets:', error)
+  } catch {
+    // 处理样式表失败
   }
 
   return iconInfos

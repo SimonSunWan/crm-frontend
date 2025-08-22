@@ -37,8 +37,8 @@ const getDefaultLanguage = (): LanguageEnum => {
         return language
       }
     }
-  } catch (error) {
-    console.warn('[i18n] 从版本化存储获取语言设置失败:', error)
+  } catch {
+    // 从版本化存储获取语言设置失败
   }
 
   // 尝试从系统存储中获取语言设置
@@ -50,12 +50,11 @@ const getDefaultLanguage = (): LanguageEnum => {
         return user.language
       }
     }
-  } catch (error) {
-    console.warn('[i18n] 从系统存储获取语言设置失败:', error)
+  } catch {
+    // 从系统存储获取语言设置失败
   }
 
   // 返回默认语言
-  console.debug('[i18n] 使用默认语言:', LanguageEnum.ZH)
   return LanguageEnum.ZH
 }
 

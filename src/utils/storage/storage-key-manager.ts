@@ -37,10 +37,9 @@ export class StorageKeyManager {
       const existingData = localStorage.getItem(fromKey)
       if (existingData) {
         localStorage.setItem(toKey, existingData)
-        console.info(`[Storage] 已迁移数据: ${fromKey} → ${toKey}`)
       }
-    } catch (error) {
-      console.warn(`[Storage] 数据迁移失败: ${fromKey}`, error)
+    } catch {
+      // 数据迁移失败
     }
   }
 

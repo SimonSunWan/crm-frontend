@@ -242,8 +242,7 @@
       })
       typeData.value = response.records || []
       filteredTypes.value = [...typeData.value]
-    } catch (error) {
-      console.error('获取字典类型列表失败:', error)
+    } catch {
       ElMessage.error('获取字典类型列表失败')
     }
   }
@@ -277,8 +276,7 @@
       })
       enumData.value = response.records || []
       enumPagination.total = response.total || 0
-    } catch (error) {
-      console.error('获取字典枚举列表失败:', error)
+    } catch {
       ElMessage.error('获取字典枚举列表失败')
     } finally {
       enumLoading.value = false

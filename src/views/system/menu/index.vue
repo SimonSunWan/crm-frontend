@@ -427,8 +427,6 @@
         params.path = appliedFilters.route.trim()
       }
 
-      console.log('筛选参数:', params) // 调试信息
-
       const response = await getMenus(params)
       if (response.records) {
         // 转换后端数据为前端格式（保持树形结构）
@@ -436,8 +434,7 @@
       } else {
         tableData.value = []
       }
-    } catch (error) {
-      console.error(error)
+    } catch {
       ElMessage.error('获取菜单数据失败')
       // 回退到store中的数据
       tableData.value = menuList.value
@@ -512,8 +509,7 @@
 
           dialogVisible.value = false
           getTableData() // 刷新数据
-        } catch (error) {
-          console.error(error)
+        } catch {
           const itemType = labelPosition.value === 'button' ? '权限' : '菜单'
           ElMessage.error(`${isEdit.value ? '编辑' : '新增'}${itemType}失败`)
         } finally {

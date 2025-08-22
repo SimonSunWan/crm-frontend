@@ -299,8 +299,8 @@ export function useChart(options: UseChartOptions = {}) {
 
                   pendingOptions = null
                   cleanupIntersectionObserver()
-                } catch (error) {
-                  console.error('图表初始化失败:', error)
+                } catch {
+                  // 图表初始化失败
                 }
               }
             })
@@ -425,8 +425,8 @@ export function useChart(options: UseChartOptions = {}) {
         pendingOptions = mergedOptions
         createIntersectionObserver()
       }
-    } catch (error) {
-      console.error('图表初始化失败:', error)
+    } catch {
+      // 图表初始化失败
     }
   }
 
@@ -441,8 +441,8 @@ export function useChart(options: UseChartOptions = {}) {
         return
       }
       chart.setOption(options)
-    } catch (error) {
-      console.error('图表更新失败:', error)
+    } catch {
+      // 图表更新失败
     }
   }
 
@@ -451,8 +451,8 @@ export function useChart(options: UseChartOptions = {}) {
     if (chart && !isDestroyed) {
       try {
         chart.resize()
-      } catch (error) {
-        console.error('图表resize失败:', error)
+      } catch {
+        // 图表resize失败
       }
     }
   }
@@ -464,8 +464,6 @@ export function useChart(options: UseChartOptions = {}) {
     if (chart) {
       try {
         chart.dispose()
-      } catch (error) {
-        console.error('图表销毁失败:', error)
       } finally {
         chart = null
       }

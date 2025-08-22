@@ -72,8 +72,6 @@
     const handler = (basicHandlers as any)[handlerName]
     if (typeof handler === 'function') {
       handler(value)
-    } else {
-      console.warn(`Handler "${handlerName}" not found in basicHandlers`)
     }
   }
 </script>

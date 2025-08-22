@@ -39,7 +39,6 @@ export function useCeremony() {
 
     const { start: startFireworks } = useTimeoutFn(() => {
       const { pause } = useIntervalFn(() => {
-        // console.log(currentFestivalData.value?.image)
         mittBus.emit('triggerFireworks', currentFestivalData.value?.image)
         triggers++
 

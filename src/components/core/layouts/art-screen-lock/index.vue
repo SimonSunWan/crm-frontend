@@ -333,8 +333,7 @@
         CryptoJS.enc.Utf8
       )
       return inputPassword === decryptedPassword
-    } catch (error) {
-      console.error('密码解密失败:', error)
+    } catch {
       return false
     }
   }
@@ -356,7 +355,7 @@
   const handleLock = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate((valid, fields) => {
+    await formRef.value.validate(valid => {
       if (valid) {
         const encryptedPassword = CryptoJS.AES.encrypt(formData.password, ENCRYPT_KEY).toString()
         userStore.setLockStatus(true)
@@ -364,7 +363,7 @@
         visible.value = false
         formData.password = ''
       } else {
-        console.error('表单验证失败:', fields)
+        // 表单验证失败
       }
     })
   }
@@ -372,7 +371,7 @@
   const handleUnlock = async () => {
     if (!unlockFormRef.value) return
 
-    await unlockFormRef.value.validate((valid, fields) => {
+    await unlockFormRef.value.validate(valid => {
       if (valid) {
         const isValid = verifyPassword(unlockForm.password, lockPassword.value)
 
@@ -383,14 +382,14 @@
             unlockForm.password = ''
             visible.value = false
             showDevToolsWarning.value = false
-          } catch (error) {
-            console.error('更新store失败:', error)
+          } catch {
+            // 更新store失败
           }
         } else {
           ElMessage.error(t('lockScreen.pwdError'))
         }
       } else {
-        console.error('表单验证失败:', fields)
+        // 表单验证失败
       }
     })
   }

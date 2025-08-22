@@ -30,8 +30,7 @@ export function copy(str: string): boolean {
   try {
     navigator.clipboard.writeText(str)
     return true
-  } catch (err) {
-    console.error('复制失败:', err)
+  } catch {
     return false
   }
 }

@@ -196,7 +196,6 @@
   const getTableData = async () => {
     try {
       loading.value = true
-      console.log('getTableData')
       const params: any = {
         current: 1,
         size: 100
@@ -295,8 +294,7 @@
             }
           })
         }
-      } catch (error) {
-        console.error(error)
+      } catch {
         ElMessage.error('获取角色菜单权限失败')
         menuTreeData.value = []
         selectedMenuIds.value = []
@@ -392,8 +390,7 @@
                 }
               }
             })
-          } catch (error) {
-            console.error('重新获取角色菜单权限失败:', error)
+          } catch {
             // 如果获取失败，清空选中状态
             menuTreeData.value = []
             selectedMenuIds.value = []
@@ -458,8 +455,8 @@
           getTableData() // 刷新列表
         }
       })
-    } catch (error) {
-      ElMessage.error(error as string)
+    } catch {
+      ElMessage.error('保存失败')
     }
   }
 
@@ -507,8 +504,7 @@
 
       ElMessage.success('权限保存成功')
       permissionDialog.value = false
-    } catch (error) {
-      console.error(error)
+    } catch {
       ElMessage.error('权限保存失败')
     }
   }

@@ -77,8 +77,7 @@
 
       /* 如果是普通数组,直接返回 */
       return Array.isArray(props.config.options) ? props.config.options : []
-    } catch (error) {
-      console.warn('Error processing options for config:', props.config.key, error)
+    } catch {
       return []
     }
   })
@@ -86,8 +85,8 @@
   const handleChange = (value: any) => {
     try {
       emit('change', value)
-    } catch (error) {
-      console.error('Error handling change for config:', props.config.key, error)
+    } catch {
+      // 处理配置变更错误
     }
   }
 </script>

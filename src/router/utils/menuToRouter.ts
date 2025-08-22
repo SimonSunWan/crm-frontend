@@ -1,5 +1,4 @@
 import { AppRouteRecord } from '@/types/router'
-import { RoutesAlias } from '../routesAlias'
 
 /**
  * 将菜单数据转换为路由配置
@@ -65,8 +64,7 @@ export const saveIframeRoutes = (list: AppRouteRecord[]): void => {
 export const getIframeRoutes = (): AppRouteRecord[] => {
   try {
     return JSON.parse(sessionStorage.getItem('iframeRoutes') || '[]')
-  } catch (error) {
-    console.error('解析 iframe 路由失败:', error)
+  } catch {
     return []
   }
 }
@@ -82,18 +80,14 @@ const validateComponent = (route: AppRouteRecord, parentPath: string): void => {
 
   // 检查一级父级菜单的 component 配置是否为空
   if (parentPath === '' && !route.component) {
-    console.error(
-      `[路由错误] 一级父级菜单的 component 不存在或为空，必须指向 ${RoutesAlias.Layout} `
-    )
-    console.error(route)
+    // 一级父级菜单的 component 不存在或为空
   }
 
   // 检查 component 是否为空字符串
   if (!route.component) {
     /* 如果不是特殊情况,则给出警告 */
     if (!hasExternalLink && !hasChildren) {
-      console.error(`[路由错误] component 不存在或为空`)
-      console.error(route)
+      // component 不存在或为空
     }
   }
 }

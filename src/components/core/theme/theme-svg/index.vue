@@ -71,8 +71,7 @@
 
       const content = await response.text()
       svgContent.value = applyThemeToSvg(content)
-    } catch (error) {
-      console.error('Failed to load SVG:', error)
+    } catch {
       svgContent.value = ''
     }
   }

@@ -61,8 +61,7 @@
       } else {
         options.value = []
       }
-    } catch (error) {
-      console.error('获取字典数据失败:', error)
+    } catch {
       options.value = []
     } finally {
       internalLoading.value = false

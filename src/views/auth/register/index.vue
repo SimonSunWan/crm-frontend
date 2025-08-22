@@ -157,8 +157,8 @@
         ElMessage.success('注册成功')
         toLogin()
       }, 1000)
-    } catch (error) {
-      console.error('验证失败:', error)
+    } catch {
+      // 验证失败
     }
   }
 

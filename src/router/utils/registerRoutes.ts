@@ -72,7 +72,7 @@ function checkDuplicateRoutes(routes: AppRouteRecord[], parentPath = ''): void {
       // 名称重复检测
       if (route.name) {
         if (routeNameMap.has(String(route.name))) {
-          console.warn(`[路由警告] 名称重复: "${String(route.name)}"`)
+          // 路由名称重复警告
         } else {
           routeNameMap.set(String(route.name), fullPath)
         }
@@ -86,7 +86,7 @@ function checkDuplicateRoutes(routes: AppRouteRecord[], parentPath = ''): void {
           const componentKey = `${parentPath}:${componentPath}`
 
           if (componentPathMap.has(componentKey)) {
-            console.warn(`[路由警告] 路径重复: "${componentPath}"`)
+            // 路由路径重复警告
           } else {
             componentPathMap.set(componentKey, fullPath)
           }
@@ -146,9 +146,6 @@ function loadComponent(componentPath: string, routeName: string): () => Promise<
   const module = modules[fullPath] || modules[fullPathWithIndex]
 
   if (!module) {
-    console.error(
-      `[路由错误] 未找到组件：${routeName}，尝试过的路径: ${fullPath} 和 ${fullPathWithIndex}`
-    )
     return () =>
       Promise.resolve({
         render() {

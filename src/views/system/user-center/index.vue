@@ -245,8 +245,6 @@
         ElMessage.error('头像上传失败：未获取到头像URL')
       }
     } catch (error: any) {
-      console.error('头像上传失败:', error)
-
       // 根据错误类型显示不同的错误信息
       if (error.response?.status === 413) {
         ElMessage.error('文件太大，请选择小于2MB的图片')
@@ -277,8 +275,7 @@
         form.email = data.email || ''
         form.phone = data.phone || ''
       }
-    } catch (error) {
-      console.error('获取用户信息失败:', error)
+    } catch {
       ElMessage.error('获取用户信息失败')
     } finally {
       loading.value = false
@@ -305,8 +302,7 @@
 
         ElMessage.success('保存成功')
         isEdit.value = false
-      } catch (error) {
-        console.error('保存失败:', error)
+      } catch {
         ElMessage.error('保存失败')
       } finally {
         loading.value = false
@@ -343,8 +339,7 @@
         pwdForm.password = ''
         pwdForm.newPassword = ''
         pwdForm.confirmPassword = ''
-      } catch (error) {
-        console.error('修改密码失败:', error)
+      } catch {
         ElMessage.error('修改密码失败')
       } finally {
         loading.value = false

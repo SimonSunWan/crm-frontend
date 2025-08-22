@@ -100,8 +100,7 @@
           value: role.roleCode
         }))
       }
-    } catch (error) {
-      console.error('获取角色列表失败:', error)
+    } catch {
       ElMessage.error('获取角色列表失败')
     }
   }
@@ -177,7 +176,6 @@
       dialogVisible.value = false
       emit('submit')
     } catch (error: any) {
-      console.error('提交失败:', error)
       ElMessage.error(error?.message || '操作失败')
     } finally {
       loading.value = false

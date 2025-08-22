@@ -38,8 +38,7 @@ export function setupBeforeEachGuard(router: Router): void {
     ) => {
       try {
         await handleRouteGuard(to, from, next, router)
-      } catch (error) {
-        console.error('路由守卫处理失败:', error)
+      } catch {
         next('/exception/500')
       }
     }
@@ -161,8 +160,8 @@ async function handleDynamicRoutes(
       try {
         const data = await UserService.getUserInfo()
         userStore.setUserInfo(data)
-      } catch (error) {
-        console.error('获取用户信息失败', error)
+      } catch {
+        // 获取用户信息失败
       }
     }
 
@@ -179,8 +178,7 @@ async function handleDynamicRoutes(
       hash: to.hash,
       replace: true
     })
-  } catch (error) {
-    console.error('动态路由注册失败:', error)
+  } catch {
     next('/exception/500')
   }
 }
@@ -278,7 +276,6 @@ async function registerAndStoreMenu(router: Router, menuList: AppRouteRecord[]):
  * 处理菜单相关错误
  */
 function handleMenuError(error: unknown): void {
-  console.error('菜单处理失败:', error)
   useUserStore().logOut()
   throw error instanceof Error ? error : new Error('获取菜单列表失败，请重新登录')
 }

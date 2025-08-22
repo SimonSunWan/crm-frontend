@@ -36,8 +36,7 @@ export const useMenuStore = defineStore('menuStore', () => {
       const response = await getNavigationMenus()
       setMenuList(response.map(convertMenuToRoute))
       return response
-    } catch (error) {
-      console.error('获取菜单列表失败:', error)
+    } catch {
       return []
     }
   }

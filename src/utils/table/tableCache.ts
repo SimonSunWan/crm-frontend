@@ -51,10 +51,8 @@ export class TableCache<T> {
   }
 
   // 内部日志工具
-  private log(message: string, ...args: any[]) {
-    if (this.enableLog) {
-      console.info(`[TableCache] ${message}`, ...args)
-    }
+  private log() {
+    // 日志功能已禁用
   }
 
   /* 🔧 优化:生成稳定的缓存键 */

@@ -172,7 +172,6 @@
     transform: {
       dataTransformer: (records: any) => {
         if (!Array.isArray(records)) {
-          console.warn('数据转换器: 期望数组类型，实际收到:', typeof records)
           return []
         }
 
@@ -214,7 +213,6 @@
    * 显示用户弹窗
    */
   const showDialog = (type: Form.DialogType, row?: UserListItem): void => {
-    console.log('打开弹窗:', { type, row })
     dialogType.value = type
     currentUserData.value = row || {}
     nextTick(() => {
@@ -238,7 +236,6 @@
       getData()
     } catch (error: any) {
       if (error !== 'cancel') {
-        console.error('删除失败:', error)
         ElMessage.error(error?.message || '删除失败')
       }
     }
@@ -252,8 +249,8 @@
       dialogVisible.value = false
       currentUserData.value = {}
       getData()
-    } catch (error) {
-      console.error('提交失败:', error)
+    } catch {
+      // 处理错误
     }
   }
 
@@ -262,7 +259,6 @@
    */
   const handleSelectionChange = (selection: UserListItem[]): void => {
     selectedRows.value = selection
-    console.log('选中行数据:', selectedRows.value)
   }
 </script>
 

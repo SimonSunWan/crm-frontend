@@ -55,8 +55,7 @@ class StorageCompatibilityManager {
     try {
       const systemStorage = this.getSystemStorage()
       return systemStorage || {}
-    } catch (error) {
-      console.warn('[Storage] 解析旧格式存储数据失败:', error)
+    } catch {
       return {}
     }
   }
@@ -82,9 +81,8 @@ class StorageCompatibilityManager {
         localStorage.clear()
         useUserStore().logOut()
         router.push(RoutesAlias.Login)
-        console.info('[Storage] 已执行系统登出')
-      } catch (error) {
-        console.error('[Storage] 系统登出失败:', error)
+      } catch {
+        // 系统登出失败
       }
     }, StorageConfig.LOGOUT_DELAY)
   }
@@ -121,22 +119,18 @@ class StorageCompatibilityManager {
 
       // 检查是否有任何版本的存储数据
       if (this.hasAnyVersionStorage()) {
-        console.debug('[Storage] 发现其他版本存储数据，可能需要迁移')
         return true
       }
 
       // 检查旧版本存储结构
       const legacyData = this.getLegacyStorageData()
       if (Object.keys(legacyData).length === 0) {
-        console.warn('[Storage] 未发现任何存储数据，需要重新登录')
         this.performSystemLogout()
         return false
       }
 
-      console.debug('[Storage] 发现旧版本存储数据')
       return true
-    } catch (error) {
-      console.error('[Storage] 存储数据验证失败:', error)
+    } catch {
       this.handleStorageError()
       return false
     }
@@ -173,10 +167,8 @@ class StorageCompatibilityManager {
         return true
       }
 
-      console.warn('[Storage] 存储兼容性检查失败')
       return false
-    } catch (error) {
-      console.error('[Storage] 兼容性检查异常:', error)
+    } catch {
       return false
     }
   }

@@ -79,8 +79,8 @@ function processBlock(block: HTMLElement) {
     insertLineNumbers(block)
     addCopyButton(block)
     markBlockAsProcessed(block)
-  } catch (error) {
-    console.warn('处理代码块时出错:', error)
+  } catch {
+    // 处理代码块时出错
   }
 }
 
