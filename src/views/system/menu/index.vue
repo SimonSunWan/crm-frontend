@@ -150,7 +150,7 @@
   import { ElMessage, ElMessageBox, ElTag } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
   import { formatMenuTitle } from '@/router/utils/utils'
-  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/composables/useTableColumns'
   import { ElButton } from 'element-plus'
   import { AppRouteRecord } from '@/types/router'

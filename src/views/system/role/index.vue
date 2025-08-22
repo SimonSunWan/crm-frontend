@@ -132,7 +132,7 @@
   import { useMenuStore } from '@/store/modules/menu'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
+  import { ButtonMoreItem } from '@/components/forms/art-button-more/index.vue'
   import {
     getRoles,
     createRole,

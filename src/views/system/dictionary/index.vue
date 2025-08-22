@@ -125,7 +125,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { DictionaryService } from '@/api/dictionaryApi'
   import type { FormInstance, FormRules } from 'element-plus'
-  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
 
   defineOptions({ name: 'Dictionary' })
 
