@@ -7,7 +7,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple> 新增角色 </ElButton>
+          <ElButton @click="showDialog('add')" v-ripple> 新增角色 </ElButton>
         </template>
       </ArtTableHeader>
 

@@ -189,13 +189,19 @@ export function convertMenuToRoute(menu: any): AppRouteRecord {
     originalAuthSort: menu.authSort
   }
 
+  // 判断是否为一级菜单
+  const isFirstLevel = menu.children && menu.children.length > 0
+
   return {
     id: menu.id,
     name: menu.name,
     path: menu.path,
     component: menu.component,
     redirect: menu.redirect,
-    meta: extendedMeta,
+    meta: {
+      ...extendedMeta,
+      isFirstLevel: isFirstLevel
+    },
     children: menu.children ? menu.children.map(convertMenuToRoute) : []
   } as AppRouteRecord & {
     title?: string

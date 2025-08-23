@@ -28,8 +28,8 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增客户</ElButton>
-          <ElButton v-auth="'export'" @click="handleExport" v-ripple>导出数据</ElButton>
+          <ElButton @click="showDialog('add')" v-ripple>新增客户</ElButton>
+          <ElButton @click="handleExport" v-ripple>导出数据</ElButton>
         </template>
       </ArtTableHeader>
 

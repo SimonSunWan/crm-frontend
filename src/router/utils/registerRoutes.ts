@@ -161,8 +161,7 @@ function convertRouteComponent(
   }
 
   // 是否为一级菜单
-  const isFirstLevel =
-    depth === 0 && route.children?.length === 0 && component !== RoutesAlias.Layout
+  const isFirstLevel = depth === 0 && route.children && route.children.length > 0
 
   if (isFirstLevel) {
     handleLayoutRoute(converted, route, component as string)
@@ -191,7 +190,13 @@ function handleLayoutRoute(
   converted.component = () => import('@/views/index/index.vue')
   converted.path = `/${(route.path?.split('/')[1] || '').trim()}`
   converted.name = ''
-  route.meta.isFirstLevel = true
+
+  // 确保 isFirstLevel 属性被正确设置
+  if (route.meta) {
+    route.meta.isFirstLevel = true
+  } else {
+    route.meta = { isFirstLevel: true } as any
+  }
 
   converted.children = [
     {

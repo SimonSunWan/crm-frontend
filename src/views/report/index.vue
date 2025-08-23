@@ -35,7 +35,7 @@
               </ElSelect>
             </div>
           </template>
-          <ArtLineChart :data="salesChartData" height="300px" />
+          <ArtLineChart :data="salesChartData" :xAxisData="salesXAxisData" height="300px" />
         </ElCard>
       </ElCol>
       <ElCol :span="12">
@@ -45,7 +45,7 @@
               <span>产品分类占比</span>
             </div>
           </template>
-          <ArtBarChart :data="categoryChartData" height="300px" />
+          <ArtBarChart :data="categoryChartData" :xAxisData="categoryXAxisData" height="300px" />
         </ElCard>
       </ElCol>
     </ElRow>
@@ -90,7 +90,7 @@
   import { ElMessage } from 'element-plus'
 
   // Vue 工具函数
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, reactive, onMounted, watch } from 'vue'
 
   defineOptions({ name: 'Report' })
 
@@ -134,29 +134,12 @@
   ])
 
   // 销售趋势图表数据
-  const salesChartData = reactive({
-    xAxis: ['1月', '2月', '3月', '4月', '5月', '6月'],
-    series: [
-      {
-        name: '销售额',
-        data: [120000, 150000, 180000, 200000, 220000, 250000],
-        type: 'line',
-        smooth: true
-      }
-    ]
-  })
+  const salesChartData = ref([120000, 150000, 180000, 200000, 220000, 250000])
+  const salesXAxisData = ref(['1月', '2月', '3月', '4月', '5月', '6月'])
 
   // 产品分类占比图表数据
-  const categoryChartData = reactive({
-    xAxis: ['服务器', '网络设备', '软件产品', '配件'],
-    series: [
-      {
-        name: '销售额',
-        data: [450000, 320000, 280000, 184567],
-        type: 'bar'
-      }
-    ]
-  })
+  const categoryChartData = ref([450000, 320000, 280000, 184567])
+  const categoryXAxisData = ref(['服务器', '网络设备', '软件产品', '配件'])
 
   // 销售排行数据
   const rankingData = reactive([

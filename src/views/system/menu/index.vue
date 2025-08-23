@@ -13,9 +13,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader :showZebra="false" v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
-          <ElButton v-auth="'add'" @click="showModel('menu', null, true)" v-ripple>
-            添加菜单
-          </ElButton>
+          <ElButton @click="showModel('menu', null, true)" v-ripple> 添加菜单 </ElButton>
           <ElButton @click="toggleExpand" v-ripple>
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>

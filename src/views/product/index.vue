@@ -32,9 +32,9 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增产品</ElButton>
-          <ElButton v-auth="'import'" @click="handleImport" v-ripple>批量导入</ElButton>
-          <ElButton v-auth="'export'" @click="handleExport" v-ripple>导出数据</ElButton>
+          <ElButton @click="showDialog('add')" v-ripple>新增产品</ElButton>
+          <ElButton @click="handleImport" v-ripple>批量导入</ElButton>
+          <ElButton @click="handleExport" v-ripple>导出数据</ElButton>
         </template>
       </ArtTableHeader>
 

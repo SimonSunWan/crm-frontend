@@ -247,13 +247,15 @@
       }
     } else {
       isEdit.value = false
+      // 先重置表单
+      resetForm()
+      // 然后设置父菜单ID（如果是新增子菜单）
       if (props.isSubMenu && props.menuData) {
         formData.parentId = props.menuData.id || 0
         menuType.value = 'menu'
       } else if (props.parentId) {
         formData.parentId = props.parentId
       }
-      resetForm()
     }
   }
 
@@ -304,14 +306,14 @@
               title: formData.name,
               icon: formData.icon,
               sort: formData.sort,
-              is_keep_alive: formData.keepAlive,
-              is_iframe: formData.isIframe,
+              isKeepAlive: formData.keepAlive,
+              isIframe: formData.isIframe,
               link: formData.link,
-              is_enable: formData.isEnable,
-              menu_type: menuType.value,
-              auth_name: formData.authName,
-              auth_mark: formData.authLabel,
-              auth_sort: formData.authSort
+              isEnable: formData.isEnable,
+              menuType: menuType.value,
+              authName: formData.authName,
+              authMark: formData.authLabel,
+              authSort: formData.authSort
             }
 
             await updateMenu(menuId, updateData)
@@ -324,15 +326,15 @@
               component: menuType.value === 'button' ? '' : formData.path,
               icon: formData.icon,
               sort: menuType.value === 'button' ? formData.authSort : formData.sort,
-              is_keep_alive: formData.keepAlive,
-              is_iframe: formData.isIframe,
+              isKeepAlive: formData.keepAlive,
+              isIframe: formData.isIframe,
               link: formData.link,
-              is_enable: formData.isEnable,
-              menu_type: menuType.value,
-              parent_id: formData.parentId > 0 ? formData.parentId : undefined,
-              auth_name: formData.authName,
-              auth_mark: formData.authLabel,
-              auth_sort: formData.authSort
+              isEnable: formData.isEnable,
+              menuType: menuType.value,
+              parentId: formData.parentId > 0 ? formData.parentId : undefined,
+              authName: formData.authName,
+              authMark: formData.authLabel,
+              authSort: formData.authSort
             }
 
             await createMenu(createData)
