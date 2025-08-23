@@ -1,13 +1,15 @@
 <template>
   <div class="menu-page art-full-height">
+    <!-- 搜索区域 -->
     <ArtSearchBar
       v-model="formFilters"
       :items="formItems"
       :showExpand="false"
       @reset="handleReset"
       @search="handleSearch"
-    ></ArtSearchBar>
+    />
 
+    <!-- 表格区域 -->
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader :showZebra="false" v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
@@ -16,9 +18,6 @@
           </ElButton>
           <ElButton @click="toggleExpand" v-ripple>
             {{ isExpanded ? '收起' : '展开' }}
-          </ElButton>
-          <ElButton v-if="hasAuth('add')" @click="showModel('menu', null, true)" v-ripple>
-            添加菜单
           </ElButton>
         </template>
       </ArtTableHeader>
@@ -33,133 +32,41 @@
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       />
 
-      <ElDialog :title="dialogTitle" v-model="dialogVisible" width="700px" align-center>
-        <ElForm ref="formRef" :model="form" :rules="rules" label-width="85px">
-          <ElFormItem label="类型">
-            <ElRadioGroup v-model="labelPosition" :disabled="disableMenuType">
-              <ElRadioButton value="menu" label="menu">菜单</ElRadioButton>
-              <ElRadioButton value="button" label="button">权限</ElRadioButton>
-            </ElRadioGroup>
-          </ElFormItem>
-
-          <template v-if="labelPosition === 'menu'">
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="名称" prop="name">
-                  <ElInput v-model="form.name" placeholder="名称"></ElInput>
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="路由地址" prop="path">
-                  <ElInput v-model="form.path" placeholder="路由地址"></ElInput>
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="图标" prop="icon">
-                  <ArtIconSelector v-model="form.icon" :iconType="iconType" width="100%" />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="外部链接" prop="link">
-                  <ElInput
-                    v-model="form.link"
-                    placeholder="外部链接/内嵌地址(https://example.com)"
-                  ></ElInput>
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="排序" prop="sort" style="width: 100%">
-                  <ElInputNumber
-                    v-model="form.sort"
-                    style="width: 100%"
-                    @change="handleChange"
-                    :min="1"
-                    controls-position="right"
-                  />
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-
-            <ElRow :gutter="20">
-              <ElCol :span="6">
-                <ElFormItem label="是否启用" prop="isEnable">
-                  <ElSwitch v-model="form.isEnable"></ElSwitch>
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="6">
-                <ElFormItem label="页面缓存" prop="keepAlive">
-                  <ElSwitch v-model="form.keepAlive"></ElSwitch>
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="6">
-                <ElFormItem label="是否内嵌" prop="isMenu">
-                  <ElSwitch v-model="form.isIframe"></ElSwitch>
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-          </template>
-
-          <template v-if="labelPosition === 'button'">
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="名称" prop="authName">
-                  <ElInput v-model="form.authName" placeholder="名称"></ElInput>
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="权限标识" prop="authLabel">
-                  <ElInput v-model="form.authLabel" placeholder="权限标识"></ElInput>
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="排序" prop="authSort" style="width: 100%">
-                  <ElInputNumber
-                    v-model="form.authSort"
-                    style="width: 100%"
-                    @change="handleChange"
-                    :min="1"
-                    controls-position="right"
-                  />
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-          </template>
-        </ElForm>
-
-        <template #footer>
-          <span class="dialog-footer">
-            <ElButton @click="dialogVisible = false">取 消</ElButton>
-            <ElButton type="primary" @click="submitForm()">确 定</ElButton>
-          </span>
-        </template>
-      </ElDialog>
+      <!-- 菜单弹窗 -->
+      <MenuDialog
+        v-model:visible="dialogVisible"
+        :type="isEdit ? 'edit' : 'add'"
+        :menu-data="currentEditMenu || undefined"
+        :parent-id="currentParentId"
+        :is-sub-menu="isSubMenu"
+        @submit="handleDialogSubmit"
+      />
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { useMenuStore } from '@/store/modules/menu'
-  import type { FormInstance, FormRules } from 'element-plus'
-  import { ElMessage, ElMessageBox, ElTag } from 'element-plus'
-  import { IconTypeEnum } from '@/enums/appEnum'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
+  import MenuDialog from './modules/menu-dialog.vue'
+
+  // Element Plus 组件和类型
+  import { ElMessage, ElMessageBox, ElTag, ElButton } from 'element-plus'
+
+  // Store
+  import { useMenuStore } from '@/store/modules/menu'
+
+  // 工具和组合式函数
   import { useTableColumns } from '@/composables/useTableColumns'
-  import { ElButton } from 'element-plus'
+  import { formatMenuTitle } from '@/router/utils/utils'
+
+  // 枚举和类型
   import { AppRouteRecord } from '@/types/router'
-  import { useAuth } from '@/composables/useAuth'
-  import { getMenus, createMenu, updateMenu, deleteMenu, convertMenuToRoute } from '@/api/menuApi'
+
+  // API 服务
+  import { getMenus, deleteMenu, convertMenuToRoute } from '@/api/menuApi'
 
   defineOptions({ name: 'Menus' })
-
-  const { hasAuth } = useAuth()
 
   const { menuList } = storeToRefs(useMenuStore())
 
@@ -341,42 +248,9 @@
   }
 
   const dialogVisible = ref(false)
-  const form = reactive({
-    id: 0,
-    parentId: 0,
-    name: '',
-    path: '',
-    icon: '',
-    isEnable: true,
-    sort: 1,
-    isMenu: true,
-    keepAlive: true,
-    link: '',
-    isIframe: false,
-    authName: '',
-    authLabel: '',
-    authIcon: '',
-    authSort: 1
-  })
-  const iconType = ref(IconTypeEnum.UNICODE)
-
-  const labelPosition = ref('menu')
-  const rules = computed<FormRules>(() => {
-    const baseRules: FormRules = {}
-
-    if (labelPosition.value === 'menu') {
-      baseRules.name = [
-        { required: true, message: '请输入名称', trigger: 'blur' },
-        { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-      ]
-      baseRules.path = [{ required: true, message: '请输入路由地址', trigger: 'blur' }]
-    } else {
-      baseRules.authName = [{ required: true, message: '请输入名称', trigger: 'blur' }]
-      baseRules.authLabel = [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
-    }
-
-    return baseRules
-  })
+  const currentEditMenu = ref<AppRouteRecord | null>(null)
+  const currentParentId = ref<number>(0)
+  const isSubMenu = ref(false)
 
   const tableData = ref<AppRouteRecord[]>([])
 
@@ -415,155 +289,37 @@
   }
 
   const isEdit = ref(false)
-  const formRef = ref<FormInstance>()
-  const dialogTitle = ref('新建菜单')
 
   const showDialog = (type: string, row: AppRouteRecord) => {
     showModel(type, row, false)
   }
 
-  const handleChange = () => {}
-
-  const submitForm = async () => {
-    if (!formRef.value) return
-
-    await formRef.value.validate(async valid => {
-      if (valid) {
-        try {
-          loading.value = true
-
-          if (isEdit.value) {
-            const menuId = form.id || 0
-            const updateData = {
-              name: form.name,
-              path: form.path,
-              title: form.name,
-              icon: form.icon,
-              sort: form.sort,
-              is_keep_alive: form.keepAlive,
-              is_iframe: form.isIframe,
-              link: form.link,
-              is_enable: form.isEnable,
-              menu_type: labelPosition.value,
-              auth_name: form.authName,
-              auth_mark: form.authLabel,
-              auth_sort: form.authSort
-            }
-
-            await updateMenu(menuId, updateData)
-            ElMessage.success('编辑成功')
-          } else {
-            const createData = {
-              name: labelPosition.value === 'button' ? form.authName : form.name,
-              path: labelPosition.value === 'button' ? '' : form.path,
-              title: labelPosition.value === 'button' ? form.authName : form.name,
-              component: labelPosition.value === 'button' ? '' : form.path,
-              icon: form.icon,
-              sort: labelPosition.value === 'button' ? form.authSort : form.sort,
-              is_keep_alive: form.keepAlive,
-              is_iframe: form.isIframe,
-              link: form.link,
-              is_enable: form.isEnable,
-              menu_type: labelPosition.value,
-              parent_id: form.parentId > 0 ? form.parentId : undefined,
-              auth_name: form.authName,
-              auth_mark: form.authLabel,
-              auth_sort: form.authSort
-            }
-
-            await createMenu(createData)
-            const itemType = labelPosition.value === 'button' ? '权限' : '菜单'
-            ElMessage.success(`新增${itemType}成功`)
-          }
-
-          dialogVisible.value = false
-          getTableData()
-        } catch {
-          const itemType = labelPosition.value === 'button' ? '权限' : '菜单'
-          ElMessage.error(`${isEdit.value ? '编辑' : '新增'}${itemType}失败`)
-        } finally {
-          loading.value = false
-        }
-      }
-    })
+  const handleDialogSubmit = () => {
+    dialogVisible.value = false
+    currentEditMenu.value = null
+    currentParentId.value = 0
+    isSubMenu.value = false
+    getTableData()
   }
 
-  const showModel = (type: string, row?: any, isSubMenu: boolean = false) => {
+  const showModel = (type: string, row?: any, isSubMenuFlag: boolean = false) => {
     dialogVisible.value = true
     isEdit.value = false
-    lockMenuType.value = false
-    resetForm()
+    isSubMenu.value = isSubMenuFlag
 
-    if (isSubMenu && row) {
-      form.parentId = row.id
-      dialogTitle.value = `新建子菜单 - ${row.meta?.title || row.title || '菜单'}`
-      labelPosition.value = 'menu'
+    if (isSubMenuFlag && row) {
+      currentParentId.value = row.id || 0
+      currentEditMenu.value = null
     } else if (row && type === 'edit') {
       isEdit.value = true
-
-      const menuType = row.meta?.originalMenuType || 'menu'
-      labelPosition.value = menuType
-
-      dialogTitle.value = `编辑${menuType === 'menu' ? '菜单' : '权限'}`
-
-      if (menuType === 'menu') {
-        form.id = row.id || 0
-        form.parentId = row.meta?.originalParentId || 0
-        form.name = row.meta?.originalTitle || row.meta?.title || ''
-        form.path = row.path || ''
-        form.icon = row.meta?.originalIcon || row.meta?.icon || ''
-        form.sort = row.meta?.originalSort || row.meta?.sort || 1
-        form.isMenu = true
-        form.keepAlive =
-          row.meta?.originalIsKeepAlive !== undefined
-            ? row.meta.originalIsKeepAlive
-            : row.meta?.keepAlive !== undefined
-              ? row.meta.keepAlive
-              : true
-        form.isEnable =
-          row.meta?.originalIsEnable !== undefined
-            ? row.meta.originalIsEnable
-            : row.meta?.isEnable !== undefined
-              ? row.meta.isEnable
-              : true
-        form.link = row.meta?.originalLink || row.meta?.link || ''
-        form.isIframe =
-          row.meta?.originalIsIframe !== undefined
-            ? row.meta.originalIsIframe
-            : row.meta?.isIframe !== undefined
-              ? row.meta.isIframe
-              : false
-      } else {
-        form.id = row.id || 0
-        form.authName = row.meta?.originalAuthName || row.meta?.title || ''
-        form.authLabel = row.meta?.originalAuthMark || ''
-        form.authIcon = row.meta?.originalIcon || row.meta?.icon || ''
-        form.authSort = row.meta?.originalAuthSort || row.meta?.sort || 1
-      }
+      currentEditMenu.value = row
+      currentParentId.value = 0
+      isSubMenu.value = false
     } else {
-      dialogTitle.value = '新建菜单'
-      labelPosition.value = 'menu'
+      currentEditMenu.value = null
+      currentParentId.value = 0
+      isSubMenu.value = false
     }
-  }
-
-  const resetForm = () => {
-    formRef.value?.resetFields()
-    Object.assign(form, {
-      id: 0,
-      parentId: 0,
-      name: '',
-      path: '',
-      icon: '',
-      sort: 1,
-      isMenu: true,
-      keepAlive: true,
-      link: '',
-      isIframe: false,
-      authName: '',
-      authLabel: '',
-      authIcon: '',
-      authSort: 1
-    })
   }
 
   const handleDeleteMenu = async (row?: AppRouteRecord) => {
@@ -595,15 +351,6 @@
       loading.value = false
     }
   }
-
-  const disableMenuType = computed(() => {
-    if (isEdit.value && labelPosition.value === 'button') return true
-    if (isEdit.value && labelPosition.value === 'menu') return true
-    if (!isEdit.value && labelPosition.value === 'menu' && lockMenuType.value) return true
-    return false
-  })
-
-  const lockMenuType = ref(false)
 
   const isExpanded = ref(false)
   const tableRef = ref()

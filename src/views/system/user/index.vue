@@ -1,11 +1,13 @@
 <template>
   <div class="user-page art-full-height">
-    <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
+    <!-- 搜索区域 -->
+    <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams" />
 
+    <!-- 表格区域 -->
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增用户</ElButton>
+          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple> 新增用户 </ElButton>
         </template>
       </ArtTableHeader>
 
@@ -17,8 +19,7 @@
         @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
-      >
-      </ArtTable>
+      />
 
       <UserDialog
         v-model:visible="dialogVisible"
@@ -31,26 +32,36 @@
 </template>
 
 <script setup lang="ts">
+  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
+  import UserSearch from './modules/user-search.vue'
+  import UserDialog from './modules/user-dialog.vue'
+
+  // Element Plus 组件
   import { ElMessageBox, ElMessage, ElTag } from 'element-plus'
+
+  // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
   import { useAuth } from '@/composables/useAuth'
   import { UserService } from '@/api/usersApi'
-  import UserSearch from './modules/user-search.vue'
-  import UserDialog from './modules/user-dialog.vue'
   import type { ApiResponse } from '@/utils/table/tableCache'
 
   defineOptions({ name: 'User' })
 
+  // 类型定义
   type UserListItem = Api.User.UserListItem
+
+  // API 服务
   const { getUserList, deleteUser } = UserService
   const { hasAuth } = useAuth()
 
+  // 响应式数据
   const dialogType = ref<Form.DialogType>('add')
   const dialogVisible = ref(false)
   const currentUserData = ref<Partial<UserListItem>>({})
   const selectedRows = ref<UserListItem[]>([])
 
+  // 搜索表单
   const searchForm = ref({
     name: undefined,
     phone: undefined,

@@ -1,0 +1,86 @@
+.report-page {
+  .stats-row {
+    margin-bottom: 20px;
+
+    .stats-card {
+      .stats-content {
+        display: flex;
+        align-items: center;
+
+        .stats-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 60px;
+          height: 60px;
+          margin-right: 16px;
+          border-radius: 12px;
+
+          .iconfont-sys {
+            font-size: 24px;
+            color: white;
+          }
+        }
+
+        .stats-info {
+          flex: 1;
+
+          .stats-value {
+            margin-bottom: 4px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--el-text-color-primary);
+          }
+
+          .stats-label {
+            margin-bottom: 4px;
+            font-size: 14px;
+            color: var(--el-text-color-regular);
+          }
+
+          .stats-change {
+            font-size: 12px;
+
+            &.up {
+              color: #67c23a;
+            }
+
+            &.down {
+              color: #f56c6c;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .charts-row {
+    margin-bottom: 20px;
+
+    .chart-card {
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+  }
+
+  .table-row {
+    .table-card {
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+  }
+
+  .text-success {
+    color: #67c23a;
+  }
+
+  .text-danger {
+    color: #f56c6c;
+  }
+}

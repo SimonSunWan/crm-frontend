@@ -1,6 +1,7 @@
 <template>
   <div class="dictionary-page art-full-height">
     <div class="dictionary-layout">
+      <!-- 左侧字典分类面板 -->
       <div class="left-panel">
         <ElCard class="type-card" shadow="never">
           <template #header>
@@ -39,6 +40,7 @@
         </ElCard>
       </div>
 
+      <!-- 右侧字典枚举面板 -->
       <div class="right-panel">
         <ElCard class="enum-card" shadow="never">
           <template #header>
@@ -67,81 +69,47 @@
       </div>
     </div>
 
-    <ElDialog :title="typeDialogTitle" v-model="typeDialogVisible" width="500px" align-center>
-      <ElForm ref="typeFormRef" :model="typeForm" :rules="typeRules" label-width="100px">
-        <ElFormItem label="字典名称" prop="name">
-          <ElInput v-model="typeForm.name" placeholder="请输入字典名称" />
-        </ElFormItem>
-        <ElFormItem label="字典编码" prop="code">
-          <ElInput v-model="typeForm.code" placeholder="请输入字典编码" />
-        </ElFormItem>
-        <ElFormItem label="字典描述" prop="description">
-          <ElInput
-            v-model="typeForm.description"
-            type="textarea"
-            placeholder="请输入字典描述"
-            :rows="3"
-          />
-        </ElFormItem>
-      </ElForm>
+    <!-- 字典分类弹窗 -->
+    <TypeDialog
+      v-model:visible="typeDialogVisible"
+      :type="typeDialogType"
+      :type-data="currentEditType || undefined"
+      @submit="handleTypeDialogSubmit"
+    />
 
-      <template #footer>
-        <span class="dialog-footer">
-          <ElButton @click="typeDialogVisible = false">取 消</ElButton>
-          <ElButton type="primary" @click="submitTypeForm">确 定</ElButton>
-        </span>
-      </template>
-    </ElDialog>
-
-    <ElDialog :title="enumDialogTitle" v-model="enumDialogVisible" width="500px" align-center>
-      <ElForm ref="enumFormRef" :model="enumForm" :rules="enumRules" label-width="100px">
-        <ElFormItem label="key值" prop="keyValue">
-          <ElInput v-model="enumForm.keyValue" placeholder="请输入key值" />
-        </ElFormItem>
-        <ElFormItem label="字典值" prop="dictValue">
-          <ElInput v-model="enumForm.dictValue" placeholder="请输入字典值" />
-        </ElFormItem>
-        <ElFormItem label="排序" prop="sortOrder">
-          <ElInputNumber
-            v-model="enumForm.sortOrder"
-            :min="1"
-            controls-position="right"
-            style="width: 100%"
-          />
-        </ElFormItem>
-      </ElForm>
-
-      <template #footer>
-        <span class="dialog-footer">
-          <ElButton @click="enumDialogVisible = false">取 消</ElButton>
-          <ElButton type="primary" @click="submitEnumForm">确 定</ElButton>
-        </span>
-      </template>
-    </ElDialog>
+    <!-- 字典枚举弹窗 -->
+    <EnumDialog
+      v-model:visible="enumDialogVisible"
+      :type="enumDialogType"
+      :type-data="selectedType || undefined"
+      :enum-data="currentEditEnum || undefined"
+      @submit="handleEnumDialogSubmit"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import { DictionaryService } from '@/api/dictionaryApi'
-  import type { FormInstance, FormRules } from 'element-plus'
+  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
+  import TypeDialog from './modules/type-dialog.vue'
+  import EnumDialog from './modules/enum-dialog.vue'
+
+  // Element Plus 组件和类型
+  import { ElMessage, ElMessageBox } from 'element-plus'
+
+  // Vue 工具函数
+  import { h, ref, reactive, onMounted } from 'vue'
+
+  // API 服务
+  import { DictionaryService } from '@/api/dictionaryApi'
 
   defineOptions({ name: 'Dictionary' })
 
   type DictionaryTypeItem = Api.Dictionary.DictionaryTypeItem
   type DictionaryEnumItem = Api.Dictionary.DictionaryEnumItem
 
-  const {
-    getDictionaryTypes,
-    createDictionaryType,
-    updateDictionaryType,
-    deleteDictionaryType,
-    getDictionaryEnums,
-    createDictionaryEnum,
-    updateDictionaryEnum,
-    deleteDictionaryEnum
-  } = DictionaryService
+  const { getDictionaryTypes, deleteDictionaryType, getDictionaryEnums, deleteDictionaryEnum } =
+    DictionaryService
 
   const typeData = ref<DictionaryTypeItem[]>([])
   const filteredTypes = ref<DictionaryTypeItem[]>([])
@@ -149,28 +117,7 @@
   const typeSearchKeyword = ref('')
   const typeDialogVisible = ref(false)
   const typeDialogType = ref<'add' | 'edit'>('add')
-  const typeFormRef = ref<FormInstance>()
-  const currentEditTypeId = ref<number | null>(null)
-  const typeForm = reactive({
-    name: '',
-    code: '',
-    description: ''
-  })
-
-  const typeRules: FormRules = {
-    name: [
-      { required: true, message: '请输入字典名称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ],
-    code: [
-      { required: true, message: '请输入字典编码', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ]
-  }
-
-  const typeDialogTitle = computed(() => {
-    return typeDialogType.value === 'add' ? '新增字典分类' : '编辑字典分类'
-  })
+  const currentEditType = ref<DictionaryTypeItem | null>(null)
 
   const enumLoading = ref(false)
   const enumData = ref<DictionaryEnumItem[]>([])
@@ -206,22 +153,7 @@
 
   const enumDialogVisible = ref(false)
   const enumDialogType = ref<'add' | 'edit'>('add')
-  const enumFormRef = ref<FormInstance>()
-  const currentEditEnumId = ref<number | null>(null)
-  const enumForm = reactive({
-    keyValue: '',
-    dictValue: '',
-    sortOrder: 0
-  })
-
-  const enumRules: FormRules = {
-    keyValue: [{ required: true, message: '请输入key值', trigger: 'blur' }],
-    dictValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
-  }
-
-  const enumDialogTitle = computed(() => {
-    return enumDialogType.value === 'add' ? '新增字典枚举' : '编辑字典枚举'
-  })
+  const currentEditEnum = ref<DictionaryEnumItem | null>(null)
 
   const getTypeData = async () => {
     try {
@@ -285,42 +217,16 @@
     typeDialogVisible.value = true
 
     if (type === 'edit' && typeData) {
-      Object.assign(typeForm, {
-        name: typeData.name,
-        code: typeData.code,
-        description: typeData.description || ''
-      })
-      currentEditTypeId.value = typeData.id
+      currentEditType.value = typeData
     } else {
-      Object.assign(typeForm, {
-        name: '',
-        code: '',
-        description: ''
-      })
-      currentEditTypeId.value = null
+      currentEditType.value = null
     }
   }
 
-  const submitTypeForm = async () => {
-    if (!typeFormRef.value) return
-
-    await typeFormRef.value.validate(async valid => {
-      if (valid) {
-        try {
-          if (typeDialogType.value === 'add') {
-            await createDictionaryType(typeForm)
-            ElMessage.success('创建成功')
-          } else if (currentEditTypeId.value) {
-            await updateDictionaryType(currentEditTypeId.value, typeForm)
-            ElMessage.success('更新成功')
-          }
-          typeDialogVisible.value = false
-          getTypeData()
-        } catch (error: any) {
-          ElMessage.error(error?.message || '操作失败')
-        }
-      }
-    })
+  const handleTypeDialogSubmit = () => {
+    typeDialogVisible.value = false
+    currentEditType.value = null
+    getTypeData()
   }
 
   const deleteType = async (type: DictionaryTypeItem) => {
@@ -356,45 +262,16 @@
     enumDialogVisible.value = true
 
     if (type === 'edit' && enumData) {
-      Object.assign(enumForm, {
-        keyValue: enumData.keyValue,
-        dictValue: enumData.dictValue,
-        sortOrder: enumData.sortOrder
-      })
-      currentEditEnumId.value = enumData.id
+      currentEditEnum.value = enumData
     } else {
-      Object.assign(enumForm, {
-        keyValue: '',
-        dictValue: '',
-        sortOrder: 0
-      })
-      currentEditEnumId.value = null
+      currentEditEnum.value = null
     }
   }
 
-  const submitEnumForm = async () => {
-    if (!enumFormRef.value || !selectedType.value) return
-
-    await enumFormRef.value.validate(async valid => {
-      if (valid) {
-        try {
-          if (enumDialogType.value === 'add') {
-            await createDictionaryEnum({
-              typeId: selectedType.value!.id,
-              ...enumForm
-            })
-            ElMessage.success('创建成功')
-          } else if (currentEditEnumId.value) {
-            await updateDictionaryEnum(currentEditEnumId.value, enumForm)
-            ElMessage.success('更新成功')
-          }
-          enumDialogVisible.value = false
-          getEnumData()
-        } catch (error: any) {
-          ElMessage.error(error?.message || '操作失败')
-        }
-      }
-    })
+  const handleEnumDialogSubmit = () => {
+    enumDialogVisible.value = false
+    currentEditEnum.value = null
+    getEnumData()
   }
 
   const deleteEnum = async (enumItem: DictionaryEnumItem) => {

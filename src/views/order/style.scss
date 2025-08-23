@@ -1,0 +1,19 @@
+.order-page {
+  .search-card {
+    margin-bottom: 20px;
+
+    .el-form {
+      .el-form-item {
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  .art-table-card {
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+}
