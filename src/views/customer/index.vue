@@ -10,7 +10,12 @@
           <ElInput v-model="searchForm.phone" placeholder="请输入联系电话" clearable />
         </ElFormItem>
         <ElFormItem label="客户状态">
-          <ElSelect v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <ElSelect
+            v-model="searchForm.status"
+            placeholder="请选择状态"
+            clearable
+            style="width: 200px"
+          >
             <ElOption label="潜在客户" value="potential" />
             <ElOption label="意向客户" value="intention" />
             <ElOption label="成交客户" value="deal" />

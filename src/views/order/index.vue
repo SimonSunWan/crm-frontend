@@ -10,7 +10,12 @@
           <ElInput v-model="searchForm.customerName" placeholder="请输入客户名称" clearable />
         </ElFormItem>
         <ElFormItem label="订单状态">
-          <ElSelect v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <ElSelect
+            v-model="searchForm.status"
+            placeholder="请选择状态"
+            clearable
+            style="width: 200px"
+          >
             <ElOption label="待确认" value="pending" />
             <ElOption label="已确认" value="confirmed" />
             <ElOption label="生产中" value="producing" />

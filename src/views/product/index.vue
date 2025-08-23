@@ -7,7 +7,12 @@
           <ElInput v-model="searchForm.name" placeholder="请输入产品名称" clearable />
         </ElFormItem>
         <ElFormItem label="产品分类">
-          <ElSelect v-model="searchForm.category" placeholder="请选择分类" clearable>
+          <ElSelect
+            v-model="searchForm.category"
+            placeholder="请选择分类"
+            clearable
+            style="width: 200px"
+          >
             <ElOption label="服务器" value="server" />
             <ElOption label="网络设备" value="network" />
             <ElOption label="软件产品" value="software" />
@@ -15,7 +20,12 @@
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="产品状态">
-          <ElSelect v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <ElSelect
+            v-model="searchForm.status"
+            placeholder="请选择状态"
+            clearable
+            style="width: 200px"
+          >
             <ElOption label="在售" value="active" />
             <ElOption label="停售" value="inactive" />
             <ElOption label="缺货" value="outofstock" />
