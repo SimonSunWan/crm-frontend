@@ -92,7 +92,7 @@
 
   const formItems = computed(() => [
     {
-      label: '名称',
+      label: '菜单名称',
       key: 'name',
       type: 'input',
       props: {
@@ -154,8 +154,7 @@
   const { columnChecks, columns } = useTableColumns(() => [
     {
       prop: 'meta.title',
-      label: '名称',
-      minWidth: 120,
+      label: '菜单名称',
       formatter: (row: AppRouteRecord) => {
         if (row.meta?.originalMenuType === 'button') {
           return row.meta?.originalAuthName || row.meta?.title || ''
@@ -165,7 +164,7 @@
     },
     {
       prop: 'type',
-      label: '类型',
+      label: '菜单类型',
       formatter: (row: AppRouteRecord) => {
         return h(ElTag, { type: buildMenuTypeTag(row) }, () => buildMenuTypeText(row))
       }
@@ -190,7 +189,6 @@
     {
       prop: 'meta.icon',
       label: '图标',
-      width: 80,
       formatter: (row: AppRouteRecord) => {
         if (!row.meta?.icon) return '-'
         const iconText = row.meta.icon.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
@@ -200,34 +198,39 @@
       }
     },
     {
-      prop: 'meta.sort',
-      label: '排序',
-      width: 80,
-      formatter: (row: AppRouteRecord) => {
-        return row.meta?.sort || 1
-      }
-    },
-    {
       prop: 'meta.isEnable',
       label: '状态',
-      width: 80,
       formatter: (row: AppRouteRecord) => {
         return h(ElTag, { type: row.meta?.isEnable ? 'success' : 'danger' }, () =>
           row.meta?.isEnable ? '启用' : '禁用'
         )
       }
     },
-
+    {
+      prop: 'meta.sort',
+      label: '排序',
+      formatter: (row: AppRouteRecord) => {
+        return row.meta?.sort || 1
+      }
+    },
     {
       prop: 'operation',
       label: '操作',
       width: 180,
       formatter: (row: AppRouteRecord) => {
-        return h('div', [
-          h(ArtButtonTable, {
-            type: 'add',
-            onClick: () => showModel('menu', row, true)
-          }),
+        const buttons = []
+
+        // 只有当菜单类型不是权限时才显示新增按钮
+        if (row.meta?.originalMenuType !== 'button') {
+          buttons.push(
+            h(ArtButtonTable, {
+              type: 'add',
+              onClick: () => showModel('menu', row, true)
+            })
+          )
+        }
+
+        buttons.push(
           h(ArtButtonTable, {
             type: 'edit',
             onClick: () => showDialog('edit', row)
@@ -236,7 +239,9 @@
             type: 'delete',
             onClick: () => handleDeleteMenu(row)
           })
-        ])
+        )
+
+        return h('div', buttons)
       }
     }
   ])

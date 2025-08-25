@@ -1,7 +1,7 @@
 <template>
   <ElDialog :title="dialogTitle" v-model="dialogVisible" width="700px" align-center>
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="85px">
-      <ElFormItem label="类型">
+      <ElFormItem label="菜单类型">
         <ElRadioGroup v-model="menuType" :disabled="disableMenuType">
           <ElRadioButton value="menu" label="menu">菜单</ElRadioButton>
           <ElRadioButton value="button" label="button">权限</ElRadioButton>
@@ -11,8 +11,8 @@
       <template v-if="menuType === 'menu'">
         <ElRow :gutter="20">
           <ElCol :span="12">
-            <ElFormItem label="名称" prop="name">
-              <ElInput v-model="formData.name" placeholder="名称"></ElInput>
+            <ElFormItem label="菜单名称" prop="name">
+              <ElInput v-model="formData.name" placeholder="菜单名称"></ElInput>
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
@@ -72,8 +72,8 @@
       <template v-if="menuType === 'button'">
         <ElRow :gutter="20">
           <ElCol :span="12">
-            <ElFormItem label="名称" prop="authName">
-              <ElInput v-model="formData.authName" placeholder="名称"></ElInput>
+            <ElFormItem label="权限名称" prop="authName">
+              <ElInput v-model="formData.authName" placeholder="权限名称"></ElInput>
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
@@ -172,7 +172,7 @@
 
   const dialogTitle = computed(() => {
     if (props.isSubMenu) {
-      return `新建子菜单 - ${(props.menuData?.meta as any)?.title || (props.menuData as any)?.title || '菜单'}`
+      return '新建子菜单'
     }
     if (props.type === 'edit') {
       return `编辑${menuType.value === 'menu' ? '菜单' : '权限'}`

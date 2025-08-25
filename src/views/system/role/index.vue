@@ -16,7 +16,6 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
-        @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       />
@@ -64,7 +63,6 @@
   })
 
   const columnChecks = ref([])
-  const selectedRows = ref<Role[]>([])
 
   // 使用 useTable composable
   const {
@@ -87,7 +85,6 @@
       },
       excludeParams: ['daterange'],
       columnsFactory: () => [
-        { type: 'selection' },
         { type: 'index', width: 60, label: '序号' },
         { prop: 'roleName', label: '角色名称' },
         { prop: 'roleCode', label: '角色编码' },
@@ -196,10 +193,6 @@
         ElMessage.error('删除失败')
       }
     }
-  }
-
-  const handleSelectionChange = (rows: Role[]) => {
-    selectedRows.value = rows
   }
 
   const handleSearch = () => {

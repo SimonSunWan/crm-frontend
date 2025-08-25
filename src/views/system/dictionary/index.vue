@@ -130,7 +130,7 @@
   const enumColumns = [
     { prop: 'keyValue', label: 'key值' },
     { prop: 'dictValue', label: '字典值' },
-    { prop: 'sortOrder', width: 60, label: '排序' },
+    { prop: 'sortOrder', label: '排序' },
     {
       prop: 'operation',
       label: '操作',

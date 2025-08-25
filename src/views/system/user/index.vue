@@ -16,7 +16,6 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
-        @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       />
@@ -59,7 +58,6 @@
   const dialogType = ref<Form.DialogType>('add')
   const dialogVisible = ref(false)
   const currentUserData = ref<Partial<UserListItem>>({})
-  const selectedRows = ref<UserListItem[]>([])
 
   // 搜索表单
   const searchForm = ref({
@@ -100,20 +98,11 @@
       },
       excludeParams: ['daterange'],
       columnsFactory: () => [
-        { type: 'selection' },
         { type: 'index', width: 60, label: '序号' },
         { prop: 'userName', label: '用户名' },
         { prop: 'nickName', label: '姓名' },
         { prop: 'phone', label: '手机号' },
         { prop: 'email', label: '邮箱' },
-        {
-          prop: 'status',
-          label: '状态',
-          formatter: row => {
-            const statusConfig = getUserStatusConfig(row.status)
-            return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
-          }
-        },
         {
           prop: 'roleNames',
           label: '角色',
@@ -132,6 +121,14 @@
                 )
               )
             )
+          }
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          formatter: row => {
+            const statusConfig = getUserStatusConfig(row.status)
+            return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
           }
         },
         {
@@ -241,10 +238,6 @@
       currentUserData.value = {}
       getData()
     } catch {}
-  }
-
-  const handleSelectionChange = (selection: UserListItem[]): void => {
-    selectedRows.value = selection
   }
 </script>
 

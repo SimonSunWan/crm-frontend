@@ -64,7 +64,7 @@
             </ElRow>
 
             <ElRow>
-              <ElFormItem label="手机" prop="phone">
+              <ElFormItem label="手机号" prop="phone">
                 <ElInput v-model="form.phone" :disabled="!isEdit" />
               </ElFormItem>
               <ElFormItem label="邮箱" prop="email" class="right-input">
