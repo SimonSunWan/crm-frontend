@@ -124,13 +124,7 @@ export function useSettingsConfig() {
         handler: 'menuButton',
         headerBarKey: 'menuButton' as const
       },
-      {
-        key: 'showFastEnter',
-        label: t('setting.basics.list.fastEnter'),
-        type: 'switch' as const,
-        handler: 'fastEnter',
-        headerBarKey: 'fastEnter' as const
-      },
+
       {
         key: 'showRefreshButton',
         label: t('setting.basics.list.reloadPage'),
@@ -146,13 +140,7 @@ export function useSettingsConfig() {
         mobileHide: true,
         headerBarKey: 'breadcrumb' as const
       },
-      {
-        key: 'showLanguage',
-        label: t('setting.basics.list.language'),
-        type: 'switch' as const,
-        handler: 'language',
-        headerBarKey: 'language' as const
-      },
+
       {
         key: 'showNprogress',
         label: t('setting.basics.list.progressBar'),

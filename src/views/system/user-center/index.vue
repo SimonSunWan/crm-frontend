@@ -5,30 +5,16 @@
         <div class="user-wrap box-style">
           <img class="bg" src="@imgs/user/bg.webp" />
           <div class="avatar-container">
-            <img
-              v-if="userInfo.avatar"
-              class="avatar"
-              :src="getAvatarUrl(userInfo.avatar)"
-              @click="handleAvatarClick"
-            />
-            <div v-else class="avatar-placeholder" @click="handleAvatarClick">
+            <img v-if="userInfo.avatar" class="avatar" :src="getAvatarUrl(userInfo.avatar)" />
+            <div v-else class="avatar-placeholder">
               {{ getAvatarText(userInfo.nickName || userInfo.userName || '用户') }}
             </div>
-            <div class="avatar-upload-overlay" @click="handleAvatarClick">
-              <i class="iconfont-sys">&#xe734;</i>
-              <span>点击更换头像</span>
-            </div>
+
             <div v-if="loading" class="avatar-loading">
               <i class="iconfont-sys">&#xe6b8;</i>
             </div>
           </div>
-          <input
-            ref="avatarInputRef"
-            type="file"
-            accept="image/*"
-            style="display: none"
-            @change="handleAvatarChange"
-          />
+
           <div class="outer-info">
             <h2 class="name">{{ userInfo.userName || '用户' }}</h2>
             <p class="nick-name">{{ userInfo.nickName }}</p>
@@ -127,7 +113,6 @@
   import { useUserStore } from '@/store/modules/user'
   import { UserService } from '@/api/usersApi'
   import { ElForm, FormInstance, FormRules, ElMessage } from 'element-plus'
-  import mittBus from '@/utils/sys/mittBus'
   import { getAvatarUrl } from '@/utils'
 
   defineOptions({ name: 'UserCenter' })
@@ -138,7 +123,6 @@
   const isEdit = ref(false)
   const isEditPwd = ref(false)
   const loading = ref(false)
-  const avatarInputRef = ref<HTMLInputElement>()
 
   const form = reactive({
     userName: '',
@@ -180,72 +164,6 @@
 
   const getAvatarText = (text: string) => {
     return text ? text.charAt(0).toUpperCase() : 'U'
-  }
-
-  const handleAvatarClick = () => {
-    avatarInputRef.value?.click()
-  }
-
-  const handleAvatarChange = async (event: Event) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0]
-
-    if (!file) return
-
-    if (!file.type.startsWith('image/')) {
-      ElMessage.error('请选择图片文件')
-      return
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      ElMessage.error('图片大小不能超过2MB')
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = e => {
-      const img = new Image()
-      img.onload = () => {
-        if (img.width < 100 || img.height < 100) {
-          ElMessage.error('图片尺寸不能小于100x100像素')
-          return
-        }
-
-        uploadAvatarFile(file)
-      }
-      img.src = e.target?.result as string
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const uploadAvatarFile = async (file: File) => {
-    try {
-      loading.value = true
-      const response = await UserService.uploadAvatar(file)
-
-      if (response.avatar_url) {
-        const updatedUserInfo = { ...userInfo.value, avatar: response.avatar_url }
-        userStore.setUserInfo(updatedUserInfo as Api.User.UserInfo)
-
-        ElMessage.success('头像上传成功')
-        mittBus.emit('user-avatar-updated', response.avatar_url)
-      } else {
-        ElMessage.error('头像上传失败：未获取到头像URL')
-      }
-    } catch (error: any) {
-      if (error.response?.status === 413) {
-        ElMessage.error('文件太大，请选择小于2MB的图片')
-      } else if (error.response?.status === 415) {
-        ElMessage.error('不支持的图片格式，请选择JPG、PNG或GIF格式')
-      } else if (error.response?.status === 401) {
-        ElMessage.error('登录已过期，请重新登录')
-      } else {
-        ElMessage.error(`头像上传失败：${error.message || '未知错误'}`)
-      }
-    } finally {
-      loading.value = false
-      if (avatarInputRef.value) avatarInputRef.value.value = ''
-    }
   }
 
   const loadUserInfo = async () => {

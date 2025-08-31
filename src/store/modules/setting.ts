@@ -38,16 +38,13 @@ export const useSettingStore = defineStore(
     // 界面显示设置
     /** 是否显示菜单按钮 */
     const showMenuButton = ref(true)
-    /** 是否显示快速入口 */
-    const showFastEnter = ref(true)
     /** 是否显示刷新按钮 */
     const showRefreshButton = ref(true)
     /** 是否显示面包屑 */
     const showCrumbs = ref(true)
     /** 是否显示工作台标签 */
     const showWorkTab = ref(true)
-    /** 是否显示语言切换 */
-    const showLanguage = ref(true)
+
     /** 是否显示进度条 */
     const showNprogress = ref(true)
     /** 是否显示设置引导 */
@@ -200,13 +197,6 @@ export const useSettingStore = defineStore(
     }
 
     /**
-     * 切换快速入口显示
-     */
-    const setFastEnter = () => {
-      showFastEnter.value = !showFastEnter.value
-    }
-
-    /**
      * 切换自动关闭
      */
     const setAutoClose = () => {
@@ -233,13 +223,6 @@ export const useSettingStore = defineStore(
      */
     const setWorkTab = (show: boolean) => {
       showWorkTab.value = show
-    }
-
-    /**
-     * 切换语言切换显示
-     */
-    const setLanguage = () => {
-      showLanguage.value = !showLanguage.value
     }
 
     /**
@@ -362,12 +345,10 @@ export const useSettingStore = defineStore(
       boxBorderMode,
       uniqueOpened,
       showMenuButton,
-      showFastEnter,
       showRefreshButton,
       showCrumbs,
       autoClose,
       showWorkTab,
-      showLanguage,
       showNprogress,
       colorWeak,
       showSettingGuide,
@@ -396,12 +377,10 @@ export const useSettingStore = defineStore(
       setContainerWidth,
       setUniqueOpened,
       setButton,
-      setFastEnter,
       setAutoClose,
       setShowRefreshButton,
       setCrumbs,
       setWorkTab,
-      setLanguage,
       setNprogress,
       setColorWeak,
       hideSettingGuide,

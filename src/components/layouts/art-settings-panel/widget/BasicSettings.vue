@@ -29,11 +29,9 @@
   const {
     uniqueOpened,
     showMenuButton,
-    showFastEnter,
     showRefreshButton,
     showCrumbs,
     showWorkTab,
-    showLanguage,
     showNprogress,
     colorWeak,
     watermarkVisible,
@@ -47,11 +45,9 @@
   const settingValueMap = {
     uniqueOpened,
     showMenuButton,
-    showFastEnter,
     showRefreshButton,
     showCrumbs,
     showWorkTab,
-    showLanguage,
     showNprogress,
     colorWeak,
     watermarkVisible,

@@ -40,7 +40,6 @@ export interface SettingState {
   showCrumbs: boolean
   autoClose: boolean
   showWorkTab: boolean
-  showLanguage: boolean
   showNprogress: boolean
   themeModel: string
 }

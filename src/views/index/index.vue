@@ -5,7 +5,7 @@
     <ArtPageContent />
     <ArtSettingsPanel />
     <ArtGlobalSearch />
-    <ArtScreenLock />
+
     <ArtFireworksEffect />
     <ArtWatermark />
   </ArtLayouts>

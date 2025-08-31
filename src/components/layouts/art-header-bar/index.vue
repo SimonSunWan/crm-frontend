@@ -153,14 +153,11 @@
                     <i class="menu-icon iconfont-sys">&#xe734;</i>
                     <span class="menu-txt">{{ $t('topBar.user.userCenter') }}</span>
                   </li>
-                  <li @click="lockScreen()">
-                    <i class="menu-icon iconfont-sys">&#xe817;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.lockScreen') }}</span>
+
+                  <li @click="loginOut">
+                    <i class="menu-icon iconfont-sys">&#xe6fd;</i>
+                    <span class="menu-txt">{{ $t('topBar.user.logout') }}</span>
                   </li>
-                  <div class="line"></div>
-                  <div class="logout-btn" @click="loginOut">
-                    {{ $t('topBar.user.logout') }}
-                  </div>
                 </ul>
               </div>
             </template>
@@ -398,13 +395,6 @@
    */
   const visibleNotice = (): void => {
     showNotice.value = !showNotice.value
-  }
-
-  /**
-   * 打开锁屏功能
-   */
-  const lockScreen = (): void => {
-    mittBus.emit('openLockScreen')
   }
 
   /**

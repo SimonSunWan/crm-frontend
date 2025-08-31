@@ -11,8 +11,7 @@
     "gatewayTimeout": "Gateway timeout, please try again later",
     "requestCancelled": "Request cancelled",
     "networkError": "Network connection error, please check your connection",
-    "requestFailed": "Request failed",
-    "requestConfigError": "Request configuration error"
+    "requestFailed": "Request failed"
   },
   "topBar": {
     "search": {
@@ -20,9 +19,7 @@
     },
     "user": {
       "userCenter": "User center",
-      "docs": "Document",
-      "github": "Github",
-      "lockScreen": "Lock screen",
+
       "logout": "Log out"
     },
     "guide": {
@@ -75,9 +72,7 @@
         "accordion": "Sidebar opens accordion",
         "collapseSidebar": "Show sidebar button",
         "reloadPage": "Show reload page button",
-        "fastEnter": "Show fast enter",
         "breadcrumb": "Show crumb navigation",
-        "language": "Show multilingual selection",
         "progressBar": "Show top progress bar",
         "weakMode": "Color Weakness Mode",
         "watermark": "Global watermark",
@@ -121,17 +116,8 @@
     }
   },
   "login": {
-    "leftView": {
-      "title": "An Admin template focused on user experience",
-      "subTitle": "A sleek and practical interface for a great user experience"
-    },
     "title": "Welcome back",
     "subTitle": "Please enter your account and password to login",
-    "roles": {
-      "super": "Super Admin",
-      "admin": "Admin",
-      "user": "User"
-    },
     "placeholder": [
       "Please enter your account",
       "Please enter your password",
@@ -177,24 +163,7 @@
     "hasAccount": "Already have an account?",
     "toLogin": "To login"
   },
-  "lockScreen": {
-    "pwdError": "Password error",
-    "lock": {
-      "inputPlaceholder": "Please input lock screen password",
-      "btnText": "Lock"
-    },
-    "unlock": {
-      "inputPlaceholder": "Please input unlock password",
-      "btnText": "Unlock",
-      "backBtnText": "Back to login"
-    }
-  },
-  "greeting": {
-    "dawn": "Good morning!",
-    "morning": "Good morning!",
-    "afternoon": "Good afternoon!",
-    "evening": "Good evening!"
-  },
+
   "exceptionPage": {
     "gohome": "Go Home",
     "403": "Sorry, you do not have permission to access this page",
@@ -211,67 +180,9 @@
     "forgetPassword": {
       "title": "Forget Password"
     },
-    "outside": {
-      "title": "Outside"
-    },
     "dashboard": {
       "title": "Dashboard",
-      "console": "Console",
-      "analysis": "Analysis",
-      "ecommerce": "Ecommerce"
-    },
-    "widgets": {
-      "title": "Components",
-      "iconList": "Icon List",
-      "iconSelector": "Icon Selector",
-      "imageCrop": "Image Crop",
-      "excel": "Excel Import Export",
-      "video": "Video Player",
-      "countTo": "Count To",
-      "wangEditor": "Wang Editor",
-      "watermark": "Watermark",
-      "contextMenu": "Context Menu",
-      "qrcode": "QR Code",
-      "drag": "Drag",
-      "textScroll": "Text Scroll",
-      "fireworks": "Fireworks",
-      "elementUI": "Component Overview"
-    },
-    "template": {
-      "title": "Template Center",
-      "chat": "Chat",
-      "cards": "Cards",
-      "banners": "Banners",
-      "charts": "Charts",
-      "map": "Map",
-      "calendar": "Calendar",
-      "pricing": "Pricing"
-    },
-    "article": {
-      "title": "Article Management",
-      "articleList": "Article List",
-      "articleDetail": "Article Detail",
-      "comment": "Comment",
-      "articlePublish": "Article Publish"
-    },
-    "result": {
-      "title": "Result Page",
-      "success": "Success",
-      "fail": "Fail"
-    },
-    "exception": {
-      "title": "Exception",
-      "forbidden": "403",
-      "notFound": "404",
-      "serverError": "500"
-    },
-    "examples": {
-      "title": "Feature Examples",
-      "tabs": "Tabs",
-      "tablesBasic": "Basic Tables",
-      "tables": "Advanced Tables",
-      "tablesTree": "Tree Table Layout",
-      "searchBar": "Search Form"
+      "console": "Console"
     },
     "system": {
       "title": "System Settings",
@@ -279,27 +190,7 @@
       "role": "Role Manage",
       "userCenter": "User Center",
       "menu": "Menu Manage",
-      "dictionary": "Dictionary Manage",
-      "nested": "Nested Menu",
-      "menu1": "Menu 1",
-      "menu2": "Menu 2",
-      "menu21": "Menu 2-1",
-      "menu3": "Menu 3",
-      "menu31": "Menu 3-1",
-      "menu32": "Menu 3-2",
-      "menu321": "Menu 3-2-1"
-    },
-    "safeguard": {
-      "title": "Safeguard",
-      "server": "Server"
-    },
-    "plan": {
-      "title": "Version Plan",
-      "log": "Change Log"
-    },
-    "help": {
-      "title": "Help Center",
-      "document": "Document"
+      "dictionary": "Dictionary Manage"
     }
   },
   "table": {

@@ -9,24 +9,6 @@
             {{ isDark ? '&#xe6b5;' : '&#xe725;' }}
           </i>
         </div>
-        <ElDropdown @command="changeLanguage" popper-class="langDropDownStyle">
-          <div class="btn language-btn">
-            <i class="iconfont-sys icon-language">&#xe611;</i>
-          </div>
-          <template #dropdown>
-            <ElDropdownMenu>
-              <div v-for="lang in languageOptions" :key="lang.value" class="lang-btn-item">
-                <ElDropdownItem
-                  :command="lang.value"
-                  :class="{ 'is-selected': locale === lang.value }"
-                >
-                  <span class="menu-txt">{{ lang.label }}</span>
-                  <i v-if="locale === lang.value" class="iconfont-sys icon-check">&#xe621;</i>
-                </ElDropdownItem>
-              </div>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
       </div>
       <div class="header">
         <ArtLogo class="icon" />
@@ -112,8 +94,7 @@
   import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { getCssVar } from '@/utils/ui'
-  import { languageOptions } from '@/locales'
-  import { LanguageEnum } from '@/enums/appEnum'
+
   import { useI18n } from 'vue-i18n'
   import { HttpError } from '@/utils/http/error'
   import { themeAnimation } from '@/utils/theme/animation'
@@ -205,14 +186,6 @@
         message: `${t('login.success.message')}, ${userInfo.nickName}!`
       })
     }, 150)
-  }
-
-  const { locale } = useI18n()
-
-  const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
   }
 </script>
 

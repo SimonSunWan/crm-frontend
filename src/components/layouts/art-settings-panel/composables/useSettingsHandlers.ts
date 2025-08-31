@@ -69,17 +69,11 @@ export function useSettingsHandlers() {
     // 显示菜单按钮
     menuButton: createToggleHandler(() => settingStore.setButton()),
 
-    // 显示快速入口
-    fastEnter: createToggleHandler(() => settingStore.setFastEnter()),
-
     // 显示刷新按钮
     refreshButton: createToggleHandler(() => settingStore.setShowRefreshButton()),
 
     // 显示面包屑
     crumbs: createToggleHandler(() => settingStore.setCrumbs()),
-
-    // 显示语言切换
-    language: createToggleHandler(() => settingStore.setLanguage()),
 
     // 显示进度条
     nprogress: createToggleHandler(() => settingStore.setNprogress()),
