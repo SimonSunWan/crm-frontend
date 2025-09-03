@@ -5,7 +5,6 @@
     <ArtPageContent />
     <ArtSettingsPanel />
     <ArtGlobalSearch />
-
     <ArtWatermark />
   </ArtLayouts>
 </template>

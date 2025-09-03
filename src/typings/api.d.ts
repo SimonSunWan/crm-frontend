@@ -56,14 +56,14 @@ declare namespace Api {
   namespace User {
     /** 登录参数 */
     interface LoginParams {
-      username: string
+      userName: string
       password: string
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      token: string
-      user: UserInfo
+      accessToken: string
+      tokenType: string
     }
 
     /** 用户信息 */
@@ -114,7 +114,7 @@ declare namespace Api {
       email: string
       password: string
       roles?: string[]
-      status?: string
+      status?: boolean
     }
 
     /** 更新用户参数 */
