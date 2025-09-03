@@ -91,12 +91,11 @@
 <script setup lang="ts">
   import AppConfig from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
-  import { ElNotification, ElMessage } from 'element-plus'
+  import { ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { getCssVar } from '@/utils/ui'
 
   import { useI18n } from 'vue-i18n'
-  import { HttpError } from '@/utils/http/error'
   import { themeAnimation } from '@/utils/theme/animation'
   import { UserService } from '@/api/usersApi'
 
@@ -160,12 +159,6 @@
 
       showLoginSuccessNotice(userInfo)
       router.push('/')
-    } catch (error) {
-      if (error instanceof HttpError) {
-        ElMessage.error(error.message || '登录失败，请稍后重试')
-      } else {
-        ElMessage.error('登录失败，请稍后重试')
-      }
     } finally {
       loading.value = false
       resetDragVerify()
