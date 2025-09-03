@@ -36,19 +36,16 @@
 
 <script setup lang="ts">
   // API 服务
-  import { createRole, updateRole } from '@/api/rolesApi'
+  import { RoleService } from '@/api/rolesApi'
 
   // Element Plus 组件和类型
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
 
-  // 类型定义
-  import type { Role, RoleCreate } from '@/api/rolesApi'
-
   interface Props {
     visible: boolean
     type: 'add' | 'edit'
-    roleData?: Partial<Role>
+    roleData?: Partial<Api.Role.Role>
   }
 
   interface Emits {
@@ -64,7 +61,7 @@
   const loading = ref(false)
 
   // 表单数据
-  const formData = reactive<RoleCreate>({
+  const formData = reactive<Api.Role.CreateRoleParams>({
     roleName: '',
     roleCode: '',
     description: '',
@@ -128,11 +125,11 @@
       loading.value = true
 
       if (dialogType.value === 'add') {
-        await createRole(formData)
+        await RoleService.createRole(formData)
         ElMessage.success('新增成功')
       } else {
         if (props.roleData?.id) {
-          await updateRole(props.roleData.id, formData)
+          await RoleService.updateRole(props.roleData.id, formData)
           ElMessage.success('修改成功')
         }
       }

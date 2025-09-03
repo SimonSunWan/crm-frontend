@@ -6,7 +6,6 @@ import AppConfig from '@/config'
 import { SystemThemeEnum, MenuTypeEnum } from '@/enums/appEnum'
 import { mittBus } from '@/utils/sys'
 import { useTheme } from '@/composables/useTheme'
-import { useCeremony } from '@/composables/useCeremony'
 import { useSettingsState } from './useSettingsState'
 import { useSettingsHandlers } from './useSettingsHandlers'
 
@@ -18,7 +17,6 @@ export function useSettingsPanel() {
   const { systemThemeType, systemThemeMode, menuType } = storeToRefs(settingStore)
 
   // Composables
-  const { openFestival, cleanup } = useCeremony()
   const { setSystemTheme, setSystemAutoTheme } = useTheme()
   const { initColorWeak } = useSettingsState()
   const { domOperations } = useSettingsHandlers()
@@ -156,12 +154,10 @@ export function useSettingsPanel() {
       }, 50)
 
       themeHandlers.initSystemTheme()
-      openFestival()
     }
 
     const cleanupSettings = () => {
       themeCleanup?.()
-      cleanup()
     }
 
     return {

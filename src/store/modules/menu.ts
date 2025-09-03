@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { AppRouteRecord } from '@/types/router'
 import { getFirstMenuPath } from '@/utils'
 import { HOME_PAGE_PATH } from '@/router'
-import { getNavigationMenus, convertMenuToRoute } from '@/api/menuApi'
+import { MenuService } from '@/api/menuApi'
 
 export const useMenuStore = defineStore('menuStore', () => {
   const homePath = ref(HOME_PAGE_PATH)
@@ -18,8 +18,8 @@ export const useMenuStore = defineStore('menuStore', () => {
 
   const fetchMenuList = async () => {
     try {
-      const response = await getNavigationMenus()
-      setMenuList(response.map(convertMenuToRoute))
+      const response = await MenuService.getNavigationMenus()
+      setMenuList(response.map(MenuService.convertMenuToRoute))
       return response
     } catch {
       return []

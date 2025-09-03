@@ -6,7 +6,7 @@ import { useUserStore } from '@/store/modules/user'
 import { useMenuStore } from '@/store/modules/menu'
 import { setWorktab } from '@/utils/navigation'
 import { setPageTitle, setSystemTheme } from '../utils/utils'
-import { getNavigationMenus, convertMenuToRoute } from '@/api/menuApi'
+import { MenuService } from '@/api/menuApi'
 import { registerDynamicRoutes } from '../utils/registerRoutes'
 import { AppRouteRecord } from '@/types/router'
 import { RoutesAlias } from '../routesAlias'
@@ -219,8 +219,8 @@ async function processFrontendMenu(router: Router): Promise<void> {
  * 处理后端控制模式的菜单逻辑
  */
 async function processBackendMenu(router: Router): Promise<void> {
-  const response = await getNavigationMenus()
-  const menuList = response.map(convertMenuToRoute)
+  const response = await MenuService.getNavigationMenus()
+  const menuList = response.map(MenuService.convertMenuToRoute)
 
   await registerAndStoreMenu(router, menuList)
 }

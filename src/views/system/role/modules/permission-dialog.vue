@@ -58,14 +58,11 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
 
   // API 服务
-  import { getRoleMenus, updateRoleMenus } from '@/api/rolesApi'
-
-  // 类型定义
-  import type { Role, MenuNode } from '@/api/rolesApi'
+  import { RoleService } from '@/api/rolesApi'
 
   interface Props {
     visible: boolean
-    roleData?: Role | null
+    roleData?: Api.Role.Role | null
   }
 
   interface Emits {
@@ -82,7 +79,7 @@
   const treeRef = ref()
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
-  const menuTreeData = ref<MenuNode[]>([])
+  const menuTreeData = ref<Api.Role.MenuNode[]>([])
   const selectedMenuIds = ref<number[]>([])
 
   // 计算属性
@@ -135,9 +132,9 @@
   )
 
   // 加载角色菜单权限
-  const loadRoleMenus = async (role: Role) => {
+  const loadRoleMenus = async (role: Api.Role.Role) => {
     try {
-      const response = await getRoleMenus(role.id)
+      const response = await RoleService.getRoleMenus(role.id)
 
       if (response && response.menuTree && response.selectedIds) {
         menuTreeData.value = response.menuTree
@@ -213,9 +210,9 @@
   }
 
   // 获取所有节点键值
-  const getAllNodeKeys = (nodes: MenuNode[]): number[] => {
+  const getAllNodeKeys = (nodes: Api.Role.MenuNode[]): number[] => {
     const keys: number[] = []
-    const traverse = (nodeList: MenuNode[]) => {
+    const traverse = (nodeList: Api.Role.MenuNode[]) => {
       nodeList.forEach(node => {
         if (node.id) {
           keys.push(node.id)
@@ -265,7 +262,7 @@
         }
       }
 
-      await updateRoleMenus(currentRole.value.id, allCheckedKeys)
+      await RoleService.updateRoleMenus(currentRole.value.id, allCheckedKeys)
       ElMessage.success('权限保存成功')
       dialogVisible.value = false
     } catch {

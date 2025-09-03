@@ -62,7 +62,7 @@
   import { AppRouteRecord } from '@/types/router'
 
   // API 服务
-  import { getMenus, deleteMenu, convertMenuToRoute } from '@/api/menuApi'
+  import { MenuService } from '@/api/menuApi'
 
   defineOptions({ name: 'Menus' })
 
@@ -277,9 +277,9 @@
         params.path = appliedFilters.route.trim()
       }
 
-      const response = await getMenus(params)
+      const response = await MenuService.getMenus(params)
       if (response.records) {
-        tableData.value = response.records.map(convertMenuToRoute)
+        tableData.value = response.records.map(MenuService.convertMenuToRoute)
       } else {
         tableData.value = []
       }
@@ -338,7 +338,7 @@
 
       if (row && row.id) {
         loading.value = true
-        await deleteMenu(row.id)
+        await MenuService.deleteMenu(row.id)
         const isButton = row?.meta?.originalMenuType === 'button'
         const itemType = isButton ? '权限' : '菜单'
         ElMessage.success(`删除${itemType}成功`)

@@ -4,7 +4,6 @@ import { MenuThemeType } from '@/types/store'
 import AppConfig from '@/config'
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
 import { setElementThemeColor } from '@/utils/ui'
-import { useCeremony } from '@/composables/useCeremony'
 
 const { defaultMenuWidth, defaultCustomRadius, defaultTabStyle } = AppConfig.systemSetting
 
@@ -49,8 +48,6 @@ export const useSettingStore = defineStore(
     const showNprogress = ref(true)
     /** 是否显示设置引导 */
     const showSettingGuide = ref(true)
-    /** 是否显示节日文本 */
-    const showFestivalText = ref(false)
     /** 是否显示水印 */
     const watermarkVisible = ref(false)
 
@@ -63,8 +60,6 @@ export const useSettingStore = defineStore(
     const colorWeak = ref(false)
     /** 是否刷新 */
     const refresh = ref(false)
-    /** 是否加载节日烟花 */
-    const holidayFireworksLoaded = ref(false)
 
     // 样式设置
     /** 边框模式 */
@@ -77,10 +72,6 @@ export const useSettingStore = defineStore(
     const customRadius = ref(defaultCustomRadius)
     /** 容器宽度 */
     const containerWidth = ref(ContainerWidthEnum.FULL)
-
-    // 节日相关
-    /** 节日日期 */
-    const festivalDate = ref('')
 
     /**
      * 获取菜单主题
@@ -114,14 +105,6 @@ export const useSettingStore = defineStore(
      */
     const getCustomRadius = computed((): string => {
       return customRadius.value + 'rem' || defaultCustomRadius + 'rem'
-    })
-
-    /**
-     * 是否显示烟花
-     * 根据当前日期和节日日期判断是否显示烟花效果
-     */
-    const isShowFireworks = computed((): boolean => {
-      return festivalDate.value === useCeremony().currentFestivalData.value?.date ? false : true
     })
 
     /**
@@ -301,26 +284,6 @@ export const useSettingStore = defineStore(
       document.documentElement.style.setProperty('--custom-radius', `${radius}rem`)
     }
 
-    /**
-     * 设置节日烟花加载状态
-     * @param isLoad 是否已加载
-     */
-    const setholidayFireworksLoaded = (isLoad: boolean) => {
-      holidayFireworksLoaded.value = isLoad
-    }
-
-    /**
-     * 设置节日文本显示
-     * @param show 是否显示
-     */
-    const setShowFestivalText = (show: boolean) => {
-      showFestivalText.value = show
-    }
-
-    const setFestivalDate = (date: string) => {
-      festivalDate.value = date
-    }
-
     const setDualMenuShowText = (show: boolean) => {
       dualMenuShowText.value = show
     }
@@ -358,16 +321,12 @@ export const useSettingStore = defineStore(
       refresh,
       watermarkVisible,
       customRadius,
-      holidayFireworksLoaded,
-      showFestivalText,
-      festivalDate,
       dualMenuShowText,
       containerWidth,
       getMenuTheme,
       isDark,
       getMenuOpenWidth,
       getCustomRadius,
-      isShowFireworks,
       switchMenuLayouts,
       setMenuOpenWidth,
       setGlopTheme,
@@ -391,9 +350,6 @@ export const useSettingStore = defineStore(
       reload,
       setWatermarkVisible,
       setCustomRadius,
-      setholidayFireworksLoaded,
-      setShowFestivalText,
-      setFestivalDate,
       setDualMenuShowText
     }
   },

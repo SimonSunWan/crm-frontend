@@ -6,7 +6,6 @@
     <ArtSettingsPanel />
     <ArtGlobalSearch />
 
-    <ArtFireworksEffect />
     <ArtWatermark />
   </ArtLayouts>
 </template>

@@ -1,8 +1,8 @@
 import request from '@/utils/http'
 
 export class UserService {
-  static login(params: Api.Auth.LoginParams) {
-    return request.post<Api.Auth.LoginResponse>({
+  static login(params: Api.User.LoginParams) {
+    return request.post<Api.User.LoginResponse>({
       url: '/auth/login',
       data: params
     })

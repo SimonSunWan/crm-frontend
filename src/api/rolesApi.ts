@@ -1,106 +1,55 @@
-import http from '@/utils/http'
+import request from '@/utils/http'
 
-export interface Role {
-  id: number
-  roleName: string
-  roleCode: string
-  description: string
-  status: boolean
-  createBy?: string
-  createTime?: string
-  updateBy?: string
-  updateTime?: string
-}
+export class RoleService {
+  static getRoles(params: Api.Common.PaginatingSearchParams) {
+    return request.get<Api.Role.RoleListResponse>({
+      url: '/roles/',
+      params
+    })
+  }
 
-export interface RoleCreate {
-  roleName: string
-  roleCode: string
-  description?: string
-  status: boolean
-}
+  static getAllRoles() {
+    return request.get<Api.Role.Role[]>({
+      url: '/roles/all'
+    })
+  }
 
-export interface RoleUpdate {
-  roleName?: string
-  roleCode?: string
-  description?: string
-  status?: boolean
-}
+  static getRole(id: number) {
+    return request.get<Api.Role.Role>({
+      url: `/roles/${id}`
+    })
+  }
 
-export interface RoleListResponse {
-  records: Role[]
-  total: number
-  current: number
-  size: number
-}
+  static createRole(data: Api.Role.CreateRoleParams) {
+    return request.post<Api.Role.Role>({
+      url: '/roles/',
+      data
+    })
+  }
 
-export function getRoles(params: { current?: number; size?: number; roleName?: string }) {
-  return http.get<RoleListResponse>({
-    url: '/roles/',
-    params
-  })
-}
+  static updateRole(id: number, data: Api.Role.UpdateRoleParams) {
+    return request.put<Api.Role.Role>({
+      url: `/roles/${id}`,
+      data
+    })
+  }
 
-export function getAllRoles() {
-  return http.get<Role[]>({
-    url: '/roles/all'
-  })
-}
+  static deleteRole(id: number) {
+    return request.del({
+      url: `/roles/${id}`
+    })
+  }
 
-export function getRole(id: number) {
-  return http.get<Role>({
-    url: `/roles/${id}`
-  })
-}
+  static getRoleMenus(roleId: number) {
+    return request.get<Api.Role.RoleMenusResponse>({
+      url: `/roles/${roleId}/menus`
+    })
+  }
 
-export function createRole(data: RoleCreate) {
-  return http.post<Role>({
-    url: '/roles/',
-    data
-  })
-}
-
-export function updateRole(id: number, data: RoleUpdate) {
-  return http.put<Role>({
-    url: `/roles/${id}`,
-    data
-  })
-}
-
-export function deleteRole(id: number) {
-  return http.del({
-    url: `/roles/${id}`
-  })
-}
-
-export interface MenuNode {
-  id: number
-  name: string
-  title: string
-  path: string
-  icon: string
-  sort: number
-  menuType: string
-  authName: string
-  authMark: string
-  authSort: number
-  isEnable: boolean
-  children: MenuNode[]
-}
-
-export interface RoleMenusResponse {
-  menuTree: MenuNode[]
-  selectedIds: number[]
-}
-
-export function getRoleMenus(roleId: number) {
-  return http.get<RoleMenusResponse>({
-    url: `/roles/${roleId}/menus`
-  })
-}
-
-export function updateRoleMenus(roleId: number, menuIds: number[]) {
-  return http.post({
-    url: `/roles/${roleId}/menus`,
-    data: { menuIds }
-  })
+  static updateRoleMenus(roleId: number, menuIds: number[]) {
+    return request.post({
+      url: `/roles/${roleId}/menus`,
+      data: { menuIds }
+    })
+  }
 }

@@ -119,7 +119,7 @@
   import { AppRouteRecord } from '@/types/router'
 
   // API 服务
-  import { createMenu, updateMenu } from '@/api/menuApi'
+  import { MenuService } from '@/api/menuApi'
 
   // Vue 工具函数
   import { ref, reactive, computed, watch } from 'vue'
@@ -316,7 +316,7 @@
               authSort: formData.authSort
             }
 
-            await updateMenu(menuId, updateData)
+            await MenuService.updateMenu(menuId, updateData)
             ElMessage.success('编辑成功')
           } else {
             const createData = {
@@ -337,7 +337,7 @@
               authSort: formData.authSort
             }
 
-            await createMenu(createData)
+            await MenuService.createMenu(createData)
             const itemType = menuType.value === 'button' ? '权限' : '菜单'
             ElMessage.success(`新增${itemType}成功`)
           }

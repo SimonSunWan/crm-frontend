@@ -5,7 +5,7 @@ import { headerBarConfig } from './headerBar'
 
 const appConfig: SystemConfig = {
   systemInfo: {
-    name: 'Vue3 Admin'
+    name: '电驱护卫管理系统'
   },
   elementPlusTheme: {
     primary: '#5D87FF'

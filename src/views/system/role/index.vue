@@ -49,7 +49,10 @@
   import { h, ref, reactive, onMounted } from 'vue'
 
   // API 服务
-  import { getRoles, deleteRole as deleteRoleApi, type Role } from '@/api/rolesApi'
+  import { RoleService } from '@/api/rolesApi'
+
+  // 类型定义
+  type Role = Api.Role.Role
 
   defineOptions({ name: 'Role' })
 
@@ -77,7 +80,7 @@
     refreshData
   } = useTable<Role>({
     core: {
-      apiFn: getRoles,
+      apiFn: RoleService.getRoles,
       apiParams: {
         current: 1,
         size: 20,
@@ -185,7 +188,7 @@
         type: 'error'
       })
 
-      await deleteRoleApi(row.id)
+      await RoleService.deleteRole(row.id)
       ElMessage.success('删除成功')
       getData()
     } catch (error) {

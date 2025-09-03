@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
   import { UserService } from '@/api/usersApi'
-  import { getAllRoles } from '@/api/rolesApi'
+  import { RoleService } from '@/api/rolesApi'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
 
@@ -88,7 +88,7 @@
 
   const fetchRoleList = async () => {
     try {
-      const response = await getAllRoles()
+      const response = await RoleService.getAllRoles()
       if (response && Array.isArray(response)) {
         roleList.value = response.map(role => ({
           label: role.roleName,

@@ -54,6 +54,18 @@ declare namespace Api {
 
   /** 用户类型 */
   namespace User {
+    /** 登录参数 */
+    interface LoginParams {
+      username: string
+      password: string
+    }
+
+    /** 登录响应 */
+    interface LoginResponse {
+      token: string
+      user: UserInfo
+    }
+
     /** 用户信息 */
     interface UserInfo {
       id: number
@@ -193,6 +205,144 @@ declare namespace Api {
       dictValue?: string
       sortOrder?: number
       status?: boolean
+    }
+  }
+
+  /** 角色类型 */
+  namespace Role {
+    /** 角色信息 */
+    interface Role {
+      id: number
+      roleName: string
+      roleCode: string
+      description: string
+      status: boolean
+      createBy?: string
+      createTime?: string
+      updateBy?: string
+      updateTime?: string
+    }
+
+    /** 角色列表响应 */
+    interface RoleListResponse {
+      records: Role[]
+      total: number
+      current: number
+      size: number
+    }
+
+    /** 创建角色参数 */
+    interface CreateRoleParams {
+      roleName: string
+      roleCode: string
+      description?: string
+      status: boolean
+    }
+
+    /** 更新角色参数 */
+    interface UpdateRoleParams {
+      roleName?: string
+      roleCode?: string
+      description?: string
+      status?: boolean
+    }
+
+    /** 菜单节点 */
+    interface MenuNode {
+      id: number
+      name: string
+      title: string
+      path: string
+      icon: string
+      sort: number
+      menuType: string
+      authName: string
+      authMark: string
+      authSort: number
+      isEnable: boolean
+      children: MenuNode[]
+    }
+
+    /** 角色菜单响应 */
+    interface RoleMenusResponse {
+      menuTree: MenuNode[]
+      selectedIds: number[]
+    }
+  }
+
+  /** 菜单类型 */
+  namespace Menu {
+    /** 菜单信息 */
+    interface Menu {
+      id: number
+      name: string
+      path: string
+      component: string
+      redirect: string
+      title: string
+      icon: string
+      sort: number
+      is_hide: boolean
+      is_keep_alive: boolean
+      is_iframe: boolean
+      link: string
+      is_enable: boolean
+      menu_type: string
+      parent_id?: number
+      roles: string
+      auth_name: string
+      auth_mark: string
+      auth_sort: number
+      children?: Menu[]
+    }
+
+    /** 菜单列表响应 */
+    interface MenuListResponse {
+      records: Menu[]
+      total: number
+      current: number
+      size: number
+    }
+
+    /** 创建菜单参数 */
+    interface CreateMenuParams {
+      name: string
+      path: string
+      title: string
+      icon?: string
+      sort?: number
+      isHide?: boolean
+      keepAlive?: boolean
+      isIframe?: boolean
+      link?: string
+      isEnable?: boolean
+      menuType?: string
+      parentId?: number
+      roles?: string
+      authName?: string
+      authMark?: string
+      authSort?: number
+    }
+
+    /** 更新菜单参数 */
+    interface UpdateMenuParams {
+      name?: string
+      path?: string
+      title?: string
+      icon?: string
+      sort?: number
+      isHide?: boolean
+      keepAlive?: boolean
+      isIframe?: boolean
+      link?: string
+      isEnable?: boolean
+      menuType?: string
+      parentId?: number
+      roles?: string
+      authName?: string
+      authMark?: string
+      authSort?: number
+      updateBy?: string
     }
   }
 }

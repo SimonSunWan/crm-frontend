@@ -23,15 +23,6 @@ export interface MenuLayout {
   description?: string
 }
 
-// 节日配置
-export interface FestivalConfig {
-  date: string
-  name: string
-  image: string
-  scrollText: string
-  isActive?: boolean
-}
-
 // 系统基础配置
 export interface SystemBasicConfig {
   // 系统名称
