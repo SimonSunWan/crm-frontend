@@ -226,7 +226,10 @@
       try {
         loading.value = true
 
-        await UserService.changePassword(pwdForm.password, pwdForm.newPassword)
+        await UserService.changePassword({
+          currentPassword: pwdForm.password,
+          newPassword: pwdForm.newPassword
+        })
 
         ElMessage.success('密码修改成功')
         isEditPwd.value = false

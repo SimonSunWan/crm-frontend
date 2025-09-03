@@ -21,13 +21,10 @@ export class UserService {
     })
   }
 
-  static changePassword(currentPassword: string, newPassword: string) {
+  static changePassword(data: { currentPassword: string; newPassword: string }) {
     return request.put({
       url: '/users/me/change-password',
-      data: {
-        current_password: currentPassword,
-        new_password: newPassword
-      }
+      data
     })
   }
 

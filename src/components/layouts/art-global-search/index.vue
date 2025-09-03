@@ -119,7 +119,7 @@
 
   // 键盘快捷键处理
   const handleKeydown = (event: KeyboardEvent) => {
-    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+    const isMac = /Mac|iPhone|iPod|iPad/.test(navigator.userAgent)
     const isCommandKey = isMac ? event.metaKey : event.ctrlKey
 
     if (isCommandKey && event.key.toLowerCase() === 'k') {
