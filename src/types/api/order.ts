@@ -6,6 +6,8 @@
 export interface OrderItem {
   id: string
   customer: string
+  vehicleModel: string
+  repairShop: string
   reporterName: string
   contactInfo: string
   reportDate: string
@@ -35,6 +37,8 @@ export interface OrderListData {
 // 创建工单参数
 export interface OrderCreateParams {
   customer: string
+  vehicleModel: string
+  repairShop: string
   reporterName: string
   contactInfo: string
   reportDate: string
@@ -54,6 +58,8 @@ export interface OrderCreateParams {
 // 更新工单参数
 export interface OrderUpdateParams {
   customer?: string
+  vehicleModel?: string
+  repairShop?: string
   reporterName?: string
   contactInfo?: string
   reportDate?: string

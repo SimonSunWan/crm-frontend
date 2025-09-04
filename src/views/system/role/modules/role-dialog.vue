@@ -137,8 +137,8 @@
 
       dialogVisible.value = false
       emit('submit')
-    } catch (error: any) {
-      ElMessage.error(error?.message || '操作失败')
+    } catch (error) {
+      console.error(error)
     } finally {
       loading.value = false
     }

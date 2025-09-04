@@ -50,7 +50,24 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
     return res.data.data as T
   } catch (error) {
     if (config.showErrorMessage !== false) {
-      ElMessage.error(error instanceof Error ? (error as any).response.data.message : '请求失败')
+      let errorMessage = '请求失败'
+
+      if (error instanceof Error) {
+        const responseData = (error as any).response?.data
+
+        if (responseData) {
+          // 兼容标准API错误格式 {message: "错误信息"}
+          if (responseData.message) {
+            errorMessage = responseData.message
+          }
+          // 兼容REST API错误格式 {detail: "错误信息"}
+          else if (responseData.detail) {
+            errorMessage = responseData.detail
+          }
+        }
+      }
+
+      ElMessage.error(errorMessage)
     }
     return Promise.reject(error)
   }

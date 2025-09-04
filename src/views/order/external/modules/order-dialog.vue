@@ -9,6 +9,18 @@
             <ElInput v-model="formData.customer" placeholder="请输入整车厂名称" />
           </ElFormItem>
         </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="车型" prop="vehicleModel">
+            <ElInput v-model="formData.vehicleModel" placeholder="请输入车型" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="维修店(4S)" prop="repairShop">
+            <ElInput v-model="formData.repairShop" placeholder="请输入维修店名称" />
+          </ElFormItem>
+        </ElCol>
       </ElRow>
 
       <!-- 报修人信息 -->
@@ -194,6 +206,8 @@
   const formData = reactive({
     id: '',
     customer: '',
+    vehicleModel: '',
+    repairShop: '',
     reporterName: '',
     contactInfo: '',
     reportDate: '',
@@ -223,6 +237,8 @@
   // 表单验证规则
   const rules: FormRules = {
     customer: [{ required: true, message: '请输入整车厂名称', trigger: 'blur' }],
+    vehicleModel: [{ required: true, message: '请输入车型', trigger: 'blur' }],
+    repairShop: [{ required: true, message: '请输入维修店名称', trigger: 'blur' }],
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
     reportDate: [{ required: true, message: '请选择报修日期', trigger: 'change' }],
@@ -246,6 +262,8 @@
     Object.assign(formData, {
       id: '',
       customer: '',
+      vehicleModel: '',
+      repairShop: '',
       reporterName: '',
       contactInfo: '',
       reportDate: '',
@@ -284,6 +302,8 @@
         try {
           const submitData = {
             customer: formData.customer,
+            vehicleModel: formData.vehicleModel,
+            repairShop: formData.repairShop,
             reporterName: formData.reporterName,
             contactInfo: formData.contactInfo,
             reportDate: formData.reportDate,

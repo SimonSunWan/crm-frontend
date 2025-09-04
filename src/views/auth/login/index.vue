@@ -159,6 +159,8 @@
 
       showLoginSuccessNotice(userInfo)
       router.push('/')
+    } catch (error) {
+      console.error(error)
     } finally {
       loading.value = false
       resetDragVerify()

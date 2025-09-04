@@ -10,6 +10,20 @@
             <span class="value">{{ orderData.customer || '-' }}</span>
           </div>
         </ElCol>
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">车型：</span>
+            <span class="value">{{ orderData.vehicleModel || '-' }}</span>
+          </div>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">维修店(4S)：</span>
+            <span class="value">{{ orderData.repairShop || '-' }}</span>
+          </div>
+        </ElCol>
       </ElRow>
 
       <!-- 报修人信息 -->

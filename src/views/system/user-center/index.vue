@@ -44,7 +44,7 @@
               <ElFormItem label="用户名" prop="userName">
                 <el-input v-model="form.userName" :disabled="!isEdit" />
               </ElFormItem>
-              <ElFormItem label="昵称" prop="nickName" class="right-input">
+              <ElFormItem label="姓名" prop="nickName" class="right-input">
                 <ElInput v-model="form.nickName" :disabled="!isEdit" />
               </ElFormItem>
             </ElRow>
@@ -145,7 +145,7 @@
       { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
     nickName: [
-      { required: true, message: '请输入昵称', trigger: 'blur' },
+      { required: true, message: '请输入姓名', trigger: 'blur' },
       { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
     email: [

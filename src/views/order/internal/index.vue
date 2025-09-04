@@ -9,6 +9,12 @@
         <ElFormItem label="整车厂">
           <ElInput v-model="searchForm.customer" placeholder="请输入整车厂名称" clearable />
         </ElFormItem>
+        <ElFormItem label="车型">
+          <ElInput v-model="searchForm.vehicleModel" placeholder="请输入车型" clearable />
+        </ElFormItem>
+        <ElFormItem label="维修店(4S)">
+          <ElInput v-model="searchForm.repairShop" placeholder="请输入维修店名称" clearable />
+        </ElFormItem>
         <ElFormItem label="报修人">
           <ElInput v-model="searchForm.reporterName" placeholder="请输入报修人姓名" clearable />
         </ElFormItem>
@@ -93,6 +99,8 @@
   const searchForm = ref({
     orderNo: '',
     customer: '',
+    vehicleModel: '',
+    repairShop: '',
     reporterName: '',
     dateRange: []
   })
@@ -121,6 +129,8 @@
     { type: 'selection' as const, width: 55 },
     { prop: 'id', label: '工单编号', width: 150 },
     { prop: 'customer', label: '整车厂', width: 120 },
+    { prop: 'vehicleModel', label: '车型', width: 120 },
+    { prop: 'repairShop', label: '维修店(4S)', width: 150 },
     { prop: 'reporterName', label: '报修人', width: 100 },
     { prop: 'contactInfo', label: '联系方式', width: 130 },
     { prop: 'reportDate', label: '报修日期', width: 120 },
@@ -184,7 +194,14 @@
   }
 
   const resetSearch = () => {
-    searchForm.value = { orderNo: '', customer: '', reporterName: '', dateRange: [] }
+    searchForm.value = {
+      orderNo: '',
+      customer: '',
+      vehicleModel: '',
+      repairShop: '',
+      reporterName: '',
+      dateRange: []
+    }
     getData()
   }
 

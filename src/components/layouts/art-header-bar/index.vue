@@ -211,7 +211,7 @@
     })
   })
 
-  // 获取头像文字(取昵称或用户名的第一个字符)
+  // 获取头像文字(取姓名或用户名的第一个字符)
   const getAvatarText = (text: string): string => {
     return text ? text.charAt(0) : '用户'
   }
