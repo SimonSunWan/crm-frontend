@@ -44,18 +44,16 @@
   import { useAuth } from '@/composables/useAuth'
   import { UserService } from '@/api/usersApi'
   import type { ApiResponse } from '@/utils/table/tableCache'
+  import type { UserListItem } from '@/types/api'
 
   defineOptions({ name: 'User' })
-
-  // 类型定义
-  type UserListItem = Api.User.UserListItem
 
   // API 服务
   const { getUserList, deleteUser } = UserService
   const { hasAuth } = useAuth()
 
   // 响应式数据
-  const dialogType = ref<Form.DialogType>('add')
+  const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
   const currentUserData = ref<Partial<UserListItem>>({})
 
@@ -206,7 +204,7 @@
     getData()
   }
 
-  const showDialog = (type: Form.DialogType, row?: UserListItem): void => {
+  const showDialog = (type: 'add' | 'edit', row?: UserListItem): void => {
     dialogType.value = type
     currentUserData.value = row || {}
     nextTick(() => {

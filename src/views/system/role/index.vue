@@ -50,9 +50,7 @@
 
   // API 服务
   import { RoleService } from '@/api/rolesApi'
-
-  // 类型定义
-  type Role = Api.Role.Role
+  import type { Role } from '@/types/api'
 
   defineOptions({ name: 'Role' })
 

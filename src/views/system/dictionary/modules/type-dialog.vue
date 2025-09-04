@@ -36,10 +36,9 @@
 
   // API 服务
   import { DictionaryService } from '@/api/dictionaryApi'
+  import type { DictionaryTypeItem } from '@/types/api'
 
   defineOptions({ name: 'TypeDialog' })
-
-  type DictionaryTypeItem = Api.Dictionary.DictionaryTypeItem
 
   const { createDictionaryType, updateDictionaryType } = DictionaryService
 

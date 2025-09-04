@@ -59,10 +59,11 @@
 
   // API 服务
   import { RoleService } from '@/api/rolesApi'
+  import type { Role, MenuNode } from '@/types/api'
 
   interface Props {
     visible: boolean
-    roleData?: Api.Role.Role | null
+    roleData?: Role | null
   }
 
   interface Emits {
@@ -79,7 +80,7 @@
   const treeRef = ref()
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
-  const menuTreeData = ref<Api.Role.MenuNode[]>([])
+  const menuTreeData = ref<MenuNode[]>([])
   const selectedMenuIds = ref<number[]>([])
 
   // 计算属性
@@ -132,7 +133,7 @@
   )
 
   // 加载角色菜单权限
-  const loadRoleMenus = async (role: Api.Role.Role) => {
+  const loadRoleMenus = async (role: Role) => {
     try {
       const response = await RoleService.getRoleMenus(role.id)
 
@@ -210,9 +211,9 @@
   }
 
   // 获取所有节点键值
-  const getAllNodeKeys = (nodes: Api.Role.MenuNode[]): number[] => {
+  const getAllNodeKeys = (nodes: MenuNode[]): number[] => {
     const keys: number[] = []
-    const traverse = (nodeList: Api.Role.MenuNode[]) => {
+    const traverse = (nodeList: MenuNode[]) => {
       nodeList.forEach(node => {
         if (node.id) {
           keys.push(node.id)

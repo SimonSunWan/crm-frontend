@@ -1,21 +1,29 @@
 import request from '@/utils/http'
+import type {
+  UserInfo,
+  UserListData,
+  UserListItem,
+  CreateUserParams,
+  UpdateUserParams,
+  AvatarUploadResponse
+} from '@/types/api'
 
 export class UserService {
-  static login(params: Api.User.LoginParams) {
-    return request.post<Api.User.LoginResponse>({
+  static login(params: Api.Auth.LoginParams) {
+    return request.post<Api.Auth.LoginResponse>({
       url: '/auth/login',
       data: params
     })
   }
 
   static getUserInfo() {
-    return request.get<Api.User.UserInfo>({
+    return request.get<UserInfo>({
       url: '/users/me'
     })
   }
 
-  static updateCurrentUser(data: Api.User.UpdateUserParams) {
-    return request.put<Api.User.UserInfo>({
+  static updateCurrentUser(data: UpdateUserParams) {
+    return request.put<UserInfo>({
       url: '/users/me',
       data
     })
@@ -29,27 +37,27 @@ export class UserService {
   }
 
   static getUserList(params: Api.Common.PaginatingSearchParams) {
-    return request.get<Api.User.UserListData>({
+    return request.get<UserListData>({
       url: '/users/',
       params
     })
   }
 
-  static createUser(data: Api.User.CreateUserParams) {
-    return request.post<Api.User.UserListItem>({
+  static createUser(data: CreateUserParams) {
+    return request.post<UserListItem>({
       url: '/users/',
       data
     })
   }
 
   static getUserById(id: number) {
-    return request.get<Api.User.UserListItem>({
+    return request.get<UserListItem>({
       url: `/users/${id}`
     })
   }
 
-  static updateUser(id: number, data: Api.User.UpdateUserParams) {
-    return request.put<Api.User.UserListItem>({
+  static updateUser(id: number, data: UpdateUserParams) {
+    return request.put<UserListItem>({
       url: `/users/${id}`,
       data
     })
@@ -64,7 +72,7 @@ export class UserService {
   static uploadAvatar(file: File) {
     const formData = new FormData()
     formData.append('avatar', file)
-    return request.post<Api.User.AvatarUploadResponse>({
+    return request.post<AvatarUploadResponse>({
       url: '/users/me/avatar',
       data: formData,
       headers: {

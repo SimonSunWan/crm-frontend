@@ -1,5 +1,6 @@
 import { AppRouteRecord } from '@/types/router'
 import request from '@/utils/http'
+import type { Menu, MenuListResponse, CreateMenuParams, UpdateMenuParams } from '@/types/api'
 
 export class MenuService {
   static getMenus(params?: {
@@ -9,39 +10,39 @@ export class MenuService {
     path?: string
     menuType?: string
   }) {
-    return request.get<Api.Menu.MenuListResponse>({
+    return request.get<MenuListResponse>({
       url: '/menus/',
       params
     })
   }
 
   static getMenuTree() {
-    return request.get<Api.Menu.Menu[]>({
+    return request.get<Menu[]>({
       url: '/menus/tree'
     })
   }
 
   static getNavigationMenus() {
-    return request.get<Api.Menu.Menu[]>({
+    return request.get<Menu[]>({
       url: '/menus/navigation'
     })
   }
 
   static getMenu(id: number) {
-    return request.get<Api.Menu.Menu>({
+    return request.get<Menu>({
       url: `/menus/${id}`
     })
   }
 
-  static createMenu(data: Api.Menu.CreateMenuParams) {
-    return request.post<Api.Menu.Menu>({
+  static createMenu(data: CreateMenuParams) {
+    return request.post<Menu>({
       url: '/menus/',
       data
     })
   }
 
-  static updateMenu(id: number, data: Api.Menu.UpdateMenuParams) {
-    return request.put<Api.Menu.Menu>({
+  static updateMenu(id: number, data: UpdateMenuParams) {
+    return request.put<Menu>({
       url: `/menus/${id}`,
       data
     })

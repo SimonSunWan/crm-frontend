@@ -41,11 +41,12 @@
   // Element Plus 组件和类型
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
+  import type { Role, CreateRoleParams } from '@/types/api'
 
   interface Props {
     visible: boolean
     type: 'add' | 'edit'
-    roleData?: Partial<Api.Role.Role>
+    roleData?: Partial<Role>
   }
 
   interface Emits {
@@ -61,7 +62,7 @@
   const loading = ref(false)
 
   // 表单数据
-  const formData = reactive<Api.Role.CreateRoleParams>({
+  const formData = reactive<CreateRoleParams>({
     roleName: '',
     roleCode: '',
     description: '',

@@ -3,27 +3,16 @@
     <!-- 搜索区域 -->
     <ElCard class="search-card" shadow="never">
       <ElForm :model="searchForm" inline>
-        <ElFormItem label="订单编号">
-          <ElInput v-model="searchForm.orderNo" placeholder="请输入订单编号" clearable />
+        <ElFormItem label="工单编号">
+          <ElInput v-model="searchForm.orderNo" placeholder="请输入工单编号" clearable />
         </ElFormItem>
-        <ElFormItem label="客户名称">
-          <ElInput v-model="searchForm.customerName" placeholder="请输入客户名称" clearable />
+        <ElFormItem label="整车厂">
+          <ElInput v-model="searchForm.customer" placeholder="请输入整车厂名称" clearable />
         </ElFormItem>
-        <ElFormItem label="订单状态">
-          <ElSelect
-            v-model="searchForm.status"
-            placeholder="请选择状态"
-            clearable
-            style="width: 200px"
-          >
-            <ElOption label="待确认" value="pending" />
-            <ElOption label="已确认" value="confirmed" />
-            <ElOption label="生产中" value="producing" />
-            <ElOption label="已完成" value="completed" />
-            <ElOption label="已取消" value="cancelled" />
-          </ElSelect>
+        <ElFormItem label="报修人">
+          <ElInput v-model="searchForm.reporterName" placeholder="请输入报修人姓名" clearable />
         </ElFormItem>
-        <ElFormItem label="下单时间">
+        <ElFormItem label="报修时间">
           <ElDatePicker
             v-model="searchForm.dateRange"
             type="daterange"
@@ -45,8 +34,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton @click="showDialog('add')" v-ripple>新增订单</ElButton>
-          <ElButton @click="handleExport" v-ripple>导出数据</ElButton>
+          <ElButton @click="showDialog('add')" v-ripple>新增保内工单</ElButton>
         </template>
       </ArtTableHeader>
 
@@ -66,6 +54,8 @@
         :order-data="currentOrderData"
         @submit="handleDialogSubmit"
       />
+
+      <OrderViewDialog v-model:visible="viewDialogVisible" :order-data="currentOrderData" />
     </ElCard>
   </div>
 </template>
@@ -74,171 +64,38 @@
   // 组件导入
   import { Search, Refresh } from '@element-plus/icons-vue'
   import OrderDialog from './modules/order-dialog.vue'
+  import OrderViewDialog from './modules/order-view-dialog.vue'
+  import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
 
   // Element Plus 组件
   import { ElMessage, ElMessageBox } from 'element-plus'
 
   // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
+  import { useDictionary } from '@/composables/useDictionary'
   import type { ColumnOption } from '@/types/component'
+  import type { OrderItem } from '@/types/api'
+  import { InternalOrderService } from '@/api/orderApi'
 
   defineOptions({ name: 'Order' })
-
-  // 类型定义
-  interface OrderItem {
-    id: number
-    orderNo: string
-    customerName: string
-    customerPhone: string
-    productName: string
-    quantity: number
-    unitPrice: number
-    totalAmount: number
-    status: string
-    orderDate: string
-    deliveryDate: string
-    remark: string
-  }
 
   // 响应式数据
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
+  const viewDialogVisible = ref(false)
   const currentOrderData = ref<Partial<OrderItem>>({})
   const selectedRows = ref<OrderItem[]>([])
+
+  // 字典相关
+  const { getDictionaryData, getDictionaryLabel } = useDictionary()
 
   // 搜索表单
   const searchForm = ref({
     orderNo: '',
-    customerName: '',
-    status: '',
+    customer: '',
+    reporterName: '',
     dateRange: []
   })
-
-  // 模拟数据
-  const mockData: OrderItem[] = [
-    {
-      id: 1,
-      orderNo: 'ORD202401001',
-      customerName: '张三',
-      customerPhone: '13800138001',
-      productName: '高端服务器',
-      quantity: 2,
-      unitPrice: 15000,
-      totalAmount: 30000,
-      status: 'confirmed',
-      orderDate: '2024-01-15',
-      deliveryDate: '2024-02-15',
-      remark: '客户要求高质量配置'
-    },
-    {
-      id: 2,
-      orderNo: 'ORD202401002',
-      customerName: '李四',
-      customerPhone: '13800138002',
-      productName: '网络设备',
-      quantity: 5,
-      unitPrice: 2000,
-      totalAmount: 10000,
-      status: 'producing',
-      orderDate: '2024-01-18',
-      deliveryDate: '2024-02-18',
-      remark: '标准配置即可'
-    },
-    {
-      id: 3,
-      orderNo: 'ORD202401003',
-      customerName: '王五',
-      customerPhone: '13800138003',
-      productName: '软件授权',
-      quantity: 10,
-      unitPrice: 500,
-      totalAmount: 5000,
-      status: 'completed',
-      orderDate: '2024-01-20',
-      deliveryDate: '2024-01-25',
-      remark: '已交付客户'
-    }
-  ]
-
-  // 表格列配置
-  const columns = ref<ColumnOption<OrderItem>[]>([
-    { type: 'selection' as const, width: 55 },
-    { prop: 'orderNo', label: '订单编号', width: 150 },
-    { prop: 'customerName', label: '客户姓名', width: 120 },
-    { prop: 'customerPhone', label: '联系电话', width: 130 },
-    { prop: 'productName', label: '产品名称', width: 150 },
-    { prop: 'quantity', label: '数量', width: 80 },
-    {
-      prop: 'unitPrice',
-      label: '单价',
-      width: 100,
-      formatter: (row: OrderItem) => `¥${row.unitPrice}`
-    },
-    {
-      prop: 'totalAmount',
-      label: '总金额',
-      width: 120,
-      formatter: (row: OrderItem) => `¥${row.totalAmount}`
-    },
-    {
-      prop: 'status',
-      label: '订单状态',
-      width: 120,
-      formatter: (row: OrderItem) => {
-        const statusMap: Record<string, { type: string; text: string }> = {
-          pending: { type: 'info', text: '待确认' },
-          confirmed: { type: 'warning', text: '已确认' },
-          producing: { type: 'primary', text: '生产中' },
-          completed: { type: 'success', text: '已完成' },
-          cancelled: { type: 'danger', text: '已取消' }
-        }
-        const status = statusMap[row.status] || { type: 'info', text: '未知' }
-        return h(ElTag, { type: status.type as any }, () => status.text)
-      }
-    },
-    { prop: 'orderDate', label: '下单时间', width: 120 },
-    { prop: 'deliveryDate', label: '交付时间', width: 120 },
-    { prop: 'remark', label: '备注', width: 200 },
-    {
-      label: '操作',
-      width: 200,
-      fixed: 'right' as const,
-      formatter: (row: OrderItem) => {
-        return h('div', { class: 'action-buttons' }, [
-          h(
-            ElButton,
-            {
-              type: 'primary',
-              link: true,
-              size: 'small',
-              onClick: () => showDialog('edit', row)
-            },
-            () => '编辑'
-          ),
-          h(
-            ElButton,
-            {
-              type: 'success',
-              link: true,
-              size: 'small',
-              onClick: () => handleStatusChange(row)
-            },
-            () => '状态变更'
-          ),
-          h(
-            ElButton,
-            {
-              type: 'danger',
-              link: true,
-              size: 'small',
-              onClick: () => handleDelete(row)
-            },
-            () => '删除'
-          )
-        ])
-      }
-    }
-  ])
 
   const {
     columnChecks,
@@ -251,14 +108,75 @@
     refreshData
   } = useTable<OrderItem>({
     core: {
-      apiFn: () => Promise.resolve({ data: mockData, total: mockData.length }),
+      apiFn: InternalOrderService.getOrderList,
       apiParams: {
-        current: 1,
-        size: 20,
         ...searchForm.value
-      }
+      },
+      immediate: false
     }
   })
+
+  // 表格列配置
+  const columns = ref<ColumnOption<OrderItem>[]>([
+    { type: 'selection' as const, width: 55 },
+    { prop: 'id', label: '工单编号', width: 150 },
+    { prop: 'customer', label: '整车厂', width: 120 },
+    { prop: 'reporterName', label: '报修人', width: 100 },
+    { prop: 'contactInfo', label: '联系方式', width: 130 },
+    { prop: 'reportDate', label: '报修日期', width: 120 },
+    {
+      prop: 'projectType',
+      label: '项目类型',
+      width: 100,
+      formatter: (row: OrderItem) => {
+        return getDictionaryLabel('ORDER_PROJECT_TYPE', row.projectType)
+      }
+    },
+    { prop: 'projectStage', label: '项目阶段', width: 100 },
+    { prop: 'licensePlate', label: '车牌号', width: 100 },
+    { prop: 'vinNumber', label: '车架号', width: 180 },
+    {
+      prop: 'mileage',
+      label: '里程(KM)',
+      width: 100,
+      formatter: (row: OrderItem) => (row.mileage ? `${row.mileage}` : '-')
+    },
+    { prop: 'vehicleLocation', label: '车辆位置', width: 150 },
+    { prop: 'packCode', label: 'PACK码', width: 100 },
+    {
+      prop: 'underWarranty',
+      label: '保修状态',
+      width: 100,
+      formatter: (row: OrderItem) => {
+        return h(ElTag, { type: row.underWarranty ? 'success' : 'danger' }, () =>
+          row.underWarranty ? '保内' : '保外'
+        )
+      }
+    },
+    { prop: 'faultDescription', label: '故障描述', width: 200 },
+    { prop: 'createTime', label: '创建时间', width: 160 },
+    {
+      label: '操作',
+      width: 180,
+      fixed: 'right' as const,
+      formatter: (row: OrderItem) => {
+        return h('div', { class: 'action-buttons' }, [
+          h(ArtButtonTable, {
+            type: 'view',
+            onClick: () => showViewDialog(row)
+          }),
+          h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => showDialog('edit', row)
+          }),
+          h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => handleDelete(row)
+          })
+        ])
+      }
+    }
+  ])
 
   // 搜索处理
   const handleSearch = () => {
@@ -266,7 +184,7 @@
   }
 
   const resetSearch = () => {
-    searchForm.value = { orderNo: '', customerName: '', status: '', dateRange: [] }
+    searchForm.value = { orderNo: '', customer: '', reporterName: '', dateRange: [] }
     getData()
   }
 
@@ -277,10 +195,15 @@
     dialogVisible.value = true
   }
 
+  const showViewDialog = (row: OrderItem) => {
+    currentOrderData.value = { ...row }
+    viewDialogVisible.value = true
+  }
+
   const handleDialogSubmit = () => {
     dialogVisible.value = false
     refreshData()
-    ElMessage.success(`${dialogType.value === 'add' ? '新增' : '编辑'}订单成功`)
+    ElMessage.success(`${dialogType.value === 'add' ? '新增' : '编辑'}保内工单成功`)
   }
 
   // 其他操作
@@ -288,28 +211,24 @@
     selectedRows.value = rows
   }
 
-  const handleStatusChange = (row: OrderItem) => {
-    ElMessage.info(`变更订单状态：${row.orderNo}`)
-  }
-
   const handleDelete = async (row: OrderItem) => {
     try {
-      await ElMessageBox.confirm(`确定要删除订单 ${row.orderNo} 吗？`, '提示', {
+      await ElMessageBox.confirm(`确定要删除保内工单 ${row.id} 吗？`, '提示', {
         type: 'warning'
       })
+      await InternalOrderService.deleteOrder(row.id)
       ElMessage.success('删除成功')
       refreshData()
-    } catch {
-      // 用户取消删除
+    } catch (error) {
+      if (error !== 'cancel') {
+        ElMessage.error('删除失败')
+      }
     }
   }
 
-  const handleExport = () => {
-    ElMessage.info('导出功能开发中...')
-  }
-
   // 初始化
-  onMounted(() => {
+  onMounted(async () => {
+    await getDictionaryData('ORDER_PROJECT_TYPE')
     getData()
   })
 </script>

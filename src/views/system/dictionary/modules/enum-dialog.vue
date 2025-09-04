@@ -36,11 +36,9 @@
 
   // API 服务
   import { DictionaryService } from '@/api/dictionaryApi'
+  import type { DictionaryTypeItem, DictionaryEnumItem } from '@/types/api'
 
   defineOptions({ name: 'EnumDialog' })
-
-  type DictionaryTypeItem = Api.Dictionary.DictionaryTypeItem
-  type DictionaryEnumItem = Api.Dictionary.DictionaryEnumItem
 
   const { createDictionaryEnum, updateDictionaryEnum } = DictionaryService
 
