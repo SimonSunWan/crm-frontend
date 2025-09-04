@@ -80,6 +80,7 @@
 
   // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
+  import type { ColumnOption } from '@/types/component'
 
   defineOptions({ name: 'Order' })
 
@@ -160,8 +161,8 @@
   ]
 
   // 表格列配置
-  const columns = ref([
-    { type: 'selection', width: 55 },
+  const columns = ref<ColumnOption<OrderItem>[]>([
+    { type: 'selection' as const, width: 55 },
     { prop: 'orderNo', label: '订单编号', width: 150 },
     { prop: 'customerName', label: '客户姓名', width: 120 },
     { prop: 'customerPhone', label: '联系电话', width: 130 },
@@ -171,19 +172,19 @@
       prop: 'unitPrice',
       label: '单价',
       width: 100,
-      render: (row: OrderItem) => `¥${row.unitPrice}`
+      formatter: (row: OrderItem) => `¥${row.unitPrice}`
     },
     {
       prop: 'totalAmount',
       label: '总金额',
       width: 120,
-      render: (row: OrderItem) => `¥${row.totalAmount}`
+      formatter: (row: OrderItem) => `¥${row.totalAmount}`
     },
     {
       prop: 'status',
       label: '订单状态',
       width: 120,
-      render: (row: OrderItem) => {
+      formatter: (row: OrderItem) => {
         const statusMap: Record<string, { type: string; text: string }> = {
           pending: { type: 'info', text: '待确认' },
           confirmed: { type: 'warning', text: '已确认' },
@@ -201,8 +202,8 @@
     {
       label: '操作',
       width: 200,
-      fixed: 'right',
-      render: (row: OrderItem) => {
+      fixed: 'right' as const,
+      formatter: (row: OrderItem) => {
         return h('div', { class: 'action-buttons' }, [
           h(
             ElButton,
