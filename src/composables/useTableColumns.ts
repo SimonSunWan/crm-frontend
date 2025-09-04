@@ -36,7 +36,7 @@ export interface DynamicColumnConfig<T = any> {
   /**
    * 新增列
    * @param column 列配置
-   * @param index 可选的插入位置，默认末尾
+   * @param index 可选的插入位置, 默认末尾
    */
   addColumn: (column: ColumnOption<T>, index?: number) => void
   /**
@@ -47,7 +47,7 @@ export interface DynamicColumnConfig<T = any> {
   /**
    * 切换列显示状态
    * @param prop 列的唯一标识
-   * @param visible 可选的显示状态，默认取反
+   * @param visible 可选的显示状态, 默认取反
    */
   toggleColumn: (prop: string, visible?: boolean) => void
 
@@ -94,7 +94,7 @@ export function useTableColumns<T = any>(
   const dynamicColumns = ref<ColumnOption<T>[]>(columnsFactory())
   const columnChecks = ref<ColumnOption<T>[]>(getColumnChecks(dynamicColumns.value))
 
-  // 当 dynamicColumns 变动时，重新生成 columnChecks 且保留已存在的 checked 状态
+  // 当 dynamicColumns 变动时, 重新生成 columnChecks 且保留已存在的 checked 状态
   watch(
     dynamicColumns,
     newCols => {
@@ -108,7 +108,7 @@ export function useTableColumns<T = any>(
     { deep: true }
   )
 
-  // 当前显示列（基于 columnChecks 的 checked）
+  // 当前显示列(基于 columnChecks 的 checked)
   const columns = computed(() => {
     const colMap = new Map(dynamicColumns.value.map(c => [getColumnKey(c), c]))
     return columnChecks.value

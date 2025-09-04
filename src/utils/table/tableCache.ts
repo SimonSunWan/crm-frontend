@@ -28,7 +28,7 @@ export interface CacheItem<T> {
   response: ApiResponse<T>
   timestamp: number
   params: string
-  /* 缓存标签,用于分组管理 */
+  /* 缓存标签, 用于分组管理 */
   tags: Set<string>
   /* 访问次数(用于 LRU 算法) */
   accessCount: number
@@ -44,7 +44,7 @@ export class TableCache<T> {
   private enableLog: boolean
 
   constructor(cacheTime = 5 * 60 * 1000, maxSize = 50, enableLog = false) {
-    /* 默认5分钟,最多50条缓存 */
+    /* 默认5分钟, 最多50条缓存 */
     this.cacheTime = cacheTime
     this.maxSize = maxSize
     this.enableLog = enableLog
@@ -55,13 +55,13 @@ export class TableCache<T> {
     // 日志功能已禁用
   }
 
-  /* 🔧 优化:生成稳定的缓存键 */
+  /* 🔧 优化: 生成稳定的缓存键 */
   private generateKey(params: unknown): string {
     if (!params || typeof params !== 'object') {
       return JSON.stringify(params)
     }
 
-    /* 对象属性排序后再序列化,确保键的稳定性 */
+    /* 对象属性排序后再序列化, 确保键的稳定性 */
     const sortedParams = this.sortObjectKeys(params as Record<string, unknown>)
     return JSON.stringify(sortedParams)
   }
@@ -83,7 +83,7 @@ export class TableCache<T> {
     return result
   }
 
-  /* 🔧 优化:增强类型安全性 */
+  /* 🔧 优化: 增强类型安全性 */
   private generateTags(params: Record<string, unknown>): Set<string> {
     const tags = new Set<string>()
 
@@ -105,13 +105,13 @@ export class TableCache<T> {
 
     // 添加分页标签
     tags.add(`pagination:${params.size || 10}`)
-    /* 添加通用分页标签,用于清理所有分页缓存 */
+    /* 添加通用分页标签, 用于清理所有分页缓存 */
     tags.add('pagination')
 
     return tags
   }
 
-  /* 🔧 优化:LRU 缓存清理 */
+  /* 🔧 优化: LRU 缓存清理 */
   private evictLRU(): void {
     if (this.cache.size <= this.maxSize) return
 

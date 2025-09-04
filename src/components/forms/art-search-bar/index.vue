@@ -159,15 +159,15 @@
     key: string
     /** 表单项的标签文本 */
     label: string
-    /** 表单项标签的宽度，会覆盖 Form 的 labelWidth */
+    /** 表单项标签的宽度, 会覆盖 Form 的 labelWidth */
     labelWidth?: string | number
-    /** 表单项类型，可以是预定义的字符串类型或自定义组件 */
+    /** 表单项类型, 可以是预定义的字符串类型或自定义组件 */
     type: keyof typeof componentMap | string | (() => VNode)
     /** 是否隐藏该表单项 */
     hidden?: boolean
-    /** 表单项占据的列宽，基于24格栅格系统 */
+    /** 表单项占据的列宽, 基于24格栅格系统 */
     span?: number
-    /** 选项数据，用于 select、checkbox-group、radio-group 等 */
+    /** 选项数据, 用于 select、checkbox-group、radio-group 等 */
     options?: Record<string, any>
     /** 传递给表单项组件的属性 */
     props?: Record<string, any>
@@ -182,21 +182,21 @@
   interface SearchBarProps {
     /** 表单数据 */
     items: SearchFormItem[]
-    /** 每列的宽度（基于 24 格布局） */
+    /** 每列的宽度(基于 24 格布局) */
     span?: number
     /** 表单控件间隙 */
     gutter?: number
     /** 展开/收起 */
     isExpand?: boolean
-    /** 默认是否展开（仅在 showExpand 为 true 且 isExpand 为 false 时生效） */
+    /** 默认是否展开(仅在 showExpand 为 true 且 isExpand 为 false 时生效) */
     defaultExpanded?: boolean
     /** 表单域标签的位置 */
     labelPosition?: 'left' | 'right' | 'top'
     /** 文字宽度 */
     labelWidth?: string | number
-    /** 是否需要展示，收起 */
+    /** 是否需要展示, 收起 */
     showExpand?: boolean
-    /** 按钮靠左对齐限制（表单项小于等于该值时） */
+    /** 按钮靠左对齐限制(表单项小于等于该值时) */
     buttonLeftLimit?: number
     /** 是否显示重置按钮 */
     showReset?: boolean
@@ -316,10 +316,10 @@
    * 处理重置事件
    */
   const handleReset = () => {
-    // 重置表单字段（UI 层）
+    // 重置表单字段(UI 层)
     formInstance.value?.resetFields()
 
-    // 清空所有表单项值（包含隐藏项）
+    // 清空所有表单项值(包含隐藏项)
     Object.assign(
       modelValue.value,
       Object.fromEntries(props.items.map(({ key }) => [key, undefined]))

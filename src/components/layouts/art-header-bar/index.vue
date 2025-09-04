@@ -204,14 +204,14 @@
   // 监听头像更新事件
   onMounted(() => {
     mittBus.on('user-avatar-updated', () => {
-      // 头像更新时，强制重新渲染
+      // 头像更新时, 强制重新渲染
       nextTick(() => {
         // 可以在这里添加一些更新逻辑
       })
     })
   })
 
-  // 获取头像文字（取昵称或用户名的第一个字符）
+  // 获取头像文字(取昵称或用户名的第一个字符)
   const getAvatarText = (text: string): string => {
     return text ? text.charAt(0) : '用户'
   }
@@ -327,7 +327,7 @@
 
   /**
    * 刷新页面
-   * @param {number} time - 延迟时间,默认为0毫秒
+   * @param {number} time - 延迟时间, 默认为0毫秒
    */
   const reload = (time: number = 0): void => {
     setTimeout(() => {

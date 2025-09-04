@@ -56,7 +56,7 @@ export function hexToRgba(hex: string, opacity: number): RgbaResult {
   // 移除可能存在的 # 前缀并转换为大写
   let cleanHex = hex.trim().replace(/^#/, '').toUpperCase()
 
-  /* 如果是缩写形式(如 FFF),转换为完整形式 */
+  /* 如果是缩写形式(如 FFF), 转换为完整形式 */
   if (cleanHex.length === 3) {
     cleanHex = cleanHex
       .split('')

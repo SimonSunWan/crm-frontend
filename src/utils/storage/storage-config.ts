@@ -24,7 +24,7 @@ export class StorageConfig {
   /**
    * 生成版本化的存储键名
    * @param storeId 存储ID
-   * @param version 版本号,默认使用当前版本
+   * @param version 版本号, 默认使用当前版本
    */
   static generateStorageKey(storeId: string, version: string = this.CURRENT_VERSION): string {
     return `${this.STORAGE_PREFIX}${version}-${storeId}`
@@ -32,7 +32,7 @@ export class StorageConfig {
 
   /**
    * 生成旧版本的存储键名(不带分隔符)
-   * @param version 版本号,默认使用当前版本
+   * @param version 版本号, 默认使用当前版本
    */
   static generateLegacyKey(version: string = this.CURRENT_VERSION): string {
     return `${this.STORAGE_PREFIX}${version}`

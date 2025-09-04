@@ -106,7 +106,7 @@ class StorageCompatibilityManager {
    * 验证存储数据完整性
    */
   validateStorageData(): boolean {
-    /* 如果在登录页面,跳过验证 */
+    /* 如果在登录页面, 跳过验证 */
     if (this.isOnLoginPage()) {
       return true
     }

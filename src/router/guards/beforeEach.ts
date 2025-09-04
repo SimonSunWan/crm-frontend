@@ -17,7 +17,7 @@ import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { UserService } from '@/api/usersApi'
 
-/* 前端权限模式 loading 关闭延时,提升用户体验 */
+/* 前端权限模式 loading 关闭延时, 提升用户体验 */
 const LOADING_DELAY = 100
 
 // 是否已注册动态路由
@@ -119,7 +119,7 @@ async function handleRouteGuard(
     return
   }
 
-  /* 未匹配到路由,跳转到 404 */
+  /* 未匹配到路由, 跳转到 404 */
   next(RoutesAlias.Exception404)
 }
 
@@ -231,7 +231,7 @@ async function processBackendMenu(router: Router): Promise<void> {
 function filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
   return menuList
     .map(item => {
-      /* 如果有子菜单,先递归过滤子菜单 */
+      /* 如果有子菜单, 先递归过滤子菜单 */
       if (item.children && item.children.length > 0) {
         const filteredChildren = filterEmptyMenus(item.children)
         return {

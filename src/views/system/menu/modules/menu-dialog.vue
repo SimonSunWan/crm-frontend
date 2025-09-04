@@ -249,7 +249,7 @@
       isEdit.value = false
       // 先重置表单
       resetForm()
-      // 然后设置父菜单ID（如果是新增子菜单）
+      // 然后设置父菜单ID(如果是新增子菜单)
       if (props.isSubMenu && props.menuData) {
         formData.parentId = props.menuData.id || 0
         menuType.value = 'menu'

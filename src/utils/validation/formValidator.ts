@@ -27,14 +27,14 @@ export function trimSpaces(value: string): string {
 /**
  * 验证手机号码(中国大陆)
  * @param value 手机号码字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validatePhone(value: string): boolean {
   if (!value || typeof value !== 'string') {
     return false
   }
 
-  /* 中国大陆手机号码:1开头,第二位为3-9,共11位数字 */
+  /* 中国大陆手机号码: 1开头, 第二位为3-9, 共11位数字 */
   const phoneRegex = /^1[3-9]\d{9}$/
   return phoneRegex.test(value.trim())
 }
@@ -42,14 +42,14 @@ export function validatePhone(value: string): boolean {
 /**
  * 验证固定电话号码(中国大陆)
  * @param value 电话号码字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateTelPhone(value: string): boolean {
   if (!value || typeof value !== 'string') {
     return false
   }
 
-  /* 支持格式:区号-号码,如:010-12345678、0755-1234567 */
+  /* 支持格式: 区号-号码, 如: 010-12345678、0755-1234567 */
   const telRegex = /^0\d{2,3}-?\d{7,8}$/
   return telRegex.test(value.trim().replace(/\s+/g, ''))
 }
@@ -57,15 +57,15 @@ export function validateTelPhone(value: string): boolean {
 /**
  * 验证用户账号
  * @param value 账号字符串
- * @returns 返回验证结果,true表示格式正确
- * @description 规则:字母开头,5-20位,支持字母、数字、下划线
+ * @returns 返回验证结果, true表示格式正确
+ * @description 规则: 字母开头, 5-20位, 支持字母、数字、下划线
  */
 export function validateAccount(value: string): boolean {
   if (!value || typeof value !== 'string') {
     return false
   }
 
-  /* 字母开头,5-20位,支持字母、数字、下划线 */
+  /* 字母开头, 5-20位, 支持字母、数字、下划线 */
   const accountRegex = /^[a-zA-Z][a-zA-Z0-9_]{4,19}$/
   return accountRegex.test(value.trim())
 }
@@ -73,8 +73,8 @@ export function validateAccount(value: string): boolean {
 /**
  * 验证密码
  * @param value 密码字符串
- * @returns 返回验证结果,true表示格式正确
- * @description 规则:6-20位,必须包含字母和数字
+ * @returns 返回验证结果, true表示格式正确
+ * @description 规则: 6-20位, 必须包含字母和数字
  */
 export function validatePassword(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -98,8 +98,8 @@ export function validatePassword(value: string): boolean {
 /**
  * 验证强密码
  * @param value 密码字符串
- * @returns 返回验证结果,true表示格式正确
- * @description 规则:8-20位,必须包含大写字母、小写字母、数字和特殊字符
+ * @returns 返回验证结果, true表示格式正确
+ * @description 规则: 8-20位, 必须包含大写字母、小写字母、数字和特殊字符
  */
 export function validateStrongPassword(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -113,7 +113,7 @@ export function validateStrongPassword(value: string): boolean {
     return false
   }
 
-  /* 必须包含:大写字母、小写字母、数字、特殊字符 */
+  /* 必须包含: 大写字母、小写字母、数字、特殊字符 */
   const hasUpperCase = /[A-Z]/.test(trimmedValue)
   const hasLowerCase = /[a-z]/.test(trimmedValue)
   const hasNumber = /\d/.test(trimmedValue)
@@ -125,8 +125,8 @@ export function validateStrongPassword(value: string): boolean {
 /**
  * 获取密码强度
  * @param value 密码字符串
- * @returns 返回密码强度:弱、中、强
- * @description 弱:纯数字/纯字母/纯特殊字符;中:两种组合;强:三种或以上组合
+ * @returns 返回密码强度: 弱、中、强
+ * @description 弱: 纯数字/纯字母/纯特殊字符; 中: 两种组合; 强: 三种或以上组合
  */
 export function getPasswordStrength(value: string): PasswordStrength {
   if (!value || typeof value !== 'string') {
@@ -158,7 +158,7 @@ export function getPasswordStrength(value: string): PasswordStrength {
 /**
  * 验证IPv4地址
  * @param value IP地址字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateIPv4Address(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -183,7 +183,7 @@ export function validateIPv4Address(value: string): boolean {
 /**
  * 验证邮箱地址
  * @param value 邮箱地址字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateEmail(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -202,7 +202,7 @@ export function validateEmail(value: string): boolean {
 /**
  * 验证URL地址
  * @param value URL字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateURL(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -220,7 +220,7 @@ export function validateURL(value: string): boolean {
 /**
  * 验证身份证号码(中国大陆)
  * @param value 身份证号码字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateChineseIDCard(value: string): boolean {
   if (!value || typeof value !== 'string') {
@@ -253,7 +253,7 @@ export function validateChineseIDCard(value: string): boolean {
 /**
  * 验证银行卡号
  * @param value 银行卡号字符串
- * @returns 返回验证结果,true表示格式正确
+ * @returns 返回验证结果, true表示格式正确
  */
 export function validateBankCard(value: string): boolean {
   if (!value || typeof value !== 'string') {

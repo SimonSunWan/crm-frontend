@@ -13,7 +13,7 @@ export const setWorktab = (to: RouteLocationNormalized): void => {
   const worktabStore = useWorktabStore()
   const { meta, path, name, params, query } = to
   if (!meta.isHideTab) {
-    /* 如果是 iframe 页面,则特殊处理工作标签页 */
+    /* 如果是 iframe 页面, 则特殊处理工作标签页 */
     if (isIframe(path)) {
       const iframeRoute = getIframeRoutes().find((route: any) => route.path === to.path)
 

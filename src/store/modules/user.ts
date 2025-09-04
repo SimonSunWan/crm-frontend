@@ -31,11 +31,11 @@ export const useUserStore = defineStore(
     // 刷新令牌
     const refreshToken = ref('')
 
-    /* 计算属性:获取用户信息 */
+    /* 计算属性: 获取用户信息 */
     const getUserInfo = computed(() => info.value)
-    /* 计算属性:获取设置状态 */
+    /* 计算属性: 获取设置状态 */
     const getSettingState = computed(() => useSettingStore().$state)
-    /* 计算属性:获取工作台状态 */
+    /* 计算属性: 获取工作台状态 */
     const getWorktabState = computed(() => useWorktabStore().$state)
 
     /**

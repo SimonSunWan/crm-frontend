@@ -9,7 +9,7 @@ import { StorageConfig } from '@/utils/storage/storage-config'
  */
 class VersionManager {
   /**
-   * 规范化版本号字符串,移除前缀 'v'
+   * 规范化版本号字符串, 移除前缀 'v'
    */
   private normalizeVersion(version: string): string {
     return version.replace(/^v/, '')
@@ -201,7 +201,7 @@ class VersionManager {
       return
     }
 
-    /* 版本相同,无需升级 */
+    /* 版本相同, 无需升级 */
     if (this.isSameVersion(storedVersion!)) {
       return
     }
@@ -213,7 +213,7 @@ class VersionManager {
       return
     }
 
-    /* 延迟执行升级流程,确保应用已完全加载 */
+    /* 延迟执行升级流程, 确保应用已完全加载 */
     setTimeout(() => {
       this.executeUpgrade(storedVersion!, legacyStorage)
     }, StorageConfig.UPGRADE_DELAY)

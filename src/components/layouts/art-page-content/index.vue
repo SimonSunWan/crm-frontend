@@ -60,16 +60,16 @@
   const isFullPage = computed(() => route.matched.some(r => r.meta?.isFullPage))
   const prevIsFullPage = ref(isFullPage.value)
 
-  /* 切换动画名称:从全屏返回时不使用动画 */
+  /* 切换动画名称: 从全屏返回时不使用动画 */
   const actualTransition = computed(() =>
     prevIsFullPage.value && !isFullPage.value ? '' : pageTransition.value
   )
 
-  /* 监听全屏状态变化,显示过渡遮罩 */
+  /* 监听全屏状态变化, 显示过渡遮罩 */
   watch(isFullPage, (val, oldVal) => {
     if (val !== oldVal) {
       showTransitionMask.value = true
-      /* 延迟隐藏遮罩,给足时间让页面完成切换 */
+      /* 延迟隐藏遮罩, 给足时间让页面完成切换 */
       setTimeout(() => {
         showTransitionMask.value = false
       }, 50)

@@ -97,7 +97,7 @@
     showHeaderBackground?: boolean
     /** 全屏 class */
     fullClass?: string
-    /** 组件布局,子组件名用逗号分隔  */
+    /** 组件布局, 子组件名用逗号分隔  */
     layout?: string
   }
 
@@ -132,7 +132,7 @@
 
   // ========== 计算属性 ==========
 
-  /** 解析 layout 属性,转换为数组  */
+  /** 解析 layout 属性, 转换为数组  */
   const layoutItems = computed(() => {
     return props.layout.split(',').map(item => item.trim())
   })
@@ -168,12 +168,12 @@
   /** 是否全屏状态 */
   const isFullScreen = ref(false)
 
-  /** 保存原始的 overflow 样式,用于退出全屏时恢复  */
+  /** 保存原始的 overflow 样式, 用于退出全屏时恢复  */
   const originalOverflow = ref('')
 
   /**
    * 切换全屏状态
-   * 进入全屏时会隐藏页面滚动条,退出时恢复原状态
+   * 进入全屏时会隐藏页面滚动条, 退出时恢复原状态
    */
   const toggleFullScreen = () => {
     const el = document.querySelector(`.${props.fullClass}`)
@@ -182,13 +182,13 @@
     isFullScreen.value = !isFullScreen.value
 
     if (isFullScreen.value) {
-      /* 进入全屏:保存原始样式并隐藏滚动条 */
+      /* 进入全屏: 保存原始样式并隐藏滚动条 */
       originalOverflow.value = document.body.style.overflow
       document.body.style.overflow = 'hidden'
       el.classList.add('el-full-screen')
       tableStore.setIsFullScreen(true)
     } else {
-      /* 退出全屏:恢复原始样式 */
+      /* 退出全屏: 恢复原始样式 */
       document.body.style.overflow = originalOverflow.value
       el.classList.remove('el-full-screen')
       tableStore.setIsFullScreen(false)
@@ -217,7 +217,7 @@
     // 移除事件监听器
     document.removeEventListener('keydown', handleEscapeKey)
 
-    /* 如果组件在全屏状态下被卸载,恢复页面滚动状态 */
+    /* 如果组件在全屏状态下被卸载, 恢复页面滚动状态 */
     if (isFullScreen.value) {
       document.body.style.overflow = originalOverflow.value
       const el = document.querySelector(`.${props.fullClass}`)

@@ -207,12 +207,12 @@ export function useSettingsConfig() {
     return (
       allSettings
         .filter(setting => {
-          /* 如果设置项不依赖headerBar配置,则始终显示 */
+          /* 如果设置项不依赖headerBar配置, 则始终显示 */
           if (setting.headerBarKey === null) {
             return true
           }
 
-          /* 如果依赖headerBar配置,检查对应的功能是否启用 */
+          /* 如果依赖headerBar配置, 检查对应的功能是否启用 */
           const headerBarFeature = headerBarConfig[setting.headerBarKey]
           return headerBarFeature?.enabled !== false
         })

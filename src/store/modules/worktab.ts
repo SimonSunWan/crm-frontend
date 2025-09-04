@@ -163,7 +163,7 @@ export const useWorktabStore = defineStore(
 
       const { homePath } = useCommon()
 
-      /* 如果关闭后无标签页,跳转首页 */
+      /* 如果关闭后无标签页, 跳转首页 */
       if (!hasOpenedTabs.value) {
         if (path !== homePath.value) {
           current.value = {}
@@ -172,7 +172,7 @@ export const useWorktabStore = defineStore(
         return
       }
 
-      /* 如果关闭的是当前激活标签,需要激活其他标签 */
+      /* 如果关闭的是当前激活标签, 需要激活其他标签 */
       if (current.value.path === path) {
         const newIndex = targetIndex >= opened.value.length ? opened.value.length - 1 : targetIndex
         current.value = opened.value[newIndex]
@@ -284,7 +284,7 @@ export const useWorktabStore = defineStore(
       // 获取可关闭的标签页
       const closableTabs = opened.value.filter(tab => {
         if (!isTabClosable(tab)) return false
-        /* 如果有固定标签,则所有可关闭的都可以关闭;否则保留首页 */
+        /* 如果有固定标签, 则所有可关闭的都可以关闭; 否则保留首页 */
         return hasFixedTabs || tab.path !== homePath.value
       })
 
@@ -307,7 +307,7 @@ export const useWorktabStore = defineStore(
         return
       }
 
-      /* 选择激活的标签页:优先首页,其次第一个可用标签 */
+      /* 选择激活的标签页: 优先首页, 其次第一个可用标签 */
       const homeTab = opened.value.find(tab => tab.path === homePath.value)
       const targetTab = homeTab || opened.value[0]
 

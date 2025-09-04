@@ -5,14 +5,11 @@ import { RoutesAlias } from '../routesAlias'
 import { h } from 'vue'
 import { useMenuStore } from '@/store/modules/menu'
 
-const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
-
+const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*. vue')
 export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]): void {
   const iframeRoutes: AppRouteRecord[] = []
   const removeRouteFns: (() => void)[] = []
-
   checkDuplicateRoutes(menuList)
-
   menuList.forEach(route => {
     if (route.name && !router.hasRoute(route.name)) {
       const routeConfig = convertRouteComponent(route, iframeRoutes)
@@ -20,14 +17,12 @@ export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]
       removeRouteFns.push(removeRouteFn)
     }
   })
-
   const menuStore = useMenuStore()
   menuStore.addRemoveRouteFns(removeRouteFns)
   saveIframeRoutes(iframeRoutes)
 }
-
 /**
- * 路径解析函数:处理父路径和子路径的拼接
+ * 路径解析函数: 处理父路径和子路径的拼接
  */
 function resolvePath(parent: string, child: string): string {
   return [parent.replace(/\/$/, ''), child.replace(/^\//, '')].filter(Boolean).join('/')
@@ -89,7 +84,7 @@ function getComponentPathString(component: any): string {
     return component
   }
 
-  /* 对于其他别名路由,获取组件名称 */
+  /* 对于其他别名路由, 获取组件名称 */
   for (const key in RoutesAlias) {
     if (RoutesAlias[key as keyof typeof RoutesAlias] === component) {
       return `RoutesAlias.${key}`
@@ -101,12 +96,12 @@ function getComponentPathString(component: any): string {
 
 /**
  * 根据组件路径动态加载组件
- * @param componentPath 组件路径(不包含 ../../views 前缀和 .vue 后缀)
+ * @param componentPath 组件路径(不包含../../views 前缀和. vue 后缀)
  * @param routeName 当前路由名称(用于错误提示)
  * @returns 组件加载函数
  */
 function loadComponent(componentPath: string, routeName: string): () => Promise<any> {
-  /* 如果路径为空,直接返回一个空的组件 */
+  /* 如果路径为空, 直接返回一个空的组件 */
   if (componentPath === '') {
     return () =>
       Promise.resolve({
@@ -120,7 +115,7 @@ function loadComponent(componentPath: string, routeName: string): () => Promise<
   const fullPath = `../../views${componentPath}.vue`
   const fullPathWithIndex = `../../views${componentPath}/index.vue`
 
-  /* 先尝试直接路径,再尝试添加/index的路径 */
+  /* 先尝试直接路径, 再尝试添加/index的路径 */
   const module = modules[fullPath] || modules[fullPathWithIndex]
 
   if (!module) {

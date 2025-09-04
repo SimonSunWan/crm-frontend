@@ -10,8 +10,7 @@ const userStore = useUserStore()
 
 /**
  * 按钮权限(前后端模式通用)
- * 用法:
- * const { hasAuth } = useAuth()
+ * 用法: * const { hasAuth } = useAuth()
  * hasAuth('add') // 检查是否拥有新增权限
  */
 export const useAuth = () => {

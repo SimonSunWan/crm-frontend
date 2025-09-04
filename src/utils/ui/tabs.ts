@@ -27,7 +27,7 @@ export const TAB_CONFIG = {
   }
 }
 
-/* 获取当前 tab 样式配置,设置默认值 */
+/* 获取当前 tab 样式配置, 设置默认值 */
 export const getTabConfig = (style: string) => {
   return TAB_CONFIG[style as keyof typeof TAB_CONFIG] || TAB_CONFIG['tab-card'] // 默认使用 tab-card 配置
 }

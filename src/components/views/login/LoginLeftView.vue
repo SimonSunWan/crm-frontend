@@ -72,7 +72,7 @@
 
   // 定义 props
   defineProps<{
-    hideContent?: boolean // 是否隐藏内容，只显示 logo
+    hideContent?: boolean // 是否隐藏内容, 只显示 logo
   }>()
 </script>
 
@@ -468,7 +468,7 @@
       width: auto;
       height: auto;
       padding: 0;
-      // 隐藏背景和其他内容，只保留 logo
+      // 隐藏背景和其他内容, 只保留 logo
       background: transparent;
 
       .left-img,

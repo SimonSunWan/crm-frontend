@@ -133,7 +133,7 @@
     emptyHeight?: string
     /** 空数据时显示的文本 */
     emptyText?: string
-    /** 是否开启 ArtTableHeader,解决表格高度自适应问题  */
+    /** 是否开启 ArtTableHeader, 解决表格高度自适应问题  */
     showTableHeader?: boolean
   }
 
@@ -182,7 +182,7 @@
     ...props.paginationOptions
   }))
 
-  /* 边框 (优先级:props > store) */
+  /* 边框 (优先级: props > store) */
   const border = computed(() => props.border ?? isBorder.value)
   // 斑马纹
   const stripe = computed(() => props.stripe ?? isZebra.value)
@@ -227,7 +227,7 @@
   // 是否显示分页器
   const showPagination = computed(() => props.pagination && !isEmpty.value)
 
-  /* 清理列属性,移除插槽相关的自定义属性,确保它们不会被 ElTableColumn 错误解释 */
+  /* 清理列属性, 移除插槽相关的自定义属性, 确保它们不会被 ElTableColumn 错误解释 */
   const cleanColumnProps = (col: ColumnOption) => {
     const columnProps = { ...col }
     // 删除自定义的插槽控制属性
@@ -249,7 +249,7 @@
     scrollToTop() // 页码改变后滚动到表格顶部
   }
 
-  /* 滚动表格内容到顶部,并可以联动页面滚动到顶部 */
+  /* 滚动表格内容到顶部, 并可以联动页面滚动到顶部 */
   const scrollToTop = () => {
     nextTick(() => {
       elTableRef.value?.setScrollTop(0) // 滚动 ElTable 内部滚动条到顶部

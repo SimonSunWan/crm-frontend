@@ -50,18 +50,18 @@ export interface ColumnOption<T = any> {
   filterPlacement?: string
   // 是否禁用
   disabled?: boolean
-  // 是否选中显示（可用于隐藏列）
+  // 是否选中显示(可用于隐藏列)
   checked?: boolean
   // 自定义渲染函数
   formatter?: (row: T) => any
   // 插槽相关配置
   // 是否使用插槽渲染内容
   useSlot?: boolean
-  // 插槽名称（默认为 prop 值）
+  // 插槽名称(默认为 prop 值)
   slotName?: string
   // 是否使用表头插槽
   useHeaderSlot?: boolean
-  // 表头插槽名称（默认为 `${prop}-header`）
+  // 表头插槽名称(默认为 `${prop}-header`)
   headerSlotName?: string
   // 其他属性
   [key: string]: any
