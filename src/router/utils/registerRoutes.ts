@@ -5,7 +5,7 @@ import { RoutesAlias } from '../routesAlias'
 import { h } from 'vue'
 import { useMenuStore } from '@/store/modules/menu'
 
-const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*. vue')
+const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
 export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]): void {
   const iframeRoutes: AppRouteRecord[] = []
   const removeRouteFns: (() => void)[] = []

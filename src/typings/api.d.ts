@@ -2,7 +2,7 @@
  * namespace: Api
  *
  * 所有接口相关类型定义
- * 在. vue文件使用会报错, 需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly' }
+ * 在.vue文件使用会报错, 需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly' }
  */
 declare namespace Api {
   /** 基础类型 */
