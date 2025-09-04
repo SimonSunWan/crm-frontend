@@ -79,14 +79,8 @@
 
   // 表单验证规则
   const rules: FormRules = {
-    roleName: [
-      { required: true, message: '请输入角色名称', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
-    roleCode: [
-      { required: true, message: '请输入角色编码', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
+    roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+    roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
     description: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
   }
 

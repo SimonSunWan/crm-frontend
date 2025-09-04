@@ -191,10 +191,7 @@
     const baseRules: FormRules = {}
 
     if (menuType.value === 'menu') {
-      baseRules.name = [
-        { required: true, message: '请输入名称', trigger: 'blur' },
-        { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-      ]
+      baseRules.name = [{ required: true, message: '请输入名称', trigger: 'blur' }]
       baseRules.path = [{ required: true, message: '请输入路由地址', trigger: 'blur' }]
     } else {
       baseRules.authName = [{ required: true, message: '请输入名称', trigger: 'blur' }]

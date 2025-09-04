@@ -76,14 +76,8 @@
 
   // 表单验证规则
   const rules: FormRules = {
-    name: [
-      { required: true, message: '请输入字典名称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ],
-    code: [
-      { required: true, message: '请输入字典编码', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ]
+    name: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
+    code: [{ required: true, message: '请输入字典编码', trigger: 'blur' }]
   }
 
   // 初始化表单数据
