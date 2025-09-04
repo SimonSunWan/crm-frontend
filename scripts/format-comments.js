@@ -48,6 +48,8 @@ class SafeCommentFormatter {
 
       if (char === '/') {
         this.handleSlash()
+      } else if (char === '<') {
+        this.handleHtmlComment()
       } else if (char === '"' || char === "'" || char === '`') {
         this.skipString(char)
       } else {
@@ -70,6 +72,19 @@ class SafeCommentFormatter {
       this.parseSingleLineComment()
     } else if (nextChar === '*') {
       this.parseBlockComment()
+    } else {
+      this.position++
+    }
+  }
+
+  handleHtmlComment() {
+    if (this.position + 3 >= this.length) {
+      this.position++
+      return
+    }
+
+    if (this.content.slice(this.position, this.position + 4) === '<!--') {
+      this.parseHtmlComment()
     } else {
       this.position++
     }
@@ -119,6 +134,29 @@ class SafeCommentFormatter {
     })
   }
 
+  parseHtmlComment() {
+    const start = this.position
+    this.position += 4
+
+    while (this.position < this.length - 2) {
+      if (this.content.slice(this.position, this.position + 3) === '-->') {
+        this.position += 3
+        break
+      }
+      this.position++
+    }
+
+    const end = this.position
+    const original = this.content.slice(start, end)
+
+    this.comments.push({
+      start,
+      end,
+      original,
+      type: 'html'
+    })
+  }
+
   skipString(quote) {
     this.position++
 
@@ -154,11 +192,32 @@ function formatCommentContent(comment) {
     }
   }
 
+  if (content.startsWith('<!--') && content.endsWith('-->')) {
+    const innerContent = content.slice(4, -3)
+    const { content: formattedInner, changed: innerChanged } = formatInnerContent(innerContent)
+    if (innerChanged) {
+      content = '<!--' + formattedInner + '-->'
+      changed = true
+    }
+  } else {
+    const { content: formattedContent, changed: contentChanged } = formatInnerContent(content)
+    if (contentChanged) {
+      content = formattedContent
+      changed = true
+    }
+  }
+
+  return { content, changed }
+}
+
+function formatInnerContent(content) {
+  let result = content
+  let changed = false
   const punctuations = [',', '.', ';', ':', '!', '?']
 
   for (const punct of punctuations) {
     const regex = new RegExp(`\\${punct}([^\\s\\n\\r*/,.;:!?])`, 'g')
-    const newContent = content.replace(regex, (match, nextChar) => {
+    const newContent = result.replace(regex, (match, nextChar) => {
       if (punct === '.' && /[a-zA-Z0-9_]/.test(nextChar)) {
         return match
       }
@@ -169,13 +228,13 @@ function formatCommentContent(comment) {
       return punct + ' ' + nextChar
     })
 
-    if (newContent !== content) {
-      content = newContent
+    if (newContent !== result) {
+      result = newContent
       changed = true
     }
   }
 
-  return { content, changed }
+  return { content: result, changed }
 }
 
 function replacePunctuationInComments(content) {

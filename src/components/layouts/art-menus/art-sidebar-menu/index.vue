@@ -5,7 +5,7 @@
     v-if="showLeftMenu || isDualMenu"
     :class="{ 'no-border': menuList.length === 0 }"
   >
-    <!-- 双列菜单（左侧） -->
+    <!-- 双列菜单(左侧) -->
     <div v-if="isDualMenu" class="dual-menu-left" :style="{ background: getMenuTheme.background }">
       <ArtLogo class="logo" @click="navigateToHome" />
 
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- 左侧菜单 || 双列菜单（右侧） -->
+    <!-- 左侧菜单 || 双列菜单(右侧) -->
     <div
       v-show="menuList.length > 0"
       class="menu-left"

@@ -1,7 +1,7 @@
 <!-- 表格组件 -->
-<!-- 支持：el-table 全部属性、事件、插槽，同官方文档写法 -->
-<!-- 扩展功能：分页组件、渲染自定义列、loading、表格全局边框、斑马纹、表格尺寸、表头背景配置 -->
-<!-- 获取 ref：默认暴露了 elTableRef 外部通过 ref.value.elTableRef 可以调用 el-table 方法 -->
+<!-- 支持: el-table 全部属性、事件、插槽, 同官方文档写法 -->
+<!-- 扩展功能: 分页组件、渲染自定义列、loading、表格全局边框、斑马纹、表格尺寸、表头背景配置 -->
+<!-- 获取 ref: 默认暴露了 elTableRef 外部通过 ref.value.elTableRef 可以调用 el-table 方法 -->
 <template>
   <div class="art-table" :class="{ 'is-empty': isEmpty }" :style="containerHeight">
     <ElTable

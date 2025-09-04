@@ -32,7 +32,7 @@
       </Transition>
     </RouterView>
 
-    <!-- 全屏页面切换过渡遮罩（用于提升页面切换视觉体验） -->
+    <!-- 全屏页面切换过渡遮罩(用于提升页面切换视觉体验) -->
     <Teleport to="body">
       <div v-show="showTransitionMask" class="full-page-mask" />
     </Teleport>

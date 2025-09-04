@@ -171,7 +171,7 @@ $hover-bg-color: rgba(var(--art-gray-200-rgb), 0.8); // 鼠标移入背景色
   .layout-sidebar {
     .el-menu-item.is-active {
       span {
-        // 暗黑主题模式，选中菜单文字颜色
+        // 暗黑主题模式, 选中菜单文字颜色
         color: var(--main-color) !important;
       }
 
@@ -239,7 +239,7 @@ $hover-bg-color: rgba(var(--art-gray-200-rgb), 0.8); // 鼠标移入背景色
   }
 }
 
-// 菜单折叠 hover 弹窗样式（黑色菜单）
+// 菜单折叠 hover 弹窗样式(黑色菜单)
 .menu-left-dark-popper {
   .el-menu--vertical,
   .el-menu--popup-container {
