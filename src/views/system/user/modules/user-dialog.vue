@@ -156,10 +156,10 @@
 
       if (dialogType.value === 'add') {
         await UserService.createUser(formData)
-        ElMessage.success('添加成功')
+        ElMessage.success('新增成功')
       } else {
         await UserService.updateUser(props.userData.id, formData)
-        ElMessage.success('更新成功')
+        ElMessage.success('编辑成功')
       }
 
       dialogVisible.value = false

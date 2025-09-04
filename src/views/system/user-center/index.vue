@@ -199,7 +199,7 @@
 
         await loadUserInfo()
 
-        ElMessage.success('保存成功')
+        ElMessage.success('编辑成功')
         isEdit.value = false
       } catch (error) {
         console.error(error)
@@ -231,7 +231,7 @@
           newPassword: pwdForm.newPassword
         })
 
-        ElMessage.success('密码修改成功')
+        ElMessage.success('编辑成功')
         isEditPwd.value = false
 
         pwdForm.password = ''

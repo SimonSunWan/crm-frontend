@@ -220,7 +220,7 @@
   const handleDialogSubmit = () => {
     dialogVisible.value = false
     refreshData()
-    ElMessage.success(`${dialogType.value === 'add' ? '新增' : '编辑'}保外工单成功`)
+    ElMessage.success(`${dialogType.value === 'add' ? '新增' : '编辑'}成功`)
   }
 
   // 其他操作

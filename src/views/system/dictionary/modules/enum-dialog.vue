@@ -117,10 +117,10 @@
               typeId: props.typeData!.id,
               ...formData
             })
-            ElMessage.success('创建成功')
+            ElMessage.success('新增成功')
           } else if (props.enumData?.id) {
             await updateDictionaryEnum(props.enumData.id, formData)
-            ElMessage.success('更新成功')
+            ElMessage.success('编辑成功')
           }
           emit('submit')
         } catch (error) {

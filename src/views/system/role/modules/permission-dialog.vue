@@ -264,7 +264,7 @@
       }
 
       await RoleService.updateRoleMenus(currentRole.value.id, allCheckedKeys)
-      ElMessage.success('权限保存成功')
+      ElMessage.success('保存成功')
       dialogVisible.value = false
     } catch (error) {
       console.error(error)

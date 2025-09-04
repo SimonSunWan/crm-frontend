@@ -119,10 +119,10 @@
         try {
           if (props.type === 'add') {
             await createDictionaryType(formData)
-            ElMessage.success('创建成功')
+            ElMessage.success('新增成功')
           } else if (props.typeData?.id) {
             await updateDictionaryType(props.typeData.id, formData)
-            ElMessage.success('更新成功')
+            ElMessage.success('编辑成功')
           }
           emit('submit')
         } catch (error) {

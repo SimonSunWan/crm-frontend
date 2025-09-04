@@ -131,7 +131,7 @@
       } else {
         if (props.roleData?.id) {
           await RoleService.updateRole(props.roleData.id, formData)
-          ElMessage.success('修改成功')
+          ElMessage.success('编辑成功')
         }
       }
 
