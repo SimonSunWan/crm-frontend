@@ -283,8 +283,8 @@
       } else {
         tableData.value = []
       }
-    } catch {
-      ElMessage.error('获取菜单数据失败')
+    } catch (error) {
+      console.error(error)
       tableData.value = menuList.value
     } finally {
       loading.value = false
@@ -346,9 +346,7 @@
       }
     } catch (error) {
       if (error !== 'cancel') {
-        const isButton = row?.meta?.originalMenuType === 'button'
-        const itemType = isButton ? '权限' : '菜单'
-        ElMessage.error(`删除${itemType}失败`)
+        console.error(error)
       }
     } finally {
       loading.value = false

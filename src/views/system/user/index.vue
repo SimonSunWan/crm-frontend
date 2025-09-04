@@ -223,9 +223,9 @@
       await deleteUser(row.id)
       ElMessage.success('删除成功')
       getData()
-    } catch (error: any) {
+    } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error(error?.message || '删除失败')
+        console.error(error)
       }
     }
   }
@@ -235,7 +235,9 @@
       dialogVisible.value = false
       currentUserData.value = {}
       getData()
-    } catch {}
+    } catch (error) {
+      console.error(error)
+    }
   }
 </script>
 

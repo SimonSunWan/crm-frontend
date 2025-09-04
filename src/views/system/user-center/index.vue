@@ -177,8 +177,8 @@
         form.email = data.email || ''
         form.phone = data.phone || ''
       }
-    } catch {
-      ElMessage.error('获取用户信息失败')
+    } catch (error) {
+      console.error(error)
     } finally {
       loading.value = false
     }
@@ -201,8 +201,8 @@
 
         ElMessage.success('保存成功')
         isEdit.value = false
-      } catch {
-        ElMessage.error('保存失败')
+      } catch (error) {
+        console.error(error)
       } finally {
         loading.value = false
       }
@@ -237,8 +237,8 @@
         pwdForm.password = ''
         pwdForm.newPassword = ''
         pwdForm.confirmPassword = ''
-      } catch {
-        ElMessage.error('修改密码失败')
+      } catch (error) {
+        console.error(error)
       } finally {
         loading.value = false
       }

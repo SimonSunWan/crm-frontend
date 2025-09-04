@@ -161,8 +161,8 @@
       })
       typeData.value = response.records || []
       filteredTypes.value = [...typeData.value]
-    } catch {
-      ElMessage.error('获取字典类型列表失败')
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -192,8 +192,8 @@
       })
       enumData.value = response.records || []
       enumPagination.total = response.total || 0
-    } catch {
-      ElMessage.error('获取字典枚举列表失败')
+    } catch (error) {
+      console.error(error)
     } finally {
       enumLoading.value = false
     }
@@ -243,9 +243,9 @@
         selectedType.value = null
         enumData.value = []
       }
-    } catch (error: any) {
+    } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error(error?.message || '删除失败')
+        console.error(error)
       }
     }
   }
@@ -287,9 +287,9 @@
       await deleteDictionaryEnum(enumItem.id)
       ElMessage.success('删除成功')
       getEnumData()
-    } catch (error: any) {
+    } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error(error?.message || '删除失败')
+        console.error(error)
       }
     }
   }

@@ -191,7 +191,7 @@
       getData()
     } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error('删除失败')
+        console.error(error)
       }
     }
   }
@@ -205,7 +205,9 @@
       dialogVisible.value = false
       currentEditRole.value = null
       getData()
-    } catch {}
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const formatDate = (date: string) => {

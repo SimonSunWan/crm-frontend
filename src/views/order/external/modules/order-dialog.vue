@@ -171,8 +171,6 @@
 </template>
 
 <script setup lang="ts">
-  // Element Plus 组件和类型
-  import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
 
   // Vue 工具函数
@@ -327,8 +325,8 @@
           }
 
           emit('submit')
-        } catch {
-          ElMessage.error('操作失败')
+        } catch (error) {
+          console.error(error)
         } finally {
           loading.value = false
         }

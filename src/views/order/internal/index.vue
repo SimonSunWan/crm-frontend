@@ -238,7 +238,7 @@
       refreshData()
     } catch (error) {
       if (error !== 'cancel') {
-        ElMessage.error('删除失败')
+        console.error(error)
       }
     }
   }

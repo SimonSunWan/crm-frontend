@@ -156,7 +156,9 @@
         ElMessage.success('注册成功')
         toLogin()
       }, 1000)
-    } catch {}
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const toLogin = () => {

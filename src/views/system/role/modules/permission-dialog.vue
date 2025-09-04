@@ -158,8 +158,8 @@
           }
         }
       })
-    } catch {
-      ElMessage.error('获取角色菜单权限失败')
+    } catch (error) {
+      console.error(error)
       menuTreeData.value = []
       selectedMenuIds.value = []
       nextTick(() => {
@@ -256,8 +256,8 @@
               type: 'warning'
             }
           )
-        } catch (confirmError) {
-          if (confirmError === 'cancel') {
+        } catch (error) {
+          if (error === 'cancel') {
             return
           }
         }
@@ -266,8 +266,8 @@
       await RoleService.updateRoleMenus(currentRole.value.id, allCheckedKeys)
       ElMessage.success('权限保存成功')
       dialogVisible.value = false
-    } catch {
-      ElMessage.error('权限保存失败')
+    } catch (error) {
+      console.error(error)
     }
   }
 

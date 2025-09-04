@@ -342,9 +342,8 @@
             ElMessage.success(`新增${itemType}成功`)
           }
           emit('submit')
-        } catch {
-          const itemType = menuType.value === 'button' ? '权限' : '菜单'
-          ElMessage.error(`${isEdit.value ? '编辑' : '新增'}${itemType}失败`)
+        } catch (error) {
+          console.error(error)
         } finally {
           loading.value = false
         }
