@@ -478,6 +478,10 @@
                 margin-left: 8px;
                 font-size: 14px;
               }
+
+              .el-tag {
+                font-size: 12px;
+              }
             }
           }
 

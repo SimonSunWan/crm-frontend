@@ -59,9 +59,11 @@
 
   // 搜索表单
   const searchForm = ref({
-    name: undefined,
+    userName: undefined,
+    nickName: undefined,
     phone: undefined,
     email: undefined,
+    roleCode: undefined,
     status: undefined
   })
 
