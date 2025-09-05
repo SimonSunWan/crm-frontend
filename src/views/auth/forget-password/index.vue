@@ -76,6 +76,7 @@
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { UserService } from '@/api/usersApi'
+  import { validatePassword } from '@/utils/validation'
 
   defineOptions({ name: 'ForgetPassword' })
 
@@ -95,6 +96,8 @@
   const validatePass = (rule: any, value: string, callback: any) => {
     if (value === '') {
       callback(new Error('请输入新密码'))
+    } else if (!validatePassword(value)) {
+      callback(new Error('6-20位, 必须包含字母和数字'))
     } else {
       if (formData.confirmPassword !== '') {
         formRef.value?.validateField('confirmPassword')

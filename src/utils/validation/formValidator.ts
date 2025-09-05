@@ -71,6 +71,29 @@ export function validateAccount(value: string): boolean {
 }
 
 /**
+ * 验证姓名
+ * @param value 姓名字符串
+ * @returns 返回验证结果, true表示格式正确
+ * @description 规则: 2-20位, 支持中文、英文字母、空格
+ */
+export function validateName(value: string): boolean {
+  if (!value || typeof value !== 'string') {
+    return false
+  }
+
+  const trimmedValue = value.trim()
+
+  // 长度检查
+  if (trimmedValue.length < 2 || trimmedValue.length > 20) {
+    return false
+  }
+
+  // 支持中文、英文字母、空格
+  const nameRegex = /^[\u4e00-\u9fa5a-zA-Z\s]+$/
+  return nameRegex.test(trimmedValue)
+}
+
+/**
  * 验证密码
  * @param value 密码字符串
  * @returns 返回验证结果, true表示格式正确

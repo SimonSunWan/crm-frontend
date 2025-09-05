@@ -149,7 +149,7 @@
                   </div>
                 </div>
                 <ul class="user-menu">
-                  <li @click="showSettingCode = true">
+                  <li v-roles="'SUPER'" @click="showSettingCode = true">
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
                     <span class="menu-txt">{{ $t('topBar.user.systemCode') }}</span>
                   </li>

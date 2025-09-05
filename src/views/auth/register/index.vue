@@ -93,12 +93,16 @@
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { useI18n } from 'vue-i18n'
   import { UserService } from '@/api/usersApi'
+  import {
+    validatePhone,
+    validateEmail,
+    validatePassword,
+    validateAccount,
+    validateName
+  } from '@/utils/validation'
 
   defineOptions({ name: 'Register' })
-
-  const { t } = useI18n()
 
   const router = useRouter()
   const formRef = ref<FormInstance>()
@@ -116,9 +120,51 @@
     captcha: ''
   })
 
+  const validatePhoneField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入手机号'))
+    } else if (!validatePhone(value)) {
+      callback(new Error('请输入正确的手机号'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateEmailField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback()
+    } else if (!validateEmail(value)) {
+      callback(new Error('请输入正确的邮箱格式'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateUsernameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入用户名'))
+    } else if (!validateAccount(value)) {
+      callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateNickNameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入姓名'))
+    } else if (!validateName(value)) {
+      callback(new Error('2-20位, 支持中文、英文字母、空格'))
+    } else {
+      callback()
+    }
+  }
+
   const validatePass = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error(t('register.placeholder[1]')))
+      callback(new Error('请输入密码'))
+    } else if (!validatePassword(value)) {
+      callback(new Error('6-20位, 必须包含字母和数字'))
     } else {
       if (formData.confirmPassword !== '') {
         formRef.value?.validateField('confirmPassword')
@@ -129,39 +175,19 @@
 
   const validatePass2 = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error(t('register.rule[0]')))
+      callback(new Error('请再次输入密码'))
     } else if (value !== formData.password) {
-      callback(new Error(t('register.rule[1]')))
-    } else {
-      callback()
-    }
-  }
-
-  const validatePhone = (rule: any, value: string, callback: any) => {
-    if (value === '') {
-      callback(new Error('请输入手机号'))
-    } else if (!/^1[3-9]\d{9}$/.test(value)) {
-      callback(new Error('请输入正确的手机号'))
-    } else {
-      callback()
-    }
-  }
-
-  const validateEmail = (rule: any, value: string, callback: any) => {
-    if (value === '') {
-      callback()
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      callback(new Error('请输入正确的邮箱格式'))
+      callback(new Error('两次输入密码不一致'))
     } else {
       callback()
     }
   }
 
   const rules = reactive<FormRules>({
-    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-    nickName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-    phone: [{ required: true, validator: validatePhone, trigger: 'blur' }],
-    email: [{ validator: validateEmail, trigger: 'blur' }],
+    username: [{ required: true, validator: validateUsernameField, trigger: 'blur' }],
+    nickName: [{ required: true, validator: validateNickNameField, trigger: 'blur' }],
+    phone: [{ required: true, validator: validatePhoneField, trigger: 'blur' }],
+    email: [{ validator: validateEmailField, trigger: 'blur' }],
     password: [{ required: true, validator: validatePass, trigger: 'blur' }],
     confirmPassword: [{ required: true, validator: validatePass2, trigger: 'blur' }],
     captcha: [{ required: true, message: '请输入系统码', trigger: 'blur' }]

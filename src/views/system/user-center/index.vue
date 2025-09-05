@@ -69,7 +69,13 @@
         <div class="info box-style" style="margin-top: 20px">
           <h1 class="title">更改密码</h1>
 
-          <ElForm :model="pwdForm" class="form" label-width="86px">
+          <ElForm
+            ref="pwdFormRef"
+            :model="pwdForm"
+            :rules="pwdRules"
+            class="form"
+            label-width="100px"
+          >
             <ElFormItem label="当前密码" prop="password">
               <ElInput
                 v-model="pwdForm.password"
@@ -114,6 +120,13 @@
   import { UserService } from '@/api/usersApi'
   import { ElForm, FormInstance, FormRules, ElMessage } from 'element-plus'
   import { getAvatarUrl } from '@/utils'
+  import {
+    validatePassword,
+    validatePhone,
+    validateEmail,
+    validateAccount,
+    validateName
+  } from '@/utils/validation'
 
   defineOptions({ name: 'UserCenter' })
 
@@ -138,24 +151,82 @@
   })
 
   const ruleFormRef = ref<FormInstance>()
+  const pwdFormRef = ref<FormInstance>()
+
+  const validateUsernameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入用户名'))
+    } else if (!validateAccount(value)) {
+      callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateNickNameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入姓名'))
+    } else if (!validateName(value)) {
+      callback(new Error('2-20位, 支持中文、英文字母、空格'))
+    } else {
+      callback()
+    }
+  }
+
+  const validatePhoneField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入手机号'))
+    } else if (!validatePhone(value)) {
+      callback(new Error('请输入正确的手机号'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateEmailField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback()
+    } else if (!validateEmail(value)) {
+      callback(new Error('请输入正确的邮箱格式'))
+    } else {
+      callback()
+    }
+  }
+
+  const validatePass = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入新密码'))
+    } else if (!validatePassword(value)) {
+      callback(new Error('6-20位, 必须包含字母和数字'))
+    } else {
+      if (pwdForm.confirmPassword !== '') {
+        pwdFormRef.value?.validateField('confirmPassword')
+      }
+      callback()
+    }
+  }
+
+  const validatePass2 = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请再次输入新密码'))
+    } else if (value !== pwdForm.newPassword) {
+      callback(new Error('两次输入密码不一致'))
+    } else {
+      callback()
+    }
+  }
 
   const rules = reactive<FormRules>({
-    userName: [
-      { required: true, message: '请输入用户名', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ],
-    nickName: [
-      { required: true, message: '请输入姓名', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
-    ],
-    email: [
-      { required: true, message: '请输入邮箱', trigger: 'blur' },
-      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-    ],
-    phone: [
-      { required: true, message: '请输入手机号码', trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码格式', trigger: 'blur' }
-    ]
+    userName: [{ required: true, validator: validateUsernameField, trigger: 'blur' }],
+    nickName: [{ required: true, validator: validateNickNameField, trigger: 'blur' }],
+    phone: [{ required: true, validator: validatePhoneField, trigger: 'blur' }],
+    email: [{ validator: validateEmailField, trigger: 'blur' }]
+  })
+
+  const pwdRules = reactive<FormRules>({
+    password: [{ required: true, message: '请输入当前密码', trigger: 'blur' }],
+    newPassword: [{ required: true, validator: validatePass, trigger: 'blur' }],
+    confirmPassword: [{ required: true, validator: validatePass2, trigger: 'blur' }]
   })
 
   onMounted(() => {
@@ -213,17 +284,8 @@
 
   const editPwd = async () => {
     if (isEditPwd.value) {
-      if (pwdForm.newPassword !== pwdForm.confirmPassword) {
-        ElMessage.error('两次输入的密码不一致')
-        return
-      }
-
-      if (pwdForm.newPassword.length < 6) {
-        ElMessage.error('新密码长度不能少于6位')
-        return
-      }
-
       try {
+        await pwdFormRef.value?.validate()
         loading.value = true
 
         await UserService.changePassword({

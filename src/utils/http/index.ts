@@ -62,7 +62,17 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
           }
           // 兼容REST API错误格式 {detail: "错误信息"}
           else if (responseData.detail) {
-            errorMessage = responseData.detail
+            // 处理数组格式的detail错误
+            if (Array.isArray(responseData.detail)) {
+              const firstError = responseData.detail[0]
+              if (firstError && firstError.msg) {
+                errorMessage = firstError.msg
+              } else if (typeof firstError === 'string') {
+                errorMessage = firstError
+              }
+            } else if (typeof responseData.detail === 'string') {
+              errorMessage = responseData.detail
+            }
           }
         }
       }

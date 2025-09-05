@@ -94,14 +94,11 @@
   import { ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { getCssVar } from '@/utils/ui'
-
-  import { useI18n } from 'vue-i18n'
   import { themeAnimation } from '@/utils/theme/animation'
   import { UserService } from '@/api/usersApi'
 
   defineOptions({ name: 'Login' })
 
-  const { t } = useI18n()
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
 
@@ -125,8 +122,8 @@
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: t('login.placeholder[0]'), trigger: 'blur' }],
-    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }]
+    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
   }))
 
   const loading = ref(false)
@@ -174,11 +171,11 @@
   const showLoginSuccessNotice = (userInfo: any) => {
     setTimeout(() => {
       ElNotification({
-        title: t('login.success.title'),
+        title: '登录成功',
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${userInfo.nickName}!`
+        message: `欢迎回来, ${userInfo.nickName}!`
       })
     }, 150)
   }
