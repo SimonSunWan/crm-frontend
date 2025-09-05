@@ -18,9 +18,6 @@
       <ElFormItem label="邮箱" prop="email">
         <ElInput v-model="formData.email" placeholder="请输入邮箱" />
       </ElFormItem>
-      <ElFormItem v-if="dialogType === 'add'" label="密码" prop="password">
-        <ElInput v-model="formData.password" type="password" placeholder="请输入密码" />
-      </ElFormItem>
       <ElFormItem label="角色" prop="roles">
         <ElSelect v-model="formData.roles" multiple placeholder="请选择角色">
           <ElOption
@@ -33,6 +30,10 @@
       </ElFormItem>
       <ElFormItem label="状态" prop="status">
         <ElSwitch v-model="formData.status" />
+      </ElFormItem>
+      <ElFormItem v-if="dialogType === 'add'" label="密码" prop="password">
+        <ElInput v-model="formData.password" readonly placeholder="自动生成" />
+        <div class="password-tip">密码规则：用户名 + 手机号后4位</div>
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -49,6 +50,7 @@
   import { RoleService } from '@/api/rolesApi'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
+  import { validatePhone, validateEmail, validateAccount, validateName } from '@/utils/validation'
 
   interface Props {
     visible: boolean
@@ -100,26 +102,59 @@
     }
   }
 
-  const validateEmail = (rule: any, value: string, callback: any) => {
+  const validateEmailField = (rule: any, value: string, callback: any) => {
     if (value === '') {
       callback()
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    } else if (!validateEmail(value)) {
       callback(new Error('请输入正确的邮箱格式'))
     } else {
       callback()
     }
   }
 
+  const validateUsernameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入用户名'))
+    } else if (!validateAccount(value)) {
+      callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
+    } else {
+      callback()
+    }
+  }
+
+  const validateNickNameField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入姓名'))
+    } else if (!validateName(value)) {
+      callback(new Error('2-20位, 支持中文、英文字母、空格'))
+    } else {
+      callback()
+    }
+  }
+
+  const validatePhoneField = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback(new Error('请输入手机号'))
+    } else if (!validatePhone(value)) {
+      callback(new Error('请输入正确的手机号'))
+    } else {
+      callback()
+    }
+  }
+
   const rules: FormRules = {
-    userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-    nickName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-    phone: [
-      { required: true, message: '请输入手机号', trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
-    ],
-    email: [{ validator: validateEmail, trigger: 'blur' }],
-    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    userName: [{ required: true, validator: validateUsernameField, trigger: 'blur' }],
+    nickName: [{ required: true, validator: validateNickNameField, trigger: 'blur' }],
+    phone: [{ required: true, validator: validatePhoneField, trigger: 'blur' }],
+    email: [{ validator: validateEmailField, trigger: 'blur' }],
     roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+  }
+
+  const generatePassword = () => {
+    const userName = formData.userName || ''
+    const phone = formData.phone || ''
+    const phoneLast4 = phone.slice(-4)
+    formData.password = userName + phoneLast4
   }
 
   const initFormData = () => {
@@ -151,6 +186,15 @@
     { immediate: true }
   )
 
+  watch(
+    () => [formData.userName, formData.phone],
+    () => {
+      if (dialogType.value === 'add') {
+        generatePassword()
+      }
+    }
+  )
+
   const handleSubmit = async () => {
     if (!formRef.value) return
 
@@ -175,3 +219,12 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .password-tip {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #909399;
+  }
+</style>

@@ -127,32 +127,92 @@
   // 表格列配置
   const columns = ref<ColumnOption<OrderItem>[]>([
     { type: 'selection' as const, width: 55 },
-    { prop: 'id', label: '工单编号', width: 150 },
-    { prop: 'customer', label: '整车厂', width: 120 },
-    { prop: 'vehicleModel', label: '车型', width: 120 },
-    { prop: 'repairShop', label: '维修店(4S)', width: 150 },
-    { prop: 'reporterName', label: '报修人', width: 100 },
-    { prop: 'contactInfo', label: '联系方式', width: 130 },
-    { prop: 'reportDate', label: '报修日期', width: 120 },
+    {
+      prop: 'id',
+      label: '工单编号',
+      width: 150,
+      formatter: row => row.id || '-'
+    },
+    {
+      prop: 'customer',
+      label: '整车厂',
+      width: 120,
+      formatter: row => row.customer || '-'
+    },
+    {
+      prop: 'vehicleModel',
+      label: '车型',
+      width: 120,
+      formatter: row => row.vehicleModel || '-'
+    },
+    {
+      prop: 'repairShop',
+      label: '维修店(4S)',
+      width: 150,
+      formatter: row => row.repairShop || '-'
+    },
+    {
+      prop: 'reporterName',
+      label: '报修人',
+      width: 100,
+      formatter: row => row.reporterName || '-'
+    },
+    {
+      prop: 'contactInfo',
+      label: '联系方式',
+      width: 130,
+      formatter: row => row.contactInfo || '-'
+    },
+    {
+      prop: 'reportDate',
+      label: '报修日期',
+      width: 120,
+      formatter: row => row.reportDate || '-'
+    },
     {
       prop: 'projectType',
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel('ORDER_PROJECT_TYPE', row.projectType)
+        return getDictionaryLabel('ORDER_PROJECT_TYPE', row.projectType) || '-'
       }
     },
-    { prop: 'projectStage', label: '项目阶段', width: 100 },
-    { prop: 'licensePlate', label: '车牌号', width: 100 },
-    { prop: 'vinNumber', label: '车架号', width: 180 },
+    {
+      prop: 'projectStage',
+      label: '项目阶段',
+      width: 100,
+      formatter: row => row.projectStage || '-'
+    },
+    {
+      prop: 'licensePlate',
+      label: '车牌号',
+      width: 100,
+      formatter: row => row.licensePlate || '-'
+    },
+    {
+      prop: 'vinNumber',
+      label: '车架号',
+      width: 180,
+      formatter: row => row.vinNumber || '-'
+    },
     {
       prop: 'mileage',
       label: '里程(KM)',
       width: 100,
       formatter: (row: OrderItem) => (row.mileage ? `${row.mileage}` : '-')
     },
-    { prop: 'vehicleLocation', label: '车辆位置', width: 150 },
-    { prop: 'packCode', label: 'PACK码', width: 100 },
+    {
+      prop: 'vehicleLocation',
+      label: '车辆位置',
+      width: 150,
+      formatter: row => row.vehicleLocation || '-'
+    },
+    {
+      prop: 'packCode',
+      label: 'PACK码',
+      width: 100,
+      formatter: row => row.packCode || '-'
+    },
     {
       prop: 'underWarranty',
       label: '保修状态',
@@ -163,8 +223,18 @@
         )
       }
     },
-    { prop: 'faultDescription', label: '故障描述', width: 200 },
-    { prop: 'createTime', label: '创建时间', width: 160 },
+    {
+      prop: 'faultDescription',
+      label: '故障描述',
+      width: 200,
+      formatter: row => row.faultDescription || '-'
+    },
+    {
+      prop: 'createTime',
+      label: '创建时间',
+      width: 160,
+      formatter: row => row.createTime || '-'
+    },
     {
       label: '操作',
       width: 180,

@@ -173,7 +173,7 @@
       prop: 'path',
       label: '路由地址',
       formatter: (row: AppRouteRecord) => {
-        return row.path || ''
+        return row.path || '-'
       }
     },
     {
@@ -181,9 +181,9 @@
       label: '权限标识',
       formatter: (row: AppRouteRecord) => {
         if (row.meta?.originalMenuType === 'button') {
-          return row.meta?.originalAuthMark || ''
+          return row.meta?.originalAuthMark || '-'
         }
-        return row.meta?.originalAuthMark || row.meta?.authMark || ''
+        return row.meta?.originalAuthMark || row.meta?.authMark || '-'
       }
     },
     {
@@ -216,21 +216,15 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 180,
+      width: 165,
       formatter: (row: AppRouteRecord) => {
-        const buttons = []
-
-        // 只有当菜单类型不是权限时才显示新增按钮
-        if (row.meta?.originalMenuType !== 'button') {
-          buttons.push(
-            h(ArtButtonTable, {
-              type: 'add',
-              onClick: () => showModel('menu', row, true)
-            })
-          )
-        }
-
-        buttons.push(
+        return h('div', [
+          row.meta?.originalMenuType !== 'button'
+            ? h(ArtButtonTable, {
+                type: 'add',
+                onClick: () => showModel('menu', row, true)
+              })
+            : h('span', { style: 'width: 46px; display: inline-block;' }),
           h(ArtButtonTable, {
             type: 'edit',
             onClick: () => showDialog('edit', row)
@@ -239,9 +233,7 @@
             type: 'delete',
             onClick: () => handleDeleteMenu(row)
           })
-        )
-
-        return h('div', buttons)
+        ])
       }
     }
   ])

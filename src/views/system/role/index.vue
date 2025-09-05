@@ -87,9 +87,21 @@
       excludeParams: ['daterange'],
       columnsFactory: () => [
         { type: 'index', width: 60, label: '序号' },
-        { prop: 'roleName', label: '角色名称' },
-        { prop: 'roleCode', label: '角色编码' },
-        { prop: 'description', label: '描述' },
+        {
+          prop: 'roleName',
+          label: '角色名称',
+          formatter: row => row.roleName || '-'
+        },
+        {
+          prop: 'roleCode',
+          label: '角色编码',
+          formatter: row => row.roleCode || '-'
+        },
+        {
+          prop: 'description',
+          label: '描述',
+          formatter: row => row.description || '-'
+        },
         {
           prop: 'status',
           label: '启用',
@@ -107,7 +119,7 @@
         {
           prop: 'operation',
           label: '操作',
-          width: 120,
+          width: 80,
           fixed: 'right',
           formatter: row => {
             const buttons = []

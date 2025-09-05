@@ -99,10 +99,26 @@
       excludeParams: ['daterange'],
       columnsFactory: () => [
         { type: 'index', width: 60, label: '序号' },
-        { prop: 'userName', label: '用户名' },
-        { prop: 'nickName', label: '姓名' },
-        { prop: 'phone', label: '手机号' },
-        { prop: 'email', label: '邮箱' },
+        {
+          prop: 'userName',
+          label: '用户名',
+          formatter: row => row.userName || '-'
+        },
+        {
+          prop: 'nickName',
+          label: '姓名',
+          formatter: row => row.nickName || '-'
+        },
+        {
+          prop: 'phone',
+          label: '手机号',
+          formatter: row => row.phone || '-'
+        },
+        {
+          prop: 'email',
+          label: '邮箱',
+          formatter: row => row.email || '-'
+        },
         {
           prop: 'roleNames',
           label: '角色',

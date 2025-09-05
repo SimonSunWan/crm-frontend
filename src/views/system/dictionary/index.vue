@@ -126,9 +126,21 @@
   })
 
   const enumColumns = [
-    { prop: 'keyValue', label: 'key值' },
-    { prop: 'dictValue', label: '字典值' },
-    { prop: 'sortOrder', label: '排序' },
+    {
+      prop: 'keyValue',
+      label: 'key值',
+      formatter: (row: DictionaryEnumItem) => row.keyValue || '-'
+    },
+    {
+      prop: 'dictValue',
+      label: '字典值',
+      formatter: (row: DictionaryEnumItem) => row.dictValue || '-'
+    },
+    {
+      prop: 'sortOrder',
+      label: '排序',
+      formatter: (row: DictionaryEnumItem) => row.sortOrder || '-'
+    },
     {
       prop: 'operation',
       label: '操作',

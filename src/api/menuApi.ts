@@ -55,7 +55,7 @@ export class MenuService {
   }
 
   static convertMenuToRoute(menu: any): AppRouteRecord {
-    let roles: string[] = []
+    let roles: any[] = []
     if (menu.roles) {
       if (typeof menu.roles === 'string') {
         roles = menu.roles.split(',').filter((role: string) => role.trim())
@@ -82,11 +82,31 @@ export class MenuService {
         title: menu.meta.title || menu.title || '',
         icon: menu.meta.icon || menu.icon || '',
         sort: menu.meta.sort || menu.sort || 1,
-        isHide: menu.meta.isHide || menu.is_hide || false,
-        keepAlive: menu.meta.keepAlive || menu.is_keep_alive || true,
-        isIframe: menu.meta.isIframe || menu.is_iframe || false,
+        isHide:
+          menu.meta.isHide !== undefined
+            ? menu.meta.isHide
+            : menu.isHide !== undefined
+              ? menu.isHide
+              : false,
+        keepAlive:
+          menu.meta.keepAlive !== undefined
+            ? menu.meta.keepAlive
+            : menu.isKeepAlive !== undefined
+              ? menu.isKeepAlive
+              : true,
+        isIframe:
+          menu.meta.isIframe !== undefined
+            ? menu.meta.isIframe
+            : menu.isIframe !== undefined
+              ? menu.isIframe
+              : false,
         link: menu.meta.link || menu.link || undefined,
-        isEnable: menu.meta.isEnable || menu.is_enable || true,
+        isEnable:
+          menu.meta.isEnable !== undefined
+            ? menu.meta.isEnable
+            : menu.isEnable !== undefined
+              ? menu.isEnable
+              : true,
         roles: menu.meta.roles || roles,
         authList: menu.meta.authList || []
       }
@@ -95,11 +115,11 @@ export class MenuService {
         title: menu.title || '',
         icon: menu.icon || '',
         sort: menu.sort || 1,
-        isHide: menu.is_hide || false,
-        keepAlive: menu.is_keep_alive || true,
-        isIframe: menu.is_iframe || false,
+        isHide: menu.isHide !== undefined ? menu.isHide : false,
+        keepAlive: menu.isKeepAlive !== undefined ? menu.isKeepAlive : true,
+        isIframe: menu.isIframe !== undefined ? menu.isIframe : false,
         link: menu.link || undefined,
-        isEnable: menu.is_enable || true,
+        isEnable: menu.isEnable !== undefined ? menu.isEnable : true,
         roles: roles,
         authList: []
       }
@@ -122,7 +142,7 @@ export class MenuService {
       originalAuthSort: menu.authSort
     }
 
-    const isFirstLevel = menu.children && menu.children.length > 0
+    const isFirstLevel = menu.parentId === null || menu.parentId === undefined
 
     return {
       id: menu.id,
