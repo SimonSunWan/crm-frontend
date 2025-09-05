@@ -7,7 +7,7 @@
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
       <ElFormItem label="用户名" prop="userName">
-        <ElInput v-model="formData.userName" placeholder="请输入用户名" />
+        <ElInput v-model="formData.userName" placeholder="请输入用户名" autocomplete="username" />
       </ElFormItem>
       <ElFormItem label="姓名" prop="nickName">
         <ElInput v-model="formData.nickName" placeholder="请输入姓名" />
@@ -100,6 +100,16 @@
     }
   }
 
+  const validateEmail = (rule: any, value: string, callback: any) => {
+    if (value === '') {
+      callback()
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      callback(new Error('请输入正确的邮箱格式'))
+    } else {
+      callback()
+    }
+  }
+
   const rules: FormRules = {
     userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
     nickName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
@@ -107,10 +117,7 @@
       { required: true, message: '请输入手机号', trigger: 'blur' },
       { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
     ],
-    email: [
-      { required: true, message: '请输入邮箱', trigger: 'blur' },
-      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
-    ],
+    email: [{ validator: validateEmail, trigger: 'blur' }],
     password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
     roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
   }

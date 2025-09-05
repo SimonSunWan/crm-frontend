@@ -5,7 +5,7 @@
     },
     "user": {
       "userCenter": "个人中心",
-
+      "systemCode": "系统码",
       "logout": "退出登录"
     },
     "guide": {
@@ -119,8 +119,8 @@
   },
   "forgetPassword": {
     "title": "忘记密码？",
-    "subTitle": "输入您的电子邮件来重置您的密码",
-    "placeholder": "请输入您的电子邮件",
+    "subTitle": "输入您的用户名来重置您的密码",
+    "placeholder": "请输入您的用户名",
     "submitBtnText": "提交",
     "backBtnText": "返回"
   },

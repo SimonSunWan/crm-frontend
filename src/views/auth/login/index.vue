@@ -185,5 +185,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @use './index';
+  @use '../index';
 </style>

@@ -149,11 +149,14 @@
                   </div>
                 </div>
                 <ul class="user-menu">
+                  <li @click="showSettingCode = true">
+                    <i class="menu-icon iconfont-sys">&#xe817;</i>
+                    <span class="menu-txt">{{ $t('topBar.user.systemCode') }}</span>
+                  </li>
                   <li @click="goPage('/system/user-center')">
                     <i class="menu-icon iconfont-sys">&#xe734;</i>
                     <span class="menu-txt">{{ $t('topBar.user.userCenter') }}</span>
                   </li>
-
                   <li @click="loginOut">
                     <i class="menu-icon iconfont-sys">&#xe6fd;</i>
                     <span class="menu-txt">{{ $t('topBar.user.logout') }}</span>
@@ -168,6 +171,7 @@
     <ArtWorkTab />
 
     <ArtNotification v-model:value="showNotice" ref="notice" />
+    <ArtSystemCodeModal v-model:visible="showSettingCode" />
   </div>
 </template>
 
@@ -187,6 +191,7 @@
   import { useCommon } from '@/composables/useCommon'
   import { useHeaderBar } from '@/composables/useHeaderBar'
   import { getAvatarUrl } from '@/utils'
+  import ArtSystemCodeModal from '@/components/layouts/art-system-code-modal/index.vue'
 
   defineOptions({ name: 'ArtHeaderBar' })
 
@@ -238,6 +243,7 @@
   const showNotice = ref(false)
   const notice = ref(null)
   const userMenuPopover = ref()
+  const showSettingCode = ref(false)
 
   // 菜单类型判断
   const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT)

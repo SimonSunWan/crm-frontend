@@ -5,6 +5,8 @@ import type {
   UserListItem,
   CreateUserParams,
   UpdateUserParams,
+  RegisterUserParams,
+  ForgetPasswordParams,
   AvatarUploadResponse
 } from '@/types/api'
 
@@ -46,6 +48,20 @@ export class UserService {
   static createUser(data: CreateUserParams) {
     return request.post<UserListItem>({
       url: '/users/',
+      data
+    })
+  }
+
+  static register(data: RegisterUserParams) {
+    return request.post<UserListItem>({
+      url: '/users/register',
+      data
+    })
+  }
+
+  static forgetPassword(data: ForgetPasswordParams) {
+    return request.post({
+      url: '/users/forget-password',
       data
     })
   }

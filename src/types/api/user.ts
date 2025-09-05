@@ -61,6 +61,23 @@ export interface UpdateUserParams {
   phone?: string
 }
 
+// 用户注册参数
+export interface RegisterUserParams {
+  userName: string
+  nickName: string
+  phone: string
+  email?: string
+  password: string
+  systemCode: string
+}
+
+// 忘记密码参数
+export interface ForgetPasswordParams {
+  username: string
+  newPassword: string
+  systemCode: string
+}
+
 // 头像上传响应
 export interface AvatarUploadResponse {
   avatar_url: string
