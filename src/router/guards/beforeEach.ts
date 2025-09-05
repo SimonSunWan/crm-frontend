@@ -248,9 +248,7 @@ function filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
 
       // 过滤掉组件为空字符串且没有子菜单的项
       const isEmptyComponentMenu =
-        item.component === '' &&
-        (!item.children || item.children.length === 0) &&
-        item.meta.isIframe !== true
+        item.component === '' && (!item.children || item.children.length === 0)
 
       return !(isEmptyLayoutMenu || isEmptyComponentMenu)
     })

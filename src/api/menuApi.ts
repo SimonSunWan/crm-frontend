@@ -70,7 +70,6 @@ export class MenuService {
       sort: 1,
       isHide: false,
       keepAlive: true,
-      isIframe: false,
       link: undefined,
       isEnable: true,
       roles: roles,
@@ -94,12 +93,6 @@ export class MenuService {
             : menu.isKeepAlive !== undefined
               ? menu.isKeepAlive
               : true,
-        isIframe:
-          menu.meta.isIframe !== undefined
-            ? menu.meta.isIframe
-            : menu.isIframe !== undefined
-              ? menu.isIframe
-              : false,
         link: menu.meta.link || menu.link || undefined,
         isEnable:
           menu.meta.isEnable !== undefined
@@ -117,7 +110,6 @@ export class MenuService {
         sort: menu.sort || 1,
         isHide: menu.isHide !== undefined ? menu.isHide : false,
         keepAlive: menu.isKeepAlive !== undefined ? menu.isKeepAlive : true,
-        isIframe: menu.isIframe !== undefined ? menu.isIframe : false,
         link: menu.link || undefined,
         isEnable: menu.isEnable !== undefined ? menu.isEnable : true,
         roles: roles,
@@ -132,7 +124,6 @@ export class MenuService {
       originalSort: menu.sort,
       originalIsHide: menu.isHide,
       originalIsKeepAlive: menu.isKeepAlive,
-      originalIsIframe: menu.isIframe,
       originalLink: menu.link,
       originalIsEnable: menu.isEnable,
       originalMenuType: menu.menuType,
@@ -161,7 +152,6 @@ export class MenuService {
       sort?: number
       is_hide?: boolean
       is_keep_alive?: boolean
-      is_iframe?: boolean
       link?: string
       is_enable?: boolean
       menu_type?: string

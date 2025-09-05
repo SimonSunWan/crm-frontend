@@ -4,11 +4,6 @@
 
 import { AppRouteRecord } from '@/types'
 
-// 检查是否为 iframe 路由
-export function isIframe(url: string): boolean {
-  return url.startsWith('/outside/iframe/')
-}
-
 /**
  * 验证菜单项是否有效
  * @param menuItem 菜单项

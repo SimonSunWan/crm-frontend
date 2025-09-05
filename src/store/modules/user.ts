@@ -99,8 +99,6 @@ export const useUserStore = defineStore(
       refreshToken.value = ''
       // 清空工作台已打开页面
       useWorktabStore().opened = []
-      // 移除iframe路由缓存
-      sessionStorage.removeItem('iframeRoutes')
       // 清空主页路径
       useMenuStore().setHomePath('')
       // 重置路由状态

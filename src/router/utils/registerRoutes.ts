@@ -1,25 +1,22 @@
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/router'
-import { saveIframeRoutes } from './menuToRouter'
 import { RoutesAlias } from '../routesAlias'
 import { h } from 'vue'
 import { useMenuStore } from '@/store/modules/menu'
 
 const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
 export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]): void {
-  const iframeRoutes: AppRouteRecord[] = []
   const removeRouteFns: (() => void)[] = []
   checkDuplicateRoutes(menuList)
   menuList.forEach(route => {
     if (route.name && !router.hasRoute(route.name)) {
-      const routeConfig = convertRouteComponent(route, iframeRoutes)
+      const routeConfig = convertRouteComponent(route)
       const removeRouteFn = router.addRoute(routeConfig as RouteRecordRaw)
       removeRouteFns.push(removeRouteFn)
     }
   })
   const menuStore = useMenuStore()
   menuStore.addRemoveRouteFns(removeRouteFns)
-  saveIframeRoutes(iframeRoutes)
 }
 /**
  * 路径解析函数: 处理父路径和子路径的拼接
@@ -142,11 +139,7 @@ interface ConvertedRoute extends Omit<RouteRecordRaw, 'children'> {
 /**
  * 转换路由组件配置
  */
-function convertRouteComponent(
-  route: AppRouteRecord,
-  iframeRoutes: AppRouteRecord[],
-  depth = 0
-): ConvertedRoute {
+function convertRouteComponent(route: AppRouteRecord, depth = 0): ConvertedRoute {
   const { component, children, ...routeConfig } = route
 
   // 基础路由配置
@@ -166,9 +159,7 @@ function convertRouteComponent(
 
   // 递归时增加深度
   if (children?.length) {
-    converted.children = children.map(child =>
-      convertRouteComponent(child, iframeRoutes, depth + 1)
-    )
+    converted.children = children.map(child => convertRouteComponent(child, depth + 1))
   }
 
   return converted

@@ -121,9 +121,7 @@
       return hasRealMenu ? 'info' : 'primary'
     }
 
-    if (row.meta?.link && row.meta?.isIframe) {
-      return 'success'
-    } else if (row.path) {
+    if (row.path) {
       return 'primary'
     } else if (row.meta?.link) {
       return 'warning'
@@ -142,8 +140,6 @@
         (child: AppRouteRecord) => child.meta?.originalMenuType !== 'button'
       )
       return hasRealMenu ? '目录' : '菜单'
-    } else if (row.meta?.link && row.meta?.isIframe) {
-      return '内嵌'
     } else if (row.path) {
       return '菜单'
     } else if (row.meta?.link) {

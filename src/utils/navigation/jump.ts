@@ -14,8 +14,8 @@ export const openExternalLink = (link: string) => {
  */
 export const handleMenuJump = (item: AppRouteRecord, jumpToFirst: boolean = false) => {
   // 处理外部链接
-  const { link, isIframe } = item.meta
-  if (link && !isIframe) {
+  const { link } = item.meta
+  if (link) {
     return openExternalLink(link)
   }
 

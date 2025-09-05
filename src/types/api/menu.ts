@@ -14,7 +14,6 @@ export interface Menu {
   sort: number
   is_hide: boolean
   is_keep_alive: boolean
-  is_iframe: boolean
   link: string
   is_enable: boolean
   menu_type: string
@@ -43,7 +42,6 @@ export interface CreateMenuParams {
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
-  isIframe?: boolean
   link?: string
   isEnable?: boolean
   menuType?: string
@@ -63,7 +61,6 @@ export interface UpdateMenuParams {
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
-  isIframe?: boolean
   link?: string
   isEnable?: boolean
   menuType?: string

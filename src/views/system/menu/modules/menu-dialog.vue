@@ -31,7 +31,7 @@
             <ElFormItem label="外部链接" prop="link">
               <ElInput
                 v-model="formData.link"
-                placeholder="外部链接/内嵌地址(https://example.com)"
+                placeholder="外部链接(https://example.com)"
               ></ElInput>
             </ElFormItem>
           </ElCol>
@@ -59,11 +59,6 @@
           <ElCol :span="6">
             <ElFormItem label="页面缓存" prop="keepAlive">
               <ElSwitch v-model="formData.keepAlive"></ElSwitch>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="是否内嵌" prop="isIframe">
-              <ElSwitch v-model="formData.isIframe"></ElSwitch>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -158,7 +153,6 @@
     sort: 1,
     keepAlive: false,
     link: '',
-    isIframe: false,
     authName: '',
     authLabel: '',
     authSort: 1
@@ -230,12 +224,6 @@
               ? meta.isEnable
               : true
         formData.link = meta?.originalLink || meta?.link || ''
-        formData.isIframe =
-          meta?.originalIsIframe !== undefined
-            ? meta.originalIsIframe
-            : meta?.isIframe !== undefined
-              ? meta.isIframe
-              : false
       } else {
         formData.id = row.id || 0
         formData.authName = meta?.originalAuthName || meta?.title || ''
@@ -269,7 +257,6 @@
       isEnable: true,
       keepAlive: false,
       link: '',
-      isIframe: false,
       authName: '',
       authLabel: '',
       authSort: 1
@@ -304,7 +291,6 @@
               icon: formData.icon,
               sort: formData.sort,
               isKeepAlive: formData.keepAlive,
-              isIframe: formData.isIframe,
               link: formData.link,
               isEnable: formData.isEnable,
               menuType: menuType.value,
@@ -324,7 +310,6 @@
               icon: formData.icon,
               sort: menuType.value === 'button' ? formData.authSort : formData.sort,
               isKeepAlive: formData.keepAlive,
-              isIframe: formData.isIframe,
               link: formData.link,
               isEnable: formData.isEnable,
               menuType: menuType.value,

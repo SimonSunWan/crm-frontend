@@ -28,9 +28,6 @@ export const menuDataToRouter = (route: AppRouteRecord, parentPath = ''): AppRou
 const buildRoutePath = (route: AppRouteRecord, parentPath: string): string => {
   if (!route.path) return ''
 
-  // iframe 类型路由直接使用原始路径
-  if (route.meta?.isIframe) return route.path
-
   // 拼接并规范化路径
   return parentPath ? `${parentPath}/${route.path}`.replace(/\/+/g, '/') : route.path
 }
@@ -45,28 +42,6 @@ const processChildren = (children: AppRouteRecord[], parentPath: string): AppRou
   if (!Array.isArray(children) || children.length === 0) return []
 
   return children.map(child => menuDataToRouter(child, parentPath))
-}
-
-/**
- * 保存 iframe 路由到 sessionStorage 中
- * @param list iframe 路由列表
- */
-export const saveIframeRoutes = (list: AppRouteRecord[]): void => {
-  if (list.length > 0) {
-    sessionStorage.setItem('iframeRoutes', JSON.stringify(list))
-  }
-}
-
-/**
- * 获取 iframe 路由
- * @returns iframe 路由列表
- */
-export const getIframeRoutes = (): AppRouteRecord[] => {
-  try {
-    return JSON.parse(sessionStorage.getItem('iframeRoutes') || '[]')
-  } catch {
-    return []
-  }
 }
 
 /**
