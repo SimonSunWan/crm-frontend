@@ -59,7 +59,7 @@
             <ElFormItem prop="captcha">
               <ElInput
                 v-model.trim="formData.captcha"
-                placeholder="请输入系统码（找系统管理员获取）"
+                placeholder="请输入系统码（找超级管理员获取）"
               />
             </ElFormItem>
 
@@ -210,7 +210,7 @@
         systemCode: formData.captcha
       })
 
-      ElMessage.success('注册成功，请等待系统管理员审核')
+      ElMessage.success('注册成功，请等待超级管理员审核')
       toLogin()
     } catch (error) {
       console.error(error)

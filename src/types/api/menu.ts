@@ -33,7 +33,7 @@ export interface MenuListResponse {
 export interface CreateMenuParams {
   name: string
   path?: string | null
-  icon?: string
+  icon?: string | null
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
@@ -42,14 +42,14 @@ export interface CreateMenuParams {
   isEnable?: boolean
   menuType?: string
   parentId?: number | null
-  authMark?: string
+  authMark?: string | null
 }
 
 // 更新菜单参数
 export interface UpdateMenuParams {
   name?: string
   path?: string | null
-  icon?: string
+  icon?: string | null
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
@@ -58,6 +58,6 @@ export interface UpdateMenuParams {
   isEnable?: boolean
   menuType?: string
   parentId?: number | null
-  authMark?: string
+  authMark?: string | null
   updateBy?: string
 }

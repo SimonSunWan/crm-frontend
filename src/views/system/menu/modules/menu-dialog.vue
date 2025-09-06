@@ -64,13 +64,13 @@
       <template v-if="menuType === 'button'">
         <ElRow :gutter="20">
           <ElCol :span="12">
-            <ElFormItem label="权限名称" prop="authName">
-              <ElInput v-model="formData.authName" placeholder="权限名称"></ElInput>
+            <ElFormItem label="权限名称" prop="name">
+              <ElInput v-model="formData.name" placeholder="权限名称"></ElInput>
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
-            <ElFormItem label="权限标识" prop="authLabel">
-              <ElInput v-model="formData.authLabel" placeholder="权限标识"></ElInput>
+            <ElFormItem label="权限标识" prop="authMark">
+              <ElInput v-model="formData.authMark" placeholder="权限标识"></ElInput>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -83,6 +83,11 @@
                 :min="1"
                 controls-position="right"
               />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="是否启用" prop="isEnable">
+              <ElSwitch v-model="formData.isEnable"></ElSwitch>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -111,6 +116,9 @@
 
   // API 服务
   import { MenuService } from '@/api/menuApi'
+
+  // Store
+  import { useMenuStore } from '@/store/modules/menu'
 
   // Vue 工具函数
   import { ref, reactive, computed, watch } from 'vue'
@@ -151,8 +159,7 @@
     sort: 1,
     keepAlive: false,
     isLink: false,
-    authName: '',
-    authLabel: '',
+    authMark: '',
     authSort: 1
   })
 
@@ -180,26 +187,22 @@
 
   // 判断是否为目录层级
   const isDirectory = computed(() => {
-    if (props.menuData && props.menuData.children && props.menuData.children.length > 0) {
-      return true
-    }
-    return false
+    if (menuType.value !== 'menu' || !props.menuData?.children) return false
+    return props.menuData.children.some((child: any) => child.menuType !== 'button')
   })
 
   // 表单验证规则
   const rules = computed<FormRules>(() => {
     const baseRules: FormRules = {}
-
+    baseRules.name = [{ required: true, message: '请输入名称', trigger: 'blur' }]
     if (menuType.value === 'menu') {
-      baseRules.name = [{ required: true, message: '请输入名称', trigger: 'blur' }]
       if (formData.isLink) {
         baseRules.link = [{ required: true, message: '请输入外链地址', trigger: 'blur' }]
       } else {
         baseRules.path = [{ required: true, message: '请输入路由地址', trigger: 'blur' }]
       }
     } else {
-      baseRules.authName = [{ required: true, message: '请输入名称', trigger: 'blur' }]
-      baseRules.authLabel = [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
+      baseRules.authMark = [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
     }
 
     return baseRules
@@ -217,6 +220,8 @@
         formData.id = row.id || 0
         formData.parentId = row.parentId || 0
         formData.name = row.name || ''
+        formData.path = row.path || ''
+        formData.link = row.link || ''
         formData.icon = row.icon || ''
         formData.sort = row.sort || 1
         formData.keepAlive = row.isKeepAlive
@@ -224,9 +229,10 @@
         formData.isLink = row.isLink
       } else {
         formData.id = row.id || 0
-        formData.authName = row.name || ''
-        formData.authLabel = row.authMark || ''
+        formData.name = row.name || ''
+        formData.authMark = row.authMark || ''
         formData.authSort = row.sort || 1
+        formData.isEnable = row.isEnable
       }
     } else {
       isEdit.value = false
@@ -256,8 +262,7 @@
       isEnable: true,
       keepAlive: false,
       isLink: false,
-      authName: '',
-      authLabel: '',
+      authMark: '',
       authSort: 1
     })
   }
@@ -285,24 +290,24 @@
             const menuId = formData.id || 0
             const updateData = {
               name: formData.name,
-              path: formData.isLink ? null : formData.path,
-              icon: formData.icon,
-              sort: formData.sort,
+              path: menuType.value === 'button' ? null : formData.isLink ? null : formData.path,
+              icon: menuType.value === 'button' ? null : formData.icon,
+              sort: menuType.value === 'button' ? formData.authSort : formData.sort,
               isKeepAlive: formData.keepAlive,
-              link: formData.isLink ? formData.link : null,
-              isLink: formData.isLink,
+              link: menuType.value === 'button' ? null : formData.isLink ? formData.link : null,
+              isLink: menuType.value === 'button' ? false : formData.isLink,
               isEnable: formData.isEnable,
               menuType: menuType.value,
-              authMark: formData.authLabel
+              authMark: menuType.value === 'button' ? formData.authMark : null
             }
 
             await MenuService.updateMenu(menuId, updateData)
             ElMessage.success(`编辑成功`)
           } else {
             const createData = {
-              name: menuType.value === 'button' ? formData.authName : formData.name,
+              name: formData.name,
               path: menuType.value === 'button' ? '' : formData.isLink ? null : formData.path,
-              icon: formData.icon,
+              icon: menuType.value === 'button' ? null : formData.icon,
               sort: menuType.value === 'button' ? formData.authSort : formData.sort,
               isKeepAlive: formData.keepAlive,
               link: menuType.value === 'button' ? null : formData.isLink ? formData.link : null,
@@ -310,12 +315,17 @@
               isEnable: formData.isEnable,
               menuType: menuType.value,
               parentId: formData.parentId > 0 ? formData.parentId : null,
-              authMark: formData.authLabel
+              authMark: menuType.value === 'button' ? formData.authMark : null
             }
 
             await MenuService.createMenu(createData)
             ElMessage.success('新增成功')
           }
+
+          // 同步更新左侧菜单列表
+          const menuStore = useMenuStore()
+          await menuStore.fetchMenuList()
+
           emit('submit')
         } catch (error) {
           console.error(error)

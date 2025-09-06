@@ -7,7 +7,7 @@
           <template #header>
             <div class="card-header">
               <span>字典分类</span>
-              <ElButton type="primary" @click="showTypeDialog('add')" v-ripple> + 新增 </ElButton>
+              <ElButton @click="showTypeDialog('add')" v-ripple> 新增字典分类 </ElButton>
             </div>
           </template>
 
@@ -46,8 +46,8 @@
           <template #header>
             <div class="card-header">
               <span>字典枚举</span>
-              <ElButton v-if="selectedType" type="primary" @click="showEnumDialog('add')" v-ripple>
-                + 新增
+              <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
+                新增字典枚举
               </ElButton>
             </div>
           </template>
@@ -389,6 +389,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 36px;
           }
 
           .no-selection {

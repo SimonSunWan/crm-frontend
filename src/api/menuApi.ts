@@ -67,6 +67,7 @@ export class MenuService {
       link: menu.meta?.link || undefined,
       isEnable: menu.meta?.isEnable || true,
       roles: roles,
+      authList: menu.meta?.authList || [],
       isFirstLevel: menu.parentId === null || menu.parentId === undefined
     }
 

@@ -59,7 +59,7 @@
           <ElFormItem label="项目类型" prop="projectType">
             <ArtSelect
               v-model="formData.projectType"
-              dict-code="ORDER_PROJECT_TYPE"
+              dict-code="order_project_type"
               placeholder="请选择项目类型"
             />
           </ElFormItem>

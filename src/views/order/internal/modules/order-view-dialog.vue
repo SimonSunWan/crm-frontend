@@ -58,7 +58,7 @@
           <div class="info-item">
             <span class="label">项目类型：</span>
             <span class="value">{{
-              getDictionaryLabel('ORDER_PROJECT_TYPE', orderData.projectType) || '-'
+              getDictionaryLabel('order_project_type', orderData.projectType) || '-'
             }}</span>
           </div>
         </ElCol>

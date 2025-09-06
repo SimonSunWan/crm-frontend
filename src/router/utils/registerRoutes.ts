@@ -1,27 +1,25 @@
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/router'
 import { RoutesAlias } from '../routesAlias'
-import { h } from 'vue'
 import { useMenuStore } from '@/store/modules/menu'
 
 const modules: Record<string, () => Promise<any>> = import.meta.glob('../../views/**/*.vue')
+const componentCache = new Map<string, (() => Promise<any>) | null>()
 export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]): void {
   const removeRouteFns: (() => void)[] = []
   checkDuplicateRoutes(menuList)
-  menuList.forEach(route => {
-    // 跳过外链菜单的注册
-    if (route.meta?.isLink) {
-      return
-    }
 
-    if (route.name && !router.hasRoute(route.name)) {
+  menuList.forEach(route => {
+    if (route.meta?.isLink) return
+    if (route.name && route.component && !router.hasRoute(route.name)) {
       const routeConfig = convertRouteComponent(route)
-      const removeRouteFn = router.addRoute(routeConfig as RouteRecordRaw)
-      removeRouteFns.push(removeRouteFn)
+      if (routeConfig) {
+        removeRouteFns.push(router.addRoute(routeConfig as RouteRecordRaw))
+      }
     }
   })
-  const menuStore = useMenuStore()
-  menuStore.addRemoveRouteFns(removeRouteFns)
+
+  useMenuStore().addRemoveRouteFns(removeRouteFns)
 }
 /**
  * 路径解析函数: 处理父路径和子路径的拼接
@@ -99,37 +97,21 @@ function getComponentPathString(component: any): string {
 /**
  * 根据组件路径动态加载组件
  * @param componentPath 组件路径(不包含../../views 前缀和. vue 后缀)
- * @param routeName 当前路由名称(用于错误提示)
  * @returns 组件加载函数
  */
-function loadComponent(componentPath: string, routeName: string): () => Promise<any> {
-  /* 如果路径为空, 直接返回一个空的组件 */
-  if (componentPath === '') {
-    return () =>
-      Promise.resolve({
-        render() {
-          return h('div', {})
-        }
-      })
+function loadComponent(componentPath: string): (() => Promise<any>) | null {
+  if (!componentPath) return null
+
+  if (componentCache.has(componentPath)) {
+    return componentCache.get(componentPath)!
   }
 
-  // 构建可能的路径
   const fullPath = `../../views${componentPath}.vue`
   const fullPathWithIndex = `../../views${componentPath}/index.vue`
-
-  /* 先尝试直接路径, 再尝试添加/index的路径 */
   const module = modules[fullPath] || modules[fullPathWithIndex]
-
-  if (!module) {
-    return () =>
-      Promise.resolve({
-        render() {
-          return h('div', `组件未找到: ${routeName}`)
-        }
-      })
-  }
-
-  return module
+  const result = module || null
+  componentCache.set(componentPath, result)
+  return result
 }
 
 /**
@@ -144,27 +126,27 @@ interface ConvertedRoute extends Omit<RouteRecordRaw, 'children'> {
 /**
  * 转换路由组件配置
  */
-function convertRouteComponent(route: AppRouteRecord, depth = 0): ConvertedRoute {
+function convertRouteComponent(route: AppRouteRecord, depth = 0): ConvertedRoute | null {
   const { component, children, ...routeConfig } = route
-
-  // 基础路由配置
-  const converted: ConvertedRoute = {
-    ...routeConfig,
-    component: undefined
-  }
-
-  // 是否为一级菜单
-  const isFirstLevel = depth === 0 && route.children && route.children.length > 0
+  const converted: ConvertedRoute = { ...routeConfig, component: undefined }
+  const isFirstLevel = depth === 0 && route.children?.length
 
   if (isFirstLevel) {
     handleLayoutRoute(converted, route, component as string)
   } else {
-    handleNormalRoute(converted, component as string, String(route.name))
+    if (!handleNormalRoute(converted, component as string, String(route.name))) {
+      return null
+    }
   }
 
-  // 递归时增加深度
   if (children?.length) {
-    converted.children = children.map(child => convertRouteComponent(child, depth + 1))
+    const validChildren = children
+      .map(child => convertRouteComponent(child, depth + 1))
+      .filter(Boolean) as ConvertedRoute[]
+
+    if (validChildren.length) {
+      converted.children = validChildren
+    }
   }
 
   return converted
@@ -182,33 +164,37 @@ function handleLayoutRoute(
   converted.path = `/${(route.path?.split('/')[1] || '').trim()}`
   converted.name = ''
 
-  // 确保 isFirstLevel 属性被正确设置
   if (route.meta) {
     route.meta.isFirstLevel = true
   } else {
     route.meta = { isFirstLevel: true } as any
   }
 
-  converted.children = [
-    {
-      ...route,
-      component: loadComponent(component as string, String(route.name))
-    } as ConvertedRoute
-  ]
+  const childComponent = loadComponent(component as string)
+  if (childComponent) {
+    converted.children = [{ ...route, component: childComponent } as ConvertedRoute]
+  }
 }
 
 /**
  * 处理普通路由
  */
-function handleNormalRoute(
-  converted: ConvertedRoute,
-  component: string | undefined,
-  routeName: string
-): void {
-  if (component) {
-    const aliasComponent = RoutesAlias[
-      component as keyof typeof RoutesAlias
-    ] as unknown as RouteRecordRaw['component']
-    converted.component = aliasComponent || loadComponent(component as string, routeName)
+function handleNormalRoute(converted: ConvertedRoute, component: string | undefined): boolean {
+  if (!component) return false
+
+  const aliasComponent = RoutesAlias[
+    component as keyof typeof RoutesAlias
+  ] as unknown as RouteRecordRaw['component']
+  if (aliasComponent) {
+    converted.component = aliasComponent
+    return true
   }
+
+  const loadedComponent = loadComponent(component)
+  if (loadedComponent) {
+    converted.component = loadedComponent
+    return true
+  }
+
+  return false
 }

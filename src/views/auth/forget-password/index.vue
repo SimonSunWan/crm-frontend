@@ -42,7 +42,7 @@
             <ElFormItem prop="systemCode">
               <ElInput
                 v-model.trim="formData.systemCode"
-                placeholder="请输入系统码（找系统管理员获取）"
+                placeholder="请输入系统码（找超级管理员获取）"
               />
             </ElFormItem>
 

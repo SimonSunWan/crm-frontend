@@ -323,6 +323,11 @@
         loading.value = true
         await MenuService.deleteMenu(row.id)
         ElMessage.success('删除成功')
+
+        // 同步更新左侧菜单列表
+        const menuStore = useMenuStore()
+        await menuStore.fetchMenuList()
+
         getTableData()
       }
     } catch (error) {

@@ -174,7 +174,7 @@
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel('ORDER_PROJECT_TYPE', row.projectType) || '-'
+        return getDictionaryLabel('order_project_type', row.projectType) || '-'
       }
     },
     {
@@ -315,7 +315,7 @@
 
   // 初始化
   onMounted(async () => {
-    await getDictionaryData('ORDER_PROJECT_TYPE')
+    await getDictionaryData('order_project_type')
     getData()
   })
 </script>
