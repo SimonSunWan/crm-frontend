@@ -15,7 +15,7 @@ export interface Menu {
   link: string
   is_enable: boolean
   menu_type: string
-  parent_id?: number
+  parent_id?: number | null
   roles: string
   auth_mark: string
   children?: Menu[]
@@ -32,32 +32,32 @@ export interface MenuListResponse {
 // 创建菜单参数
 export interface CreateMenuParams {
   name: string
-  path?: string
+  path?: string | null
   icon?: string
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
   isLink?: boolean
-  link?: string
+  link?: string | null
   isEnable?: boolean
   menuType?: string
-  parentId?: number
+  parentId?: number | null
   authMark?: string
 }
 
 // 更新菜单参数
 export interface UpdateMenuParams {
   name?: string
-  path?: string
+  path?: string | null
   icon?: string
   sort?: number
   isHide?: boolean
   keepAlive?: boolean
   isLink?: boolean
-  link?: string
+  link?: string | null
   isEnable?: boolean
   menuType?: string
-  parentId?: number
+  parentId?: number | null
   authMark?: string
   updateBy?: string
 }
