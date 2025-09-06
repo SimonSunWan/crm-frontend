@@ -21,15 +21,10 @@
         <template #default="{ data }">
           <div class="tree-node-content">
             <div class="node-info">
-              <span v-if="data.menuType === 'button'">{{ data.authName || data.title }}</span>
-              <span v-else>{{ data.title }}</span>
+              <span>{{ data.name }}</span>
             </div>
-            <ElTag
-              :type="data.menuType === 'button' ? 'danger' : 'primary'"
-              size="small"
-              class="node-tag"
-            >
-              {{ data.menuType === 'button' ? '权限' : '菜单' }}
+            <ElTag :type="buildMenuTypeTag(data)" size="small" class="node-tag">
+              {{ buildMenuTypeText(data) }}
             </ElTag>
           </div>
         </template>
@@ -95,11 +90,46 @@
   const defaultProps = {
     children: 'children',
     label: (data: any) => {
-      if (data.menuType === 'button') {
-        return data.authName || data.title || ''
-      }
-      return data.title || ''
+      return data.name || ''
     }
+  }
+
+  // 构建菜单类型标签颜色
+  const buildMenuTypeTag = (row: any) => {
+    if (row.menuType === 'button') {
+      return 'danger'
+    }
+
+    if (row.children && row.children.length > 0) {
+      const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
+      return hasRealMenu ? 'info' : 'primary'
+    }
+
+    if (row.isLink) {
+      return 'warning'
+    } else if (row.path) {
+      return 'primary'
+    }
+
+    return 'primary'
+  }
+
+  // 构建菜单类型文本
+  const buildMenuTypeText = (row: any) => {
+    if (row.menuType === 'button') {
+      return '权限'
+    }
+
+    if (row.children && row.children.length > 0) {
+      const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
+      return hasRealMenu ? '目录' : '菜单'
+    } else if (row.isLink) {
+      return '外链'
+    } else if (row.path) {
+      return '菜单'
+    }
+
+    return '菜单'
   }
 
   // 监听弹窗显示状态
@@ -139,8 +169,11 @@
 
       if (response && response.menuTree && response.selectedIds) {
         menuTreeData.value = response.menuTree
+        // 获取所有菜单树中的有效ID
+        const allValidIds = getAllNodeKeys(response.menuTree)
+        // 过滤出在菜单树中存在的选中ID
         const validSelectedIds = response.selectedIds.filter((id: number) => {
-          return menuList.value.some(menu => menu.id === id)
+          return allValidIds.includes(id)
         })
         selectedMenuIds.value = validSelectedIds
       } else {
