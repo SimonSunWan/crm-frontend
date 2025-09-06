@@ -142,7 +142,7 @@
 
   const validateUsernameField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入用户名'))
+      callback(new Error('请输入账号'))
     } else if (!validateAccount(value)) {
       callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
     } else {

@@ -99,7 +99,7 @@
         { type: 'index', width: 60, label: '序号' },
         {
           prop: 'userName',
-          label: '用户名',
+          label: '账号',
           formatter: row => row.userName || '-'
         },
         {

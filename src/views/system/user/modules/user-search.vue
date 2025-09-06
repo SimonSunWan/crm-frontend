@@ -40,10 +40,10 @@
 
   const formItems = computed(() => [
     {
-      label: '用户名',
+      label: '账号',
       key: 'userName',
       type: 'input',
-      placeholder: '请输入用户名',
+      placeholder: '请输入账号',
       clearable: true
     },
     { label: '姓名', key: 'nickName', type: 'input', placeholder: '请输入姓名', clearable: true },

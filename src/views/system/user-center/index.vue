@@ -41,7 +41,7 @@
 
           <ElForm :model="form" class="form" ref="ruleFormRef" :rules="rules" label-width="86px">
             <ElRow>
-              <ElFormItem label="用户名" prop="userName">
+              <ElFormItem label="账号" prop="userName">
                 <el-input v-model="form.userName" :disabled="!isEdit" />
               </ElFormItem>
               <ElFormItem label="姓名" prop="nickName" class="right-input">
@@ -155,7 +155,7 @@
 
   const validateUsernameField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入用户名'))
+      callback(new Error('请输入账号'))
     } else if (!validateAccount(value)) {
       callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
     } else {

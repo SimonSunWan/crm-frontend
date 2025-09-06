@@ -6,8 +6,8 @@
     align-center
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
-      <ElFormItem label="用户名" prop="userName">
-        <ElInput v-model="formData.userName" placeholder="请输入用户名" autocomplete="username" />
+      <ElFormItem label="账号" prop="userName">
+        <ElInput v-model="formData.userName" placeholder="请输入账号" autocomplete="username" />
       </ElFormItem>
       <ElFormItem label="姓名" prop="nickName">
         <ElInput v-model="formData.nickName" placeholder="请输入姓名" />
@@ -33,7 +33,7 @@
       </ElFormItem>
       <ElFormItem v-if="dialogType === 'add'" label="密码" prop="password">
         <ElInput v-model="formData.password" readonly placeholder="自动生成" />
-        <div class="password-tip">密码规则：用户名 + 手机号后4位</div>
+        <div class="password-tip">密码规则：账号 + 手机号后4位</div>
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -114,7 +114,7 @@
 
   const validateUsernameField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入用户名'))
+      callback(new Error('请输入账号'))
     } else if (!validateAccount(value)) {
       callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
     } else {

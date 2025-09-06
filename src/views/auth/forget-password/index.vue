@@ -18,7 +18,7 @@
             style="margin-top: 25px"
           >
             <ElFormItem prop="username">
-              <ElInput v-model.trim="formData.username" placeholder="请输入用户名" />
+              <ElInput v-model.trim="formData.username" placeholder="请输入账号" />
             </ElFormItem>
 
             <ElFormItem prop="newPassword">
@@ -117,7 +117,7 @@
   }
 
   const rules = reactive<FormRules>({
-    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
     newPassword: [{ required: true, validator: validatePass, trigger: 'blur' }],
     confirmPassword: [{ required: true, validator: validatePass2, trigger: 'blur' }],
     systemCode: [{ required: true, message: '请输入系统码', trigger: 'blur' }]
