@@ -7,7 +7,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="refreshData">
         <template #left>
-          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple> 新增用户 </ElButton>
+          <ElButton @click="showDialog('add')" v-ripple> 新增用户 </ElButton>
         </template>
       </ArtTableHeader>
 
@@ -41,7 +41,6 @@
 
   // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
-  import { useAuth } from '@/composables/useAuth'
   import { UserService } from '@/api/usersApi'
   import type { ApiResponse } from '@/utils/table/tableCache'
   import type { UserListItem } from '@/types/api'
@@ -50,7 +49,6 @@
 
   // API 服务
   const { getUserList, deleteUser } = UserService
-  const { hasAuth } = useAuth()
 
   // 响应式数据
   const dialogType = ref<'add' | 'edit'>('add')
@@ -153,35 +151,16 @@
           width: 120,
           fixed: 'right',
           formatter: row => {
-            if (row.roles && row.roles.includes('SUPER')) {
-              return h('div', {}, '-')
-            }
-
-            const buttons = []
-
-            if (hasAuth('edit')) {
-              buttons.push(
-                h(ArtButtonTable, {
-                  type: 'edit',
-                  onClick: () => showDialog('edit', row)
-                })
-              )
-            }
-
-            if (hasAuth('delete')) {
-              buttons.push(
-                h(ArtButtonTable, {
-                  type: 'delete',
-                  onClick: () => handleDeleteUser(row)
-                })
-              )
-            }
-
-            if (buttons.length === 0) {
-              return h('div', {}, '-')
-            }
-
-            return h('div', buttons)
+            return h('div', [
+              h(ArtButtonTable, {
+                type: 'edit',
+                onClick: () => showDialog('edit', row)
+              }),
+              h(ArtButtonTable, {
+                type: 'delete',
+                onClick: () => handleDeleteUser(row)
+              })
+            ])
           }
         }
       ]

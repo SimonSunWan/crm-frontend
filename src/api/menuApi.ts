@@ -1,16 +1,10 @@
 import { AppRouteRecord } from '@/types/router'
 import request from '@/utils/http'
-import type { Menu, MenuListResponse, CreateMenuParams, UpdateMenuParams } from '@/types/api'
+import type { Menu, CreateMenuParams, UpdateMenuParams } from '@/types/api'
 
 export class MenuService {
-  static getMenus(params?: {
-    current?: number
-    size?: number
-    name?: string
-    path?: string
-    menuType?: string
-  }) {
-    return request.get<MenuListResponse>({
+  static getMenus(params?: { name?: string; path?: string; menuType?: string }) {
+    return request.get<Menu[]>({
       url: '/menus/',
       params
     })
@@ -64,101 +58,25 @@ export class MenuService {
       }
     }
 
-    let meta = {
-      title: '',
-      icon: '',
-      sort: 1,
-      isHide: false,
-      keepAlive: true,
-      link: undefined,
-      isEnable: true,
+    const meta = {
+      title: menu.meta?.title || '',
+      icon: menu.meta?.icon || '',
+      sort: menu.meta?.sort || 1,
+      keepAlive: menu.meta?.keepAlive || false,
+      isLink: menu.meta?.isLink || false,
+      link: menu.meta?.link || undefined,
+      isEnable: menu.meta?.isEnable || true,
       roles: roles,
-      authList: []
+      isFirstLevel: menu.parentId === null || menu.parentId === undefined
     }
-
-    if (menu.meta) {
-      meta = {
-        title: menu.meta.title || menu.title || '',
-        icon: menu.meta.icon || menu.icon || '',
-        sort: menu.meta.sort || menu.sort || 1,
-        isHide:
-          menu.meta.isHide !== undefined
-            ? menu.meta.isHide
-            : menu.isHide !== undefined
-              ? menu.isHide
-              : false,
-        keepAlive:
-          menu.meta.keepAlive !== undefined
-            ? menu.meta.keepAlive
-            : menu.isKeepAlive !== undefined
-              ? menu.isKeepAlive
-              : true,
-        link: menu.meta.link || menu.link || undefined,
-        isEnable:
-          menu.meta.isEnable !== undefined
-            ? menu.meta.isEnable
-            : menu.isEnable !== undefined
-              ? menu.isEnable
-              : true,
-        roles: menu.meta.roles || roles,
-        authList: menu.meta.authList || []
-      }
-    } else {
-      meta = {
-        title: menu.title || '',
-        icon: menu.icon || '',
-        sort: menu.sort || 1,
-        isHide: menu.isHide !== undefined ? menu.isHide : false,
-        keepAlive: menu.isKeepAlive !== undefined ? menu.isKeepAlive : true,
-        link: menu.link || undefined,
-        isEnable: menu.isEnable !== undefined ? menu.isEnable : true,
-        roles: roles,
-        authList: []
-      }
-    }
-
-    const extendedMeta = {
-      ...meta,
-      originalTitle: menu.title,
-      originalIcon: menu.icon,
-      originalSort: menu.sort,
-      originalIsHide: menu.isHide,
-      originalIsKeepAlive: menu.isKeepAlive,
-      originalLink: menu.link,
-      originalIsEnable: menu.isEnable,
-      originalMenuType: menu.menuType,
-      originalParentId: menu.parentId,
-      originalAuthName: menu.authName,
-      originalAuthMark: menu.authMark,
-      originalAuthSort: menu.authSort
-    }
-
-    const isFirstLevel = menu.parentId === null || menu.parentId === undefined
 
     return {
       id: menu.id,
       name: menu.name,
       path: menu.path,
-      component: menu.component,
-      redirect: menu.redirect,
-      meta: {
-        ...extendedMeta,
-        isFirstLevel: isFirstLevel
-      },
+      component: menu.isLink ? undefined : menu.path,
+      meta,
       children: menu.children ? menu.children.map(MenuService.convertMenuToRoute) : []
-    } as AppRouteRecord & {
-      title?: string
-      icon?: string
-      sort?: number
-      is_hide?: boolean
-      is_keep_alive?: boolean
-      link?: string
-      is_enable?: boolean
-      menu_type?: string
-      parent_id?: number
-      auth_name?: string
-      auth_mark?: string
-      auth_sort?: number
-    }
+    } as AppRouteRecord
   }
 }

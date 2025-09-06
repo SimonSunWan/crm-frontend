@@ -37,6 +37,7 @@
         :menu-data="currentEditMenu || undefined"
         :parent-id="currentParentId"
         :is-sub-menu="isSubMenu"
+        :menu-list="tableData"
         @submit="handleDialogSubmit"
       />
     </ElCard>
@@ -109,41 +110,37 @@
     }
   ])
 
-  const buildMenuTypeTag = (row: AppRouteRecord) => {
-    if (row.meta?.originalMenuType === 'button') {
+  const buildMenuTypeTag = (row: any) => {
+    if (row.menuType === 'button') {
       return 'danger'
     }
 
     if (row.children && row.children.length > 0) {
-      const hasRealMenu = row.children.some(
-        (child: AppRouteRecord) => child.meta?.originalMenuType !== 'button'
-      )
+      const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? 'info' : 'primary'
     }
 
-    if (row.path) {
-      return 'primary'
-    } else if (row.meta?.link) {
+    if (row.isLink) {
       return 'warning'
+    } else if (row.path) {
+      return 'primary'
     }
 
     return 'primary'
   }
 
-  const buildMenuTypeText = (row: AppRouteRecord) => {
-    if (row.meta?.originalMenuType === 'button') {
+  const buildMenuTypeText = (row: any) => {
+    if (row.menuType === 'button') {
       return '权限'
     }
 
     if (row.children && row.children.length > 0) {
-      const hasRealMenu = row.children.some(
-        (child: AppRouteRecord) => child.meta?.originalMenuType !== 'button'
-      )
+      const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? '目录' : '菜单'
+    } else if (row.isLink) {
+      return '外链'
     } else if (row.path) {
       return '菜单'
-    } else if (row.meta?.link) {
-      return '外链'
     }
   }
 
@@ -151,43 +148,47 @@
     {
       prop: 'meta.title',
       label: '菜单名称',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.originalMenuType === 'button') {
-          return row.meta?.originalAuthName || row.meta?.title || ''
+      formatter: (row: any) => {
+        if (row.menuType === 'button') {
+          return row.name || ''
         }
-        return formatMenuTitle(row.meta?.title)
+        return formatMenuTitle(row.name)
       }
     },
     {
       prop: 'type',
       label: '菜单类型',
-      formatter: (row: AppRouteRecord) => {
+      formatter: (row: any) => {
         return h(ElTag, { type: buildMenuTypeTag(row) }, () => buildMenuTypeText(row))
       }
     },
     {
       prop: 'path',
       label: '路由地址',
-      formatter: (row: AppRouteRecord) => {
-        return row.path || '-'
+      formatter: (row: any) => {
+        if (row.isLink) {
+          return row.link || '-'
+        } else {
+          return row.path || '-'
+        }
       }
     },
     {
       prop: 'authMark',
       label: '权限标识',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.originalMenuType === 'button') {
-          return row.meta?.originalAuthMark || '-'
+      formatter: (row: any) => {
+        if (row.menuType === 'button') {
+          return row.authMark || '-'
         }
-        return row.meta?.originalAuthMark || row.meta?.authMark || '-'
+        return row.authMark || '-'
       }
     },
     {
       prop: 'meta.icon',
       label: '图标',
-      formatter: (row: AppRouteRecord) => {
-        if (!row.meta?.icon) return '-'
-        const iconText = row.meta.icon.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+      formatter: (row: any) => {
+        if (!row.icon) return '-'
+        const iconText = row.icon.replace(/&#x([0-9a-fA-F]+);/g, (match: string, hex: string) => {
           return String.fromCharCode(parseInt(hex, 16))
         })
         return h('i', { class: 'iconfont-sys' }, iconText)
@@ -196,26 +197,26 @@
     {
       prop: 'meta.isEnable',
       label: '状态',
-      formatter: (row: AppRouteRecord) => {
-        return h(ElTag, { type: row.meta?.isEnable ? 'success' : 'danger' }, () =>
-          row.meta?.isEnable ? '启用' : '禁用'
+      formatter: (row: any) => {
+        return h(ElTag, { type: row.isEnable ? 'success' : 'danger' }, () =>
+          row.isEnable ? '启用' : '禁用'
         )
       }
     },
     {
       prop: 'meta.sort',
       label: '排序',
-      formatter: (row: AppRouteRecord) => {
-        return row.meta?.sort || 1
+      formatter: (row: any) => {
+        return row.sort || 1
       }
     },
     {
       prop: 'operation',
       label: '操作',
       width: 165,
-      formatter: (row: AppRouteRecord) => {
+      formatter: (row: any) => {
         return h('div', [
-          row.meta?.originalMenuType !== 'button'
+          row.menuType !== 'button'
             ? h(ArtButtonTable, {
                 type: 'add',
                 onClick: () => showModel('menu', row, true)
@@ -243,7 +244,7 @@
   const currentParentId = ref<number>(0)
   const isSubMenu = ref(false)
 
-  const tableData = ref<AppRouteRecord[]>([])
+  const tableData = ref<any[]>([])
 
   onMounted(() => {
     getTableData()
@@ -252,10 +253,7 @@
   const getTableData = async () => {
     loading.value = true
     try {
-      const params: any = {
-        current: 1,
-        size: 100
-      }
+      const params: any = {}
 
       if (appliedFilters.name && appliedFilters.name.trim()) {
         params.name = appliedFilters.name.trim()
@@ -266,8 +264,8 @@
       }
 
       const response = await MenuService.getMenus(params)
-      if (response.records) {
-        tableData.value = response.records.map(MenuService.convertMenuToRoute)
+      if (response) {
+        tableData.value = response
       } else {
         tableData.value = []
       }
@@ -313,12 +311,9 @@
     }
   }
 
-  const handleDeleteMenu = async (row?: AppRouteRecord) => {
+  const handleDeleteMenu = async (row?: any) => {
     try {
-      const isButton = row?.meta?.originalMenuType === 'button'
-      const itemType = isButton ? '权限' : '菜单'
-
-      await ElMessageBox.confirm(`确定要删除该${itemType}吗？删除后无法恢复`, '提示', {
+      await ElMessageBox.confirm(`确定要删除${row.name}吗？删除后无法恢复`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -327,9 +322,7 @@
       if (row && row.id) {
         loading.value = true
         await MenuService.deleteMenu(row.id)
-        const isButton = row?.meta?.originalMenuType === 'button'
-        const itemType = isButton ? '权限' : '菜单'
-        ElMessage.success(`删除${itemType}成功`)
+        ElMessage.success('删除成功')
         getTableData()
       }
     } catch (error) {
@@ -348,7 +341,7 @@
     isExpanded.value = !isExpanded.value
     nextTick(() => {
       if (tableRef.value && tableData.value) {
-        const processRows = (rows: AppRouteRecord[]) => {
+        const processRows = (rows: any[]) => {
           rows.forEach(row => {
             if (row.children && row.children.length > 0) {
               tableRef.value.elTableRef.toggleRowExpansion(row, isExpanded.value)

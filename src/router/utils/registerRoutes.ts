@@ -9,6 +9,11 @@ export function registerDynamicRoutes(router: Router, menuList: AppRouteRecord[]
   const removeRouteFns: (() => void)[] = []
   checkDuplicateRoutes(menuList)
   menuList.forEach(route => {
+    // 跳过外链菜单的注册
+    if (route.meta?.isLink) {
+      return
+    }
+
     if (route.name && !router.hasRoute(route.name)) {
       const routeConfig = convertRouteComponent(route)
       const removeRouteFn = router.addRoute(routeConfig as RouteRecordRaw)
