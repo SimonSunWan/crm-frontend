@@ -17,6 +17,7 @@
         :default-expand-all="isExpandAll"
         :props="defaultProps"
         @check="handleTreeCheck"
+        @check-change="handleCheckChange"
       >
         <template #default="{ data }">
           <div class="tree-node-content">
@@ -211,6 +212,36 @@
 
     const checkedKeys = tree.getCheckedKeys()
     selectedMenuIds.value = checkedKeys
+  }
+
+  // 处理节点勾选变化
+  const handleCheckChange = (data: any, checked: boolean) => {
+    const tree = treeRef.value
+    if (!tree || data.menuType === 'button') return
+
+    const currentCheckedKeys = tree.getCheckedKeys()
+    const childIds = getNonPermissionChildIds(data.children || [])
+
+    if (checked) {
+      tree.setCheckedKeys([...new Set([...currentCheckedKeys, ...childIds])])
+    } else {
+      tree.setCheckedKeys(currentCheckedKeys.filter((id: number) => !childIds.includes(id)))
+    }
+  }
+
+  // 获取非权限类型的子节点ID
+  const getNonPermissionChildIds = (children: any[]): number[] => {
+    const ids: number[] = []
+    const traverse = (nodes: any[]) => {
+      nodes.forEach(node => {
+        if (node.menuType !== 'button') {
+          ids.push(node.id)
+          if (node.children?.length) traverse(node.children)
+        }
+      })
+    }
+    traverse(children)
+    return ids
   }
 
   // 切换展开状态
