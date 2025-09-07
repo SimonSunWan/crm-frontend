@@ -3,7 +3,7 @@
   <div class="login-left-view">
     <div class="logo">
       <ArtLogo class="icon" size="46" />
-      <h1 class="title">{{ AppConfig.systemInfo.name }}</h1>
+      <h1 class="title">{{ getSystemName(locale) }}</h1>
     </div>
 
     <div class="left-img">
@@ -66,14 +66,17 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import loginIcon from '@imgs/svg/login_icon.svg'
   import { themeAnimation } from '@/utils/theme/animation'
+  import { useI18n } from 'vue-i18n'
 
   // 定义 props
   defineProps<{
     hideContent?: boolean // 是否隐藏内容, 只显示 logo
   }>()
+
+  const { locale } = useI18n()
 </script>
 
 <style lang="scss" scoped>

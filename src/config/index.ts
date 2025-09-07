@@ -124,3 +124,14 @@ const appConfig: SystemConfig = {
 }
 
 export default Object.freeze(appConfig)
+
+/**
+ * 获取国际化的系统名称
+ */
+export const getSystemName = (locale: string = 'zh'): string => {
+  const systemNames: Record<string, string> = {
+    zh: '电驱护卫管理系统',
+    en: 'EPMS'
+  }
+  return systemNames[locale] || systemNames.zh
+}

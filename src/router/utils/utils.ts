@@ -1,7 +1,7 @@
 import { useTheme } from '@/composables/useTheme'
 import { useSettingStore } from '@/store/modules/setting'
 import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
-import AppConfig from '@/config'
+import { getSystemName } from '@/config'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import i18n, { $t } from '@/locales'
@@ -30,7 +30,9 @@ export const setPageTitle = (to: RouteLocationNormalized): void => {
   const { title } = to.meta
   if (title) {
     setTimeout(() => {
-      document.title = `${formatMenuTitle(String(title))} - ${AppConfig.systemInfo.name}`
+      const locale =
+        typeof i18n.global.locale === 'string' ? i18n.global.locale : i18n.global.locale.value
+      document.title = `${formatMenuTitle(String(title))} - ${getSystemName(locale)}`
     }, 150)
   }
 }

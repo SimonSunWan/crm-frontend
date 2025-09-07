@@ -104,11 +104,11 @@
   "login": {
     "title": "Welcome back",
     "subTitle": "Please enter your account and password to login",
-    "placeholder": [
-      "Please enter your account",
-      "Please enter your password",
-      "Please slide to verify"
-    ],
+    "placeholder": {
+      "username": "Please enter your account",
+      "password": "Please enter your password",
+      "sliderError": "Please slide to verify"
+    },
     "sliderText": "Please slide to verify",
     "sliderSuccessText": "Verification successful",
     "rememberPwd": "Remember password",
@@ -116,6 +116,10 @@
     "btnText": "Login",
     "noAccount": "No account yet?",
     "register": "Register",
+    "validation": {
+      "username": "Please enter your account",
+      "password": "Please enter your password"
+    },
     "success": {
       "title": "Login successful",
       "message": "Welcome back"
@@ -124,18 +128,38 @@
   "forgetPassword": {
     "title": "Forgot password?",
     "subTitle": "Enter your username to reset your password",
-    "placeholder": "Please enter your username",
+    "placeholder": {
+      "username": "Please enter your account",
+      "newPassword": "Please enter new password",
+      "confirmPassword": "Please enter new password again",
+      "systemCode": "Please enter system code (get from super admin)"
+    },
     "submitBtnText": "Submit",
-    "backBtnText": "Back"
+    "backBtnText": "Back",
+    "validation": {
+      "username": "Please enter your account",
+      "newPassword": "Please enter new password",
+      "confirmPassword": "Please enter new password again",
+      "passwordFormat": "6-20 characters, must contain letters and numbers",
+      "passwordMismatch": "The two passwords are inconsistent",
+      "systemCode": "Please enter system code"
+    },
+    "success": {
+      "message": "Password reset successful"
+    }
   },
   "register": {
     "title": "Create account",
     "subTitle": "Welcome to join us, please fill in the following information to complete the registration",
-    "placeholder": [
-      "Please enter your account",
-      "Please enter your password",
-      "Please enter your password again"
-    ],
+    "placeholder": {
+      "username": "Please enter your account",
+      "nickName": "Please enter your name",
+      "phone": "Please enter your phone number",
+      "email": "Please enter your email",
+      "password": "Please enter your password",
+      "confirmPassword": "Please enter your password again",
+      "captcha": "Please enter system code (get from super admin)"
+    },
     "rule": [
       "Please enter your password again",
       "The two passwords are inconsistent!",
@@ -147,7 +171,24 @@
     "privacyPolicy": "Privacy policy",
     "submitBtnText": "Register",
     "hasAccount": "Already have an account?",
-    "toLogin": "To login"
+    "toLogin": "To login",
+    "validation": {
+      "username": "Please enter your account",
+      "usernameFormat": "Start with letter, 5-20 characters, support letters, numbers, underscores",
+      "nickName": "Please enter your name",
+      "nickNameFormat": "2-20 characters, support Chinese, English letters, spaces",
+      "phone": "Please enter your phone number",
+      "phoneFormat": "Please enter a valid phone number",
+      "emailFormat": "Please enter a valid email format",
+      "password": "Please enter your password",
+      "passwordFormat": "6-20 characters, must contain letters and numbers",
+      "confirmPassword": "Please enter your password again",
+      "passwordMismatch": "The two passwords are inconsistent",
+      "captcha": "Please enter system code"
+    },
+    "success": {
+      "message": "Registration successful, please wait for super admin approval"
+    }
   },
 
   "exceptionPage": {
@@ -165,18 +206,6 @@
     },
     "forgetPassword": {
       "title": "Forget Password"
-    },
-    "dashboard": {
-      "title": "Dashboard",
-      "console": "Console"
-    },
-    "system": {
-      "title": "System Settings",
-      "user": "User Manage",
-      "role": "Role Manage",
-      "userCenter": "User Center",
-      "menu": "Menu Manage",
-      "dictionary": "Dictionary Manage"
     }
   },
   "table": {

@@ -104,7 +104,11 @@
   "login": {
     "title": "欢迎回来",
     "subTitle": "输入您的账号和密码登录",
-    "placeholder": ["请输入账号", "请输入密码", "请拖动滑块完成验证"],
+    "placeholder": {
+      "username": "请输入账号",
+      "password": "请输入密码",
+      "sliderError": "请拖动滑块完成验证"
+    },
     "sliderText": "按住滑块拖动",
     "sliderSuccessText": "验证成功",
     "rememberPwd": "记住密码",
@@ -112,6 +116,10 @@
     "btnText": "登录",
     "noAccount": "还没有账号？",
     "register": "注册",
+    "validation": {
+      "username": "请输入账号",
+      "password": "请输入密码"
+    },
     "success": {
       "title": "登录成功",
       "message": "欢迎回来"
@@ -120,14 +128,38 @@
   "forgetPassword": {
     "title": "忘记密码？",
     "subTitle": "输入您的账号来重置您的密码",
-    "placeholder": "请输入您的账号",
+    "placeholder": {
+      "username": "请输入账号",
+      "newPassword": "请输入新密码",
+      "confirmPassword": "请再次输入新密码",
+      "systemCode": "请输入系统码（找超级管理员获取）"
+    },
     "submitBtnText": "提交",
-    "backBtnText": "返回"
+    "backBtnText": "返回",
+    "validation": {
+      "username": "请输入账号",
+      "newPassword": "请输入新密码",
+      "confirmPassword": "请再次输入新密码",
+      "passwordFormat": "6-20位, 必须包含字母和数字",
+      "passwordMismatch": "两次输入密码不一致",
+      "systemCode": "请输入系统码"
+    },
+    "success": {
+      "message": "密码重置成功"
+    }
   },
   "register": {
     "title": "创建账号",
     "subTitle": "欢迎加入我们，请填写以下信息完成注册",
-    "placeholder": ["请输入账号", "请输入密码", "请再次输入密码"],
+    "placeholder": {
+      "username": "请输入账号",
+      "nickName": "请输入姓名",
+      "phone": "请输入手机号",
+      "email": "请输入邮箱",
+      "password": "请输入密码",
+      "confirmPassword": "请再次输入密码",
+      "captcha": "请输入系统码（找超级管理员获取）"
+    },
     "rule": [
       "请再次输入密码",
       "两次输入密码不一致!",
@@ -139,7 +171,24 @@
     "privacyPolicy": "《隐私政策》",
     "submitBtnText": "注册",
     "hasAccount": "已有账号？",
-    "toLogin": "去登录"
+    "toLogin": "去登录",
+    "validation": {
+      "username": "请输入账号",
+      "usernameFormat": "字母开头, 5-20位, 支持字母、数字、下划线",
+      "nickName": "请输入姓名",
+      "nickNameFormat": "2-20位, 支持中文、英文字母、空格",
+      "phone": "请输入手机号",
+      "phoneFormat": "请输入正确的手机号",
+      "emailFormat": "请输入正确的邮箱格式",
+      "password": "请输入密码",
+      "passwordFormat": "6-20位, 必须包含字母和数字",
+      "confirmPassword": "请再次输入密码",
+      "passwordMismatch": "两次输入密码不一致",
+      "captcha": "请输入系统码"
+    },
+    "success": {
+      "message": "注册成功，请等待超级管理员审核"
+    }
   },
 
   "exceptionPage": {
@@ -157,18 +206,6 @@
     },
     "forgetPassword": {
       "title": "忘记密码"
-    },
-    "dashboard": {
-      "title": "仪表盘",
-      "console": "工作台"
-    },
-    "system": {
-      "title": "系统管理",
-      "user": "用户管理",
-      "role": "角色管理",
-      "userCenter": "个人中心",
-      "menu": "菜单管理",
-      "dictionary": "字典管理"
     }
   },
   "table": {

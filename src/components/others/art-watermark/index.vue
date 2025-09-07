@@ -2,7 +2,7 @@
 <template>
   <div v-if="watermarkVisible" class="layout-watermark" :style="{ zIndex: zIndex }">
     <el-watermark
-      :content="content"
+      :content="watermarkContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -14,11 +14,13 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+  import { useI18n } from 'vue-i18n'
 
   defineOptions({ name: 'ArtWatermark' })
 
+  const { locale } = useI18n()
   const settingStore = useSettingStore()
   const { watermarkVisible } = storeToRefs(settingStore)
 
@@ -45,8 +47,8 @@
     zIndex?: number
   }
 
-  withDefaults(defineProps<WatermarkProps>(), {
-    content: AppConfig.systemInfo.name,
+  const props = withDefaults(defineProps<WatermarkProps>(), {
+    content: '',
     visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
@@ -57,6 +59,8 @@
     offsetY: 50,
     zIndex: 3100
   })
+
+  const watermarkContent = computed(() => props.content || getSystemName(locale.value))
 </script>
 
 <style lang="scss" scoped>

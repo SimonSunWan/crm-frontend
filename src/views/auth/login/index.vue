@@ -16,8 +16,8 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('login.title') }}</h3>
-          <p class="sub-title">{{ $t('login.subTitle') }}</p>
+          <h3 class="title">{{ t('login.title') }}</h3>
+          <p class="sub-title">{{ t('login.subTitle') }}</p>
           <ElForm
             ref="formRef"
             :model="formData"
@@ -26,11 +26,14 @@
             style="margin-top: 25px"
           >
             <ElFormItem prop="username">
-              <ElInput :placeholder="$t('login.placeholder[0]')" v-model.trim="formData.username" />
+              <ElInput
+                :placeholder="t('login.placeholder.username')"
+                v-model.trim="formData.username"
+              />
             </ElFormItem>
             <ElFormItem prop="password">
               <ElInput
-                :placeholder="$t('login.placeholder[1]')"
+                :placeholder="t('login.placeholder.password')"
                 v-model.trim="formData.password"
                 type="password"
                 radius="8px"
@@ -43,24 +46,24 @@
                 <ArtDragVerify
                   ref="dragVerify"
                   v-model:value="isPassing"
-                  :text="$t('login.sliderText')"
+                  :text="t('login.sliderText')"
                   textColor="var(--art-gray-800)"
-                  :successText="$t('login.sliderSuccessText')"
+                  :successText="t('login.sliderSuccessText')"
                   :progressBarBg="getCssVar('--el-color-primary')"
                   background="var(--art-gray-200)"
                   handlerBg="var(--art-main-bg-color)"
                 />
               </div>
               <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">
-                {{ $t('login.placeholder[2]') }}
+                {{ t('login.placeholder.sliderError') }}
               </p>
             </div>
 
             <div class="forget-password">
               <ElCheckbox v-model="formData.rememberPassword">{{
-                $t('login.rememberPwd')
+                t('login.rememberPwd')
               }}</ElCheckbox>
-              <RouterLink :to="RoutesAlias.ForgetPassword">{{ $t('login.forgetPwd') }}</RouterLink>
+              <RouterLink :to="RoutesAlias.ForgetPassword">{{ t('login.forgetPwd') }}</RouterLink>
             </div>
 
             <div style="margin-top: 30px">
@@ -71,14 +74,14 @@
                 :loading="loading"
                 v-ripple
               >
-                {{ $t('login.btnText') }}
+                {{ t('login.btnText') }}
               </ElButton>
             </div>
 
             <div class="footer">
               <p>
-                {{ $t('login.noAccount') }}
-                <RouterLink :to="RoutesAlias.Register">{{ $t('login.register') }}</RouterLink>
+                {{ t('login.noAccount') }}
+                <RouterLink :to="RoutesAlias.Register">{{ t('login.register') }}</RouterLink>
               </p>
             </div>
           </ElForm>
@@ -89,18 +92,21 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { getCssVar } from '@/utils/ui'
   import { themeAnimation } from '@/utils/theme/animation'
   import { UserService } from '@/api/usersApi'
+  import { useI18n } from 'vue-i18n'
 
   defineOptions({ name: 'Login' })
 
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
+
+  const { t, locale } = useI18n()
 
   const settingStore = useSettingStore()
   const { isDark } = storeToRefs(settingStore)
@@ -112,7 +118,7 @@
   const isPassing = ref(false)
   const isClickPass = ref(false)
 
-  const systemName = AppConfig.systemInfo.name
+  const systemName = computed(() => getSystemName(locale.value))
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
@@ -122,8 +128,8 @@
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
-    password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+    username: [{ required: true, message: t('login.validation.username'), trigger: 'blur' }],
+    password: [{ required: true, message: t('login.validation.password'), trigger: 'blur' }]
   }))
 
   const loading = ref(false)
@@ -171,11 +177,11 @@
   const showLoginSuccessNotice = (userInfo: any) => {
     setTimeout(() => {
       ElNotification({
-        title: '登录成功',
+        title: t('login.success.title'),
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `欢迎回来, ${userInfo.nickName}!`
+        message: `${t('login.success.message')}, ${userInfo.nickName}!`
       })
     }, 150)
   }

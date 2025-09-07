@@ -6,7 +6,7 @@
         <!-- 系统信息  -->
         <div class="top-header" @click="toHome" v-if="isTopMenu">
           <ArtLogo class="logo" />
-          <p v-if="width >= 1400">{{ AppConfig.systemInfo.name }}</p>
+          <p v-if="width >= 1400">{{ getSystemName(locale) }}</p>
         </div>
 
         <ArtLogo class="logo2" @click="toHome" />
@@ -184,7 +184,7 @@
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   import { useMenuStore } from '@/store/modules/menu'
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { languageOptions } from '@/locales'
   import mittBus from '@/utils/sys/mittBus'
   import { themeAnimation } from '@/utils/theme/animation'

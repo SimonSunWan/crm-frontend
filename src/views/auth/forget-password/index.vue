@@ -8,8 +8,8 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('forgetPassword.title') }}</h3>
-          <p class="sub-title">{{ $t('forgetPassword.subTitle') }}</p>
+          <h3 class="title">{{ t('forgetPassword.title') }}</h3>
+          <p class="sub-title">{{ t('forgetPassword.subTitle') }}</p>
           <ElForm
             ref="formRef"
             :model="formData"
@@ -18,13 +18,16 @@
             style="margin-top: 25px"
           >
             <ElFormItem prop="username">
-              <ElInput v-model.trim="formData.username" placeholder="请输入账号" />
+              <ElInput
+                v-model.trim="formData.username"
+                :placeholder="t('forgetPassword.placeholder.username')"
+              />
             </ElFormItem>
 
             <ElFormItem prop="newPassword">
               <ElInput
                 v-model.trim="formData.newPassword"
-                placeholder="请输入新密码"
+                :placeholder="t('forgetPassword.placeholder.newPassword')"
                 type="password"
                 show-password
               />
@@ -33,7 +36,7 @@
             <ElFormItem prop="confirmPassword">
               <ElInput
                 v-model.trim="formData.confirmPassword"
-                placeholder="请再次输入新密码"
+                :placeholder="t('forgetPassword.placeholder.confirmPassword')"
                 type="password"
                 show-password
               />
@@ -42,7 +45,7 @@
             <ElFormItem prop="systemCode">
               <ElInput
                 v-model.trim="formData.systemCode"
-                placeholder="请输入系统码（找超级管理员获取）"
+                :placeholder="t('forgetPassword.placeholder.systemCode')"
               />
             </ElFormItem>
 
@@ -54,13 +57,13 @@
                 :loading="loading"
                 v-ripple
               >
-                {{ $t('forgetPassword.submitBtnText') }}
+                {{ t('forgetPassword.submitBtnText') }}
               </ElButton>
             </div>
 
             <div style="margin-top: 15px">
               <ElButton class="back-btn" plain @click="toLogin">
-                {{ $t('forgetPassword.backBtnText') }}
+                {{ t('forgetPassword.backBtnText') }}
               </ElButton>
             </div>
           </ElForm>
@@ -71,19 +74,22 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { UserService } from '@/api/usersApi'
+  import { useI18n } from 'vue-i18n'
   import { validatePassword } from '@/utils/validation'
 
   defineOptions({ name: 'ForgetPassword' })
 
+  const { t, locale } = useI18n()
+
   const router = useRouter()
   const formRef = ref<FormInstance>()
 
-  const systemName = AppConfig.systemInfo.name
+  const systemName = computed(() => getSystemName(locale.value))
   const loading = ref(false)
 
   const formData = reactive({
@@ -95,9 +101,9 @@
 
   const validatePass = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入新密码'))
+      callback(new Error(t('forgetPassword.validation.newPassword')))
     } else if (!validatePassword(value)) {
-      callback(new Error('6-20位, 必须包含字母和数字'))
+      callback(new Error(t('forgetPassword.validation.passwordFormat')))
     } else {
       if (formData.confirmPassword !== '') {
         formRef.value?.validateField('confirmPassword')
@@ -108,19 +114,23 @@
 
   const validatePass2 = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请再次输入新密码'))
+      callback(new Error(t('forgetPassword.validation.confirmPassword')))
     } else if (value !== formData.newPassword) {
-      callback(new Error('两次输入密码不一致'))
+      callback(new Error(t('forgetPassword.validation.passwordMismatch')))
     } else {
       callback()
     }
   }
 
   const rules = reactive<FormRules>({
-    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+    username: [
+      { required: true, message: t('forgetPassword.validation.username'), trigger: 'blur' }
+    ],
     newPassword: [{ required: true, validator: validatePass, trigger: 'blur' }],
     confirmPassword: [{ required: true, validator: validatePass2, trigger: 'blur' }],
-    systemCode: [{ required: true, message: '请输入系统码', trigger: 'blur' }]
+    systemCode: [
+      { required: true, message: t('forgetPassword.validation.systemCode'), trigger: 'blur' }
+    ]
   })
 
   const resetPassword = async () => {
@@ -136,7 +146,7 @@
         systemCode: formData.systemCode
       })
 
-      ElMessage.success('密码重置成功')
+      ElMessage.success(t('forgetPassword.success.message'))
       toLogin()
     } catch (error) {
       console.error(error)

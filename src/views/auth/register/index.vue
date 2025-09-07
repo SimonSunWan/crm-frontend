@@ -8,8 +8,8 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('register.title') }}</h3>
-          <p class="sub-title">{{ $t('register.subTitle') }}</p>
+          <h3 class="title">{{ t('register.title') }}</h3>
+          <p class="sub-title">{{ t('register.subTitle') }}</p>
           <ElForm
             ref="formRef"
             :model="formData"
@@ -20,27 +20,36 @@
             <ElFormItem prop="username">
               <ElInput
                 v-model.trim="formData.username"
-                :placeholder="$t('register.placeholder[0]')"
+                :placeholder="t('register.placeholder.username')"
                 autocomplete="username"
               />
             </ElFormItem>
 
             <ElFormItem prop="nickName">
-              <ElInput v-model.trim="formData.nickName" placeholder="请输入姓名" />
+              <ElInput
+                v-model.trim="formData.nickName"
+                :placeholder="t('register.placeholder.nickName')"
+              />
             </ElFormItem>
 
             <ElFormItem prop="phone">
-              <ElInput v-model.trim="formData.phone" placeholder="请输入手机号" />
+              <ElInput
+                v-model.trim="formData.phone"
+                :placeholder="t('register.placeholder.phone')"
+              />
             </ElFormItem>
 
             <ElFormItem prop="email">
-              <ElInput v-model.trim="formData.email" placeholder="请输入邮箱" />
+              <ElInput
+                v-model.trim="formData.email"
+                :placeholder="t('register.placeholder.email')"
+              />
             </ElFormItem>
 
             <ElFormItem prop="password">
               <ElInput
                 v-model.trim="formData.password"
-                :placeholder="$t('register.placeholder[1]')"
+                :placeholder="t('register.placeholder.password')"
                 type="password"
                 autocomplete="password"
                 show-password
@@ -50,7 +59,7 @@
             <ElFormItem prop="confirmPassword">
               <ElInput
                 v-model.trim="formData.confirmPassword"
-                :placeholder="$t('register.placeholder[2]')"
+                :placeholder="t('register.placeholder.confirmPassword')"
                 type="password"
                 show-password
               />
@@ -59,7 +68,7 @@
             <ElFormItem prop="captcha">
               <ElInput
                 v-model.trim="formData.captcha"
-                placeholder="请输入系统码（找超级管理员获取）"
+                :placeholder="t('register.placeholder.captcha')"
               />
             </ElFormItem>
 
@@ -71,14 +80,14 @@
                 :loading="loading"
                 v-ripple
               >
-                {{ $t('register.submitBtnText') }}
+                {{ t('register.submitBtnText') }}
               </ElButton>
             </div>
 
             <div class="footer">
               <p>
-                {{ $t('register.hasAccount') }}
-                <router-link :to="RoutesAlias.Login">{{ $t('register.toLogin') }}</router-link>
+                {{ t('register.hasAccount') }}
+                <router-link :to="RoutesAlias.Login">{{ t('register.toLogin') }}</router-link>
               </p>
             </div>
           </ElForm>
@@ -89,11 +98,12 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { UserService } from '@/api/usersApi'
+  import { useI18n } from 'vue-i18n'
   import {
     validatePhone,
     validateEmail,
@@ -104,10 +114,12 @@
 
   defineOptions({ name: 'Register' })
 
+  const { t, locale } = useI18n()
+
   const router = useRouter()
   const formRef = ref<FormInstance>()
 
-  const systemName = AppConfig.systemInfo.name
+  const systemName = computed(() => getSystemName(locale.value))
   const loading = ref(false)
 
   const formData = reactive({
@@ -122,9 +134,9 @@
 
   const validatePhoneField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入手机号'))
+      callback(new Error(t('register.validation.phone')))
     } else if (!validatePhone(value)) {
-      callback(new Error('请输入正确的手机号'))
+      callback(new Error(t('register.validation.phoneFormat')))
     } else {
       callback()
     }
@@ -134,7 +146,7 @@
     if (value === '') {
       callback()
     } else if (!validateEmail(value)) {
-      callback(new Error('请输入正确的邮箱格式'))
+      callback(new Error(t('register.validation.emailFormat')))
     } else {
       callback()
     }
@@ -142,9 +154,9 @@
 
   const validateUsernameField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入账号'))
+      callback(new Error(t('register.validation.username')))
     } else if (!validateAccount(value)) {
-      callback(new Error('字母开头, 5-20位, 支持字母、数字、下划线'))
+      callback(new Error(t('register.validation.usernameFormat')))
     } else {
       callback()
     }
@@ -152,9 +164,9 @@
 
   const validateNickNameField = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入姓名'))
+      callback(new Error(t('register.validation.nickName')))
     } else if (!validateName(value)) {
-      callback(new Error('2-20位, 支持中文、英文字母、空格'))
+      callback(new Error(t('register.validation.nickNameFormat')))
     } else {
       callback()
     }
@@ -162,9 +174,9 @@
 
   const validatePass = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请输入密码'))
+      callback(new Error(t('register.validation.password')))
     } else if (!validatePassword(value)) {
-      callback(new Error('6-20位, 必须包含字母和数字'))
+      callback(new Error(t('register.validation.passwordFormat')))
     } else {
       if (formData.confirmPassword !== '') {
         formRef.value?.validateField('confirmPassword')
@@ -175,9 +187,9 @@
 
   const validatePass2 = (rule: any, value: string, callback: any) => {
     if (value === '') {
-      callback(new Error('请再次输入密码'))
+      callback(new Error(t('register.validation.confirmPassword')))
     } else if (value !== formData.password) {
-      callback(new Error('两次输入密码不一致'))
+      callback(new Error(t('register.validation.passwordMismatch')))
     } else {
       callback()
     }
@@ -190,7 +202,7 @@
     email: [{ validator: validateEmailField, trigger: 'blur' }],
     password: [{ required: true, validator: validatePass, trigger: 'blur' }],
     confirmPassword: [{ required: true, validator: validatePass2, trigger: 'blur' }],
-    captcha: [{ required: true, message: '请输入系统码', trigger: 'blur' }]
+    captcha: [{ required: true, message: t('register.validation.captcha'), trigger: 'blur' }]
   })
 
   const register = async () => {
@@ -210,7 +222,7 @@
         systemCode: formData.captcha
       })
 
-      ElMessage.success('注册成功，请等待超级管理员审核')
+      ElMessage.success(t('register.success.message'))
       toLogin()
     } catch (error) {
       console.error(error)

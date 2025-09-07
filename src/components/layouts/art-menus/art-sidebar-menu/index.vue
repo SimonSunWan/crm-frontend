@@ -77,7 +77,7 @@
               opacity: !menuOpen ? 0 : 1
             }"
           >
-            {{ AppConfig.systemInfo.name }}
+            {{ getSystemName(locale) }}
           </p>
         </div>
 
@@ -116,15 +116,18 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
+  import { getSystemName } from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useMenuStore } from '@/store/modules/menu'
   import { handleMenuJump } from '@/utils/navigation'
   import SidebarSubmenu from './widget/SidebarSubmenu.vue'
   import { useCommon } from '@/composables/useCommon'
+  import { useI18n } from 'vue-i18n'
 
   defineOptions({ name: 'ArtSidebarMenu' })
+
+  const { locale } = useI18n()
 
   const MOBILE_BREAKPOINT = 800
   const ANIMATION_DELAY = 350
