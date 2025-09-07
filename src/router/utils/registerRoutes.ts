@@ -134,7 +134,7 @@ function convertRouteComponent(route: AppRouteRecord, depth = 0): ConvertedRoute
   if (isFirstLevel) {
     handleLayoutRoute(converted, route, component as string)
   } else {
-    if (!handleNormalRoute(converted, component as string, String(route.name))) {
+    if (!handleNormalRoute(converted, component as string)) {
       return null
     }
   }

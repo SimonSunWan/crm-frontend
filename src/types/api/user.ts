@@ -16,6 +16,7 @@ export interface UserInfo {
   updated_at: string | null
   roles?: string[] // 可选的角色字段
   roleNames?: string[] // 可选的角色名称字段
+  buttons?: string[] // 按钮权限列表
 }
 
 // 用户列表数据
