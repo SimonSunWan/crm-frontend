@@ -94,17 +94,12 @@
         },
         {
           prop: 'status',
-          label: '启用',
+          label: '状态',
           formatter: row => {
             return h(ElTag, { type: row.status ? 'primary' : 'info' }, () =>
               row.status ? '启用' : '禁用'
             )
           }
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          formatter: row => formatDate(row.createTime || '')
         },
         {
           prop: 'operation',
@@ -182,7 +177,7 @@
       await ElMessageBox.confirm('确定删除该角色吗？', '删除确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'error'
+        type: 'warning'
       })
       await RoleService.deleteRole(row.id)
       ElMessage.success('删除成功')
@@ -206,19 +201,6 @@
     } catch (error) {
       console.error(error)
     }
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date)
-      .toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-      .replace(/\//g, '-')
   }
 </script>
 

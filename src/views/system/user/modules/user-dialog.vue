@@ -18,8 +18,8 @@
       <ElFormItem label="邮箱" prop="email">
         <ElInput v-model="formData.email" placeholder="请输入邮箱" />
       </ElFormItem>
-      <ElFormItem label="角色" prop="roles">
-        <ElSelect v-model="formData.roles" multiple placeholder="请选择角色">
+      <ElFormItem label="角色名称" prop="roles">
+        <ElSelect v-model="formData.roles" multiple placeholder="请选择角色名称">
           <ElOption
             v-for="role in roleList"
             :key="role.value"
@@ -147,7 +147,7 @@
     nickName: [{ required: true, validator: validateNickNameField, trigger: 'blur' }],
     phone: [{ required: true, validator: validatePhoneField, trigger: 'blur' }],
     email: [{ validator: validateEmailField, trigger: 'blur' }],
-    roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
+    roles: [{ required: true, message: '请选择角色名称', trigger: 'blur' }]
   }
 
   const generatePassword = () => {

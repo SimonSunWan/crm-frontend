@@ -20,7 +20,7 @@
           :rows="3"
         />
       </ElFormItem>
-      <ElFormItem label="启用">
+      <ElFormItem label="状态">
         <ElSwitch v-model="formData.status" />
       </ElFormItem>
     </ElForm>

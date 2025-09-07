@@ -60,12 +60,12 @@
       props: { placeholder: '请输入邮箱', clearable: true }
     },
     {
-      label: '角色',
+      label: '角色名称',
       key: 'roleCode',
       type: 'select',
       props: {
         options: roleList.value,
-        placeholder: '请选择角色',
+        placeholder: '请选择角色名称',
         clearable: true
       }
     },

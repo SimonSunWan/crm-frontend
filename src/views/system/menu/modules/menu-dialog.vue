@@ -12,15 +12,15 @@
         <ElRow :gutter="20">
           <ElCol :span="12">
             <ElFormItem label="菜单名称" prop="name">
-              <ElInput v-model="formData.name" placeholder="菜单名称"></ElInput>
+              <ElInput v-model="formData.name" placeholder="请输入菜单名称"></ElInput>
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
             <ElFormItem label="路由地址" prop="path" v-if="!formData.isLink">
-              <ElInput v-model="formData.path" placeholder="路由地址"></ElInput>
+              <ElInput v-model="formData.path" placeholder="请输入路由地址"></ElInput>
             </ElFormItem>
             <ElFormItem label="外链地址" prop="link" v-else>
-              <ElInput v-model="formData.link" placeholder="外链地址"></ElInput>
+              <ElInput v-model="formData.link" placeholder="请输入外链地址"></ElInput>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -65,12 +65,12 @@
         <ElRow :gutter="20">
           <ElCol :span="12">
             <ElFormItem label="权限名称" prop="name">
-              <ElInput v-model="formData.name" placeholder="权限名称"></ElInput>
+              <ElInput v-model="formData.name" placeholder="请输入权限名称"></ElInput>
             </ElFormItem>
           </ElCol>
           <ElCol :span="12">
             <ElFormItem label="权限标识" prop="authMark">
-              <ElInput v-model="formData.authMark" placeholder="权限标识"></ElInput>
+              <ElInput v-model="formData.authMark" placeholder="请输入权限标识"></ElInput>
             </ElFormItem>
           </ElCol>
         </ElRow>
@@ -194,14 +194,15 @@
   // 表单验证规则
   const rules = computed<FormRules>(() => {
     const baseRules: FormRules = {}
-    baseRules.name = [{ required: true, message: '请输入名称', trigger: 'blur' }]
     if (menuType.value === 'menu') {
+      baseRules.name = [{ required: true, message: '请输入菜单名称', trigger: 'blur' }]
       if (formData.isLink) {
         baseRules.link = [{ required: true, message: '请输入外链地址', trigger: 'blur' }]
       } else {
         baseRules.path = [{ required: true, message: '请输入路由地址', trigger: 'blur' }]
       }
     } else {
+      baseRules.name = [{ required: true, message: '请输入权限名称', trigger: 'blur' }]
       baseRules.authMark = [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
     }
 

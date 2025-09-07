@@ -85,7 +85,8 @@
       key: 'name',
       type: 'input',
       props: {
-        clearable: true
+        clearable: true,
+        placeholder: '请输入菜单名称'
       }
     },
     {
@@ -93,7 +94,8 @@
       key: 'route',
       type: 'input',
       props: {
-        clearable: true
+        clearable: true,
+        placeholder: '请输入路由地址'
       }
     }
   ])
@@ -182,7 +184,7 @@
       prop: 'meta.isEnable',
       label: '状态',
       formatter: (row: any) => {
-        return h(ElTag, { type: row.isEnable ? 'success' : 'danger' }, () =>
+        return h(ElTag, { type: row.isEnable ? 'primary' : 'info' }, () =>
           row.isEnable ? '启用' : '禁用'
         )
       }

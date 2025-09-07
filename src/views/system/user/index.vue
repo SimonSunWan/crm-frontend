@@ -58,9 +58,9 @@
   })
 
   const getUserStatusConfig = (status: any) => {
-    const statusMap: Record<string, { type: 'success' | 'danger' | 'info'; text: string }> = {
-      true: { type: 'success', text: '启用' },
-      false: { type: 'danger', text: '禁用' }
+    const statusMap: Record<string, { type: 'primary' | 'info'; text: string }> = {
+      true: { type: 'primary', text: '启用' },
+      false: { type: 'info', text: '禁用' }
     }
     return statusMap[status + ''] || { type: 'info', text: '未知' }
   }
@@ -110,7 +110,7 @@
         },
         {
           prop: 'roleNames',
-          label: '角色',
+          label: '角色名称',
           formatter: row => {
             if (!row.roleNames || row.roleNames.length === 0) {
               return '-'
