@@ -11,7 +11,11 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="车型" prop="vehicleModel">
-            <ElInput v-model="formData.vehicleModel" placeholder="请输入车型" />
+            <ArtCascader
+              v-model="formData.vehicleModel"
+              dict-code="car_model"
+              placeholder="请选择车型"
+            />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -181,6 +185,7 @@
 
   // 组件
   import ArtSelect from '@/components/forms/art-select/index.vue'
+  import ArtCascader from '@/components/forms/art-cascader/index.vue'
 
   defineOptions({ name: 'ExternalOrderDialog' })
 

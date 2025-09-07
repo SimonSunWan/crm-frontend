@@ -76,6 +76,11 @@
           align-items: center;
           justify-content: space-between;
           height: 36px;
+
+          .header-actions {
+            display: flex;
+            gap: 8px;
+          }
         }
 
         .no-selection {

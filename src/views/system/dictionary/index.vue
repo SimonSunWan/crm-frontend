@@ -46,14 +46,20 @@
           <template #header>
             <div class="card-header">
               <span>字典枚举</span>
-              <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
-                新增字典枚举
-              </ElButton>
+              <div class="header-actions">
+                <ElButton v-if="selectedType" @click="toggleExpand" v-ripple>
+                  {{ isExpanded ? '收起' : '展开' }}
+                </ElButton>
+                <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
+                  新增字典枚举
+                </ElButton>
+              </div>
             </div>
           </template>
 
           <div v-if="selectedType" class="enum-table">
             <ArtTable
+              ref="enumTableRef"
               :loading="enumLoading"
               :data="enumData"
               :columns="enumColumns"
@@ -88,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ref, nextTick, onMounted } from 'vue'
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
   import TypeDialog from './modules/type-dialog.vue'
   import EnumDialog from './modules/enum-dialog.vue'
@@ -154,6 +161,9 @@
   const enumDialogVisible = ref(false)
   const enumDialogType = ref<'add' | 'edit'>('add')
   const currentEditEnum = ref<DictionaryEnumItem | null>(null)
+
+  const isExpanded = ref(false)
+  const enumTableRef = ref()
 
   const getTypeData = async () => {
     try {
@@ -276,6 +286,23 @@
         console.error(error)
       }
     }
+  }
+
+  const toggleExpand = () => {
+    isExpanded.value = !isExpanded.value
+    nextTick(() => {
+      if (enumTableRef.value && enumData.value) {
+        const processRows = (rows: DictionaryEnumItem[]) => {
+          rows.forEach(row => {
+            if (row.children && row.children.length > 0) {
+              enumTableRef.value.elTableRef.toggleRowExpansion(row, isExpanded.value)
+              processRows(row.children)
+            }
+          })
+        }
+        processRows(enumData.value)
+      }
+    })
   }
 
   onMounted(() => {
