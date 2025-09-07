@@ -35,14 +35,19 @@ export interface UpdateDictionaryTypeParams {
 export interface DictionaryEnumItem {
   id: number
   typeId: number
+  parentId?: number
   keyValue: string
   dictValue: string
   sortOrder: number
+  level: number
+  path?: string
   status: boolean
   createBy?: string
   createTime?: string
   updateBy?: string
   updateTime?: string
+  children?: DictionaryEnumItem[]
+  hasChildren?: boolean
 }
 
 export interface DictionaryEnumListData {
@@ -60,14 +65,18 @@ export interface DictionaryData {
 
 export interface CreateDictionaryEnumParams {
   typeId: number
+  parentId?: number
   keyValue: string
   dictValue: string
   sortOrder?: number
 }
 
 export interface UpdateDictionaryEnumParams {
+  parentId?: number
   keyValue?: string
   dictValue?: string
   sortOrder?: number
+  level?: number
+  path?: string
   status?: boolean
 }

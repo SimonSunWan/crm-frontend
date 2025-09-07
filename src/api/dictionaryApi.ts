@@ -51,10 +51,23 @@ export class DictionaryService {
     })
   }
 
-  static getDictionaryEnums(typeId: number, params: Api.Common.PaginatingSearchParams) {
+  static getDictionaryEnums(typeId: number) {
     return request.get<DictionaryEnumListData>({
       url: '/dictionary/enums',
-      params: { type_id: typeId, ...params }
+      params: { type_id: typeId }
+    })
+  }
+
+  static getRootDictionaryEnums(typeId: number) {
+    return request.get<DictionaryEnumItem[]>({
+      url: '/dictionary/enums/root',
+      params: { type_id: typeId }
+    })
+  }
+
+  static getChildrenDictionaryEnums(parentId: number) {
+    return request.get<DictionaryEnumItem[]>({
+      url: `/dictionary/enums/${parentId}/children`
     })
   }
 

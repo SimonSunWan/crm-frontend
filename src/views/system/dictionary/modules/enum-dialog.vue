@@ -1,6 +1,23 @@
 <template>
   <ElDialog :title="dialogTitle" v-model="dialogVisible" width="500px" align-center>
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="100px">
+      <ElFormItem v-if="showParentSelect" label="父级枚举" prop="parentId">
+        <ElSelect
+          v-model="formData.parentId"
+          placeholder="请选择父级枚举"
+          clearable
+          disabled
+          filterable
+          :loading="parentOptionsLoading"
+        >
+          <ElOption
+            v-for="option in parentOptions"
+            :key="option.id"
+            :label="option.dictValue"
+            :value="option.id"
+          />
+        </ElSelect>
+      </ElFormItem>
       <ElFormItem label="key值" prop="keyValue">
         <ElInput v-model="formData.keyValue" placeholder="请输入key值" />
       </ElFormItem>
@@ -40,7 +57,7 @@
 
   defineOptions({ name: 'EnumDialog' })
 
-  const { createDictionaryEnum, updateDictionaryEnum } = DictionaryService
+  const { createDictionaryEnum, updateDictionaryEnum, getRootDictionaryEnums } = DictionaryService
 
   // Props 和 Emits
   interface Props {
@@ -59,7 +76,10 @@
   // 响应式数据
   const formRef = ref<FormInstance>()
   const loading = ref(false)
+  const parentOptionsLoading = ref(false)
+  const parentOptions = ref<DictionaryEnumItem[]>([])
   const formData = reactive({
+    parentId: undefined as number | undefined,
     keyValue: '',
     dictValue: '',
     sortOrder: 0
@@ -75,10 +95,30 @@
     return props.type === 'add' ? '新增字典枚举' : '编辑字典枚举'
   })
 
+  const showParentSelect = computed(() => {
+    return !!props.enumData?.parentId
+  })
+
   // 表单验证规则
   const rules: FormRules = {
     keyValue: [{ required: true, message: '请输入key值', trigger: 'blur' }],
     dictValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
+  }
+
+  // 获取父级选项
+  const getParentOptions = async () => {
+    if (!props.typeData?.id) return
+
+    parentOptionsLoading.value = true
+    try {
+      const response = await getRootDictionaryEnums(props.typeData.id)
+      parentOptions.value = response || []
+    } catch (error) {
+      console.error(error)
+      parentOptions.value = []
+    } finally {
+      parentOptionsLoading.value = false
+    }
   }
 
   // 初始化表单数据
@@ -87,6 +127,7 @@
     const data = props.enumData
 
     Object.assign(formData, {
+      parentId: isEdit && data ? data.parentId : data?.parentId || undefined,
       keyValue: isEdit && data ? data.keyValue || '' : '',
       dictValue: isEdit && data ? data.dictValue || '' : '',
       sortOrder: isEdit && data ? data.sortOrder || 0 : 0
@@ -99,6 +140,7 @@
     ([visible]) => {
       if (visible) {
         initFormData()
+        getParentOptions()
       }
     },
     { immediate: true }

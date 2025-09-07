@@ -57,9 +57,8 @@
               :loading="enumLoading"
               :data="enumData"
               :columns="enumColumns"
-              :pagination="enumPagination"
-              @pagination:size-change="handleEnumSizeChange"
-              @pagination:current-change="handleEnumCurrentChange"
+              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+              row-key="id"
             />
           </div>
           <div v-else class="no-selection">
@@ -111,11 +110,6 @@
 
   const enumLoading = ref(false)
   const enumData = ref<DictionaryEnumItem[]>([])
-  const enumPagination = reactive({
-    current: 1,
-    size: 20,
-    total: 0
-  })
 
   const enumColumns = [
     {
@@ -136,10 +130,14 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 120,
+      width: 165,
       fixed: 'right' as const,
       formatter: (row: DictionaryEnumItem) => {
         return h('div', [
+          h(ArtButtonTable, {
+            type: 'add',
+            onClick: () => showEnumDialog('add', row)
+          }),
           h(ArtButtonTable, {
             type: 'edit',
             onClick: () => showEnumDialog('edit', row)
@@ -190,28 +188,13 @@
 
     enumLoading.value = true
     try {
-      const response = await getDictionaryEnums(selectedType.value.id, {
-        current: enumPagination.current,
-        size: enumPagination.size
-      })
+      const response = await getDictionaryEnums(selectedType.value.id)
       enumData.value = response.records || []
-      enumPagination.total = response.total || 0
     } catch (error) {
       console.error(error)
     } finally {
       enumLoading.value = false
     }
-  }
-
-  const handleEnumSizeChange = (size: number) => {
-    enumPagination.size = size
-    enumPagination.current = 1
-    getEnumData()
-  }
-
-  const handleEnumCurrentChange = (current: number) => {
-    enumPagination.current = current
-    getEnumData()
   }
 
   const showTypeDialog = (type: 'add' | 'edit', typeData?: DictionaryTypeItem) => {
@@ -260,6 +243,9 @@
     enumDialogVisible.value = true
     if (type === 'edit' && enumData) {
       currentEditEnum.value = enumData
+    } else if (type === 'add' && enumData) {
+      // 添加子级枚举，设置父级ID
+      currentEditEnum.value = { parentId: enumData.id } as DictionaryEnumItem
     } else {
       currentEditEnum.value = null
     }
