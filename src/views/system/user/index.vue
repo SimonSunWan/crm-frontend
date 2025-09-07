@@ -31,15 +31,10 @@
 </template>
 
 <script setup lang="ts">
-  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
   import UserSearch from './modules/user-search.vue'
   import UserDialog from './modules/user-dialog.vue'
-
-  // Element Plus 组件
   import { ElMessageBox, ElMessage, ElTag } from 'element-plus'
-
-  // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
   import { UserService } from '@/api/usersApi'
   import type { ApiResponse } from '@/utils/table/tableCache'
@@ -47,15 +42,12 @@
 
   defineOptions({ name: 'User' })
 
-  // API 服务
   const { getUserList, deleteUser } = UserService
 
-  // 响应式数据
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
   const currentUserData = ref<Partial<UserListItem>>({})
 
-  // 搜索表单
   const searchForm = ref({
     userName: undefined,
     nickName: undefined,
@@ -70,7 +62,6 @@
       true: { type: 'success', text: '启用' },
       false: { type: 'danger', text: '禁用' }
     }
-
     return statusMap[status + ''] || { type: 'info', text: '未知' }
   }
 
@@ -170,13 +161,10 @@
         if (!Array.isArray(records)) {
           return []
         }
-
-        return records.map((item: any) => {
-          return {
-            ...item,
-            avatar: ''
-          }
-        })
+        return records.map((item: any) => ({
+          ...item,
+          avatar: ''
+        }))
       },
       responseAdapter: (response: any): ApiResponse<UserListItem> => {
         if (response) {
@@ -196,7 +184,6 @@
   const handleSearch = (params: Record<string, any>) => {
     const { daterange, ...filtersParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
-
     Object.assign(searchParams, { ...filtersParams, startTime, endTime })
     getData()
   }
@@ -216,7 +203,6 @@
         cancelButtonText: '取消',
         type: 'warning'
       })
-
       await deleteUser(row.id)
       ElMessage.success('删除成功')
       getData()
@@ -239,23 +225,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .user-page {
-    :deep(.user) {
-      .avatar {
-        width: 40px;
-        height: 40px;
-        margin-left: 0;
-        border-radius: 6px;
-      }
-
-      > div {
-        margin-left: 10px;
-
-        .user-name {
-          font-weight: 500;
-          color: var(--art-text-gray-800);
-        }
-      }
-    }
-  }
+  @use './style';
 </style>

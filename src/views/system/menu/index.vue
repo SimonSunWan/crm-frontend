@@ -45,24 +45,13 @@
 </template>
 
 <script setup lang="ts">
-  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
   import MenuDialog from './modules/menu-dialog.vue'
-
-  // Element Plus 组件和类型
   import { ElMessage, ElMessageBox, ElTag, ElButton } from 'element-plus'
-
-  // Store
   import { useMenuStore } from '@/store/modules/menu'
-
-  // 工具和组合式函数
   import { useTableColumns } from '@/composables/useTableColumns'
   import { formatMenuTitle } from '@/router/utils/utils'
-
-  // 枚举和类型
   import { AppRouteRecord } from '@/types/router'
-
-  // API 服务
   import { MenuService } from '@/api/menuApi'
 
   defineOptions({ name: 'Menus' })
@@ -77,7 +66,6 @@
   }
 
   const formFilters = reactive({ ...initialSearchState })
-
   const appliedFilters = reactive({ ...initialSearchState })
 
   const handleReset = () => {
@@ -114,18 +102,15 @@
     if (row.menuType === 'button') {
       return 'danger'
     }
-
     if (row.children && row.children.length > 0) {
       const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? 'info' : 'primary'
     }
-
     if (row.isLink) {
       return 'warning'
     } else if (row.path) {
       return 'primary'
     }
-
     return 'primary'
   }
 
@@ -133,7 +118,6 @@
     if (row.menuType === 'button') {
       return '权限'
     }
-
     if (row.children && row.children.length > 0) {
       const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? '目录' : '菜单'
@@ -254,15 +238,12 @@
     loading.value = true
     try {
       const params: any = {}
-
       if (appliedFilters.name && appliedFilters.name.trim()) {
         params.name = appliedFilters.name.trim()
       }
-
       if (appliedFilters.route && appliedFilters.route.trim()) {
         params.path = appliedFilters.route.trim()
       }
-
       const response = await MenuService.getMenus(params)
       if (response) {
         tableData.value = response
@@ -324,7 +305,6 @@
         await MenuService.deleteMenu(row.id)
         ElMessage.success('删除成功')
 
-        // 同步更新左侧菜单列表
         const menuStore = useMenuStore()
         await menuStore.fetchMenuList()
 
@@ -361,19 +341,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .menu-page {
-    .svg-icon {
-      width: 1.8em;
-      height: 1.8em;
-      overflow: hidden;
-      vertical-align: -8px;
-      fill: currentcolor;
-    }
-
-    :deep(.small-btn) {
-      height: 30px !important;
-      padding: 0 10px !important;
-      font-size: 12px !important;
-    }
-  }
+  @use './style';
 </style>

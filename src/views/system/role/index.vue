@@ -35,20 +35,12 @@
 </template>
 
 <script setup lang="ts">
-  // 组件导入
   import RoleSearch from './modules/role-search.vue'
   import RoleDialog from './modules/role-dialog.vue'
   import PermissionDialog from './modules/permission-dialog.vue'
   import ArtButtonMore, { ButtonMoreItem } from '@/components/forms/art-button-more/index.vue'
-
-  // Element Plus 组件和类型
   import { ElMessage, ElMessageBox, ElTag } from 'element-plus'
-
-  // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
-  import { h, ref, reactive, onMounted } from 'vue'
-
-  // API 服务
   import { RoleService } from '@/api/rolesApi'
   import type { Role } from '@/types/api'
 
@@ -56,7 +48,6 @@
 
   const dialogVisible = ref(false)
   const permissionDialog = ref(false)
-
   const currentEditRole = ref<Role | null>(null)
 
   const searchForm = reactive({
@@ -65,7 +56,6 @@
 
   const columnChecks = ref([])
 
-  // 使用 useTable composable
   const {
     columns,
     data,
@@ -123,7 +113,6 @@
           fixed: 'right',
           formatter: row => {
             const buttons = []
-
             buttons.push(
               h(ArtButtonMore, {
                 list: [
@@ -134,7 +123,6 @@
                 onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
               })
             )
-
             return h('div', buttons)
           }
         }
@@ -165,7 +153,6 @@
   const showDialog = (type: 'add' | 'edit', row?: Role) => {
     dialogVisible.value = true
     dialogType.value = type
-
     if (type === 'edit' && row) {
       currentEditRole.value = row
     } else {
@@ -197,7 +184,6 @@
         cancelButtonText: '取消',
         type: 'error'
       })
-
       await RoleService.deleteRole(row.id)
       ElMessage.success('删除成功')
       getData()
@@ -237,22 +223,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .page-content {
-    .svg-icon {
-      width: 1.8em;
-      height: 1.8em;
-      overflow: hidden;
-      vertical-align: -8px;
-      fill: currentcolor;
-    }
-  }
-
-  :deep(.el-dialog-border) {
-    .el-tree {
-      .el-tree-node__content {
-        height: 30px;
-        line-height: 30px;
-      }
-    }
-  }
+  @use './style';
 </style>

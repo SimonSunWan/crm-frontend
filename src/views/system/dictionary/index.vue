@@ -89,18 +89,10 @@
 </template>
 
 <script setup lang="ts">
-  // 组件导入
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
   import TypeDialog from './modules/type-dialog.vue'
   import EnumDialog from './modules/enum-dialog.vue'
-
-  // Element Plus 组件和类型
   import { ElMessage, ElMessageBox } from 'element-plus'
-
-  // Vue 工具函数
-  import { h, ref, reactive, onMounted } from 'vue'
-
-  // API 服务
   import { DictionaryService } from '@/api/dictionaryApi'
   import type { DictionaryTypeItem, DictionaryEnumItem } from '@/types/api'
 
@@ -225,7 +217,6 @@
   const showTypeDialog = (type: 'add' | 'edit', typeData?: DictionaryTypeItem) => {
     typeDialogType.value = type
     typeDialogVisible.value = true
-
     if (type === 'edit' && typeData) {
       currentEditType.value = typeData
     } else {
@@ -246,11 +237,9 @@
         cancelButtonText: '取消',
         type: 'warning'
       })
-
       await deleteDictionaryType(type.id)
       ElMessage.success('删除成功')
       getTypeData()
-
       if (selectedType.value?.id === type.id) {
         selectedType.value = null
         enumData.value = []
@@ -267,10 +256,8 @@
       ElMessage.warning('请先选择字典分类')
       return
     }
-
     enumDialogType.value = type
     enumDialogVisible.value = true
-
     if (type === 'edit' && enumData) {
       currentEditEnum.value = enumData
     } else {
@@ -295,7 +282,6 @@
           type: 'warning'
         }
       )
-
       await deleteDictionaryEnum(enumItem.id)
       ElMessage.success('删除成功')
       getEnumData()
@@ -312,95 +298,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .dictionary-page {
-    .dictionary-layout {
-      display: flex;
-      gap: 16px;
-      height: 100%;
-
-      .left-panel {
-        flex-shrink: 0;
-        width: 300px;
-
-        .type-card {
-          height: 100%;
-
-          .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-
-          .search-type-section {
-            margin-bottom: 16px;
-          }
-
-          .type-list {
-            .type-items {
-              .type-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 8px 12px;
-                margin-bottom: 4px;
-                cursor: pointer;
-                border-radius: 4px;
-                transition: all 0.2s;
-
-                &:hover {
-                  background-color: var(--art-gray-100);
-                }
-
-                &.active {
-                  color: white;
-                  background-color: var(--main-color);
-
-                  .el-button {
-                    color: white;
-                  }
-                }
-
-                .type-name {
-                  flex: 1;
-                  margin-right: 8px;
-                }
-
-                .type-actions {
-                  display: flex;
-
-                  :deep(.btn-text) {
-                    min-width: 0;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .right-panel {
-        flex: 1;
-        min-width: 0;
-
-        .enum-card {
-          height: 100%;
-
-          .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 36px;
-          }
-
-          .no-selection {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: var(--art-text-gray-500);
-          }
-        }
-      }
-    }
-  }
+  @use './style';
 </style>

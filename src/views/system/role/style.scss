@@ -1,0 +1,18 @@
+.role-page {
+  .svg-icon {
+    width: 1.8em;
+    height: 1.8em;
+    overflow: hidden;
+    vertical-align: -8px;
+    fill: currentcolor;
+  }
+
+  :deep(.el-dialog-border) {
+    .el-tree {
+      .el-tree-node__content {
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+  }
+}

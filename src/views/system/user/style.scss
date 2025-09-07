@@ -1,0 +1,19 @@
+.user-page {
+  :deep(.user) {
+    .avatar {
+      width: 40px;
+      height: 40px;
+      margin-left: 0;
+      border-radius: 6px;
+    }
+
+    > div {
+      margin-left: 10px;
+
+      .user-name {
+        font-weight: 500;
+        color: var(--art-text-gray-800);
+      }
+    }
+  }
+}
