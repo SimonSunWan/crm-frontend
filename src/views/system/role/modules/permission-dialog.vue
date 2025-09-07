@@ -24,8 +24,8 @@
             <div class="node-info">
               <span>{{ data.name }}</span>
             </div>
-            <ElTag :type="buildMenuTypeTag(data)" size="small" class="node-tag">
-              {{ buildMenuTypeText(data) }}
+            <ElTag :type="getMenuTypeTag(data)" size="small" class="node-tag">
+              {{ getMenuTypeText(data) }}
             </ElTag>
           </div>
         </template>
@@ -47,13 +47,8 @@
 </template>
 
 <script setup lang="ts">
-  // Store
   import { useMenuStore } from '@/store/modules/menu'
-
-  // Element Plus 组件
   import { ElMessage, ElMessageBox } from 'element-plus'
-
-  // API 服务
   import { RoleService } from '@/api/rolesApi'
   import type { Role, MenuNode } from '@/types/api'
 
@@ -68,8 +63,6 @@
 
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
-
-  // Store
   const { menuList } = storeToRefs(useMenuStore())
 
   // 响应式数据
@@ -78,6 +71,8 @@
   const isSelectAll = ref(false)
   const menuTreeData = ref<MenuNode[]>([])
   const selectedMenuIds = ref<number[]>([])
+  const isInitializing = ref(false)
+  const isUpdatingParent = ref(false)
 
   // 计算属性
   const dialogVisible = computed({
@@ -90,47 +85,27 @@
   // 树组件配置
   const defaultProps = {
     children: 'children',
-    label: (data: any) => {
-      return data.name || ''
-    }
+    label: (data: any) => data.name || ''
   }
 
-  // 构建菜单类型标签颜色
-  const buildMenuTypeTag = (row: any) => {
-    if (row.menuType === 'button') {
-      return 'danger'
-    }
-
-    if (row.children && row.children.length > 0) {
+  // 获取菜单类型标签颜色
+  const getMenuTypeTag = (row: any) => {
+    if (row.menuType === 'button') return 'danger'
+    if (row.children?.length) {
       const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? 'info' : 'primary'
     }
-
-    if (row.isLink) {
-      return 'warning'
-    } else if (row.path) {
-      return 'primary'
-    }
-
-    return 'primary'
+    return row.isLink ? 'warning' : 'primary'
   }
 
-  // 构建菜单类型文本
-  const buildMenuTypeText = (row: any) => {
-    if (row.menuType === 'button') {
-      return '权限'
-    }
-
-    if (row.children && row.children.length > 0) {
+  // 获取菜单类型文本
+  const getMenuTypeText = (row: any) => {
+    if (row.menuType === 'button') return '权限'
+    if (row.children?.length) {
       const hasRealMenu = row.children.some((child: any) => child.menuType !== 'button')
       return hasRealMenu ? '目录' : '菜单'
-    } else if (row.isLink) {
-      return '外链'
-    } else if (row.path) {
-      return '菜单'
     }
-
-    return '菜单'
+    return row.isLink ? '外链' : '菜单'
   }
 
   // 监听弹窗显示状态
@@ -168,39 +143,26 @@
     try {
       const response = await RoleService.getRoleMenus(role.id)
 
-      if (response && response.menuTree && response.selectedIds) {
+      if (response?.menuTree && response.selectedIds) {
         menuTreeData.value = response.menuTree
-        // 获取所有菜单树中的有效ID
         const allValidIds = getAllNodeKeys(response.menuTree)
-        // 过滤出在菜单树中存在的选中ID
-        const validSelectedIds = response.selectedIds.filter((id: number) => {
-          return allValidIds.includes(id)
-        })
-        selectedMenuIds.value = validSelectedIds
+        selectedMenuIds.value = response.selectedIds.filter((id: number) =>
+          allValidIds.includes(id)
+        )
       } else {
         menuTreeData.value = []
         selectedMenuIds.value = []
       }
 
       nextTick(() => {
-        const tree = treeRef.value
-        if (tree) {
-          if (selectedMenuIds.value.length > 0) {
-            tree.setCheckedKeys(selectedMenuIds.value)
-          } else {
-            tree.setCheckedKeys([])
-          }
-        }
+        setTreeCheckedKeys(selectedMenuIds.value)
       })
     } catch (error) {
       console.error(error)
       menuTreeData.value = []
       selectedMenuIds.value = []
       nextTick(() => {
-        const tree = treeRef.value
-        if (tree) {
-          tree.setCheckedKeys([])
-        }
+        setTreeCheckedKeys([])
       })
     }
   }
@@ -209,24 +171,29 @@
   const handleTreeCheck = () => {
     const tree = treeRef.value
     if (!tree) return
-
-    const checkedKeys = tree.getCheckedKeys()
-    selectedMenuIds.value = checkedKeys
+    selectedMenuIds.value = tree.getCheckedKeys()
   }
 
   // 处理节点勾选变化
   const handleCheckChange = (data: any, checked: boolean) => {
     const tree = treeRef.value
-    if (!tree || data.menuType === 'button') return
+    if (!tree || data.menuType === 'button' || isInitializing.value || isUpdatingParent.value)
+      return
 
-    const currentCheckedKeys = tree.getCheckedKeys()
+    const currentKeys = tree.getCheckedKeys()
     const childIds = getNonPermissionChildIds(data.children || [])
 
-    if (checked) {
-      tree.setCheckedKeys([...new Set([...currentCheckedKeys, ...childIds])])
-    } else {
-      tree.setCheckedKeys(currentCheckedKeys.filter((id: number) => !childIds.includes(id)))
-    }
+    // 向下联动: 勾选/取消勾选子节点
+    tree.setCheckedKeys(
+      checked
+        ? [...new Set([...currentKeys, ...childIds])]
+        : currentKeys.filter((id: number) => !childIds.includes(id))
+    )
+
+    // 向上联动: 检查并更新父节点状态
+    nextTick(() => {
+      updateParentNodeStatus(data.id)
+    })
   }
 
   // 获取非权限类型的子节点ID
@@ -244,6 +211,75 @@
     return ids
   }
 
+  // 更新父节点状态
+  const updateParentNodeStatus = (nodeId: number) => {
+    const tree = treeRef.value
+    if (!tree) return
+
+    const currentKeys = tree.getCheckedKeys()
+    const directParentId = getDirectParentId(menuTreeData.value, nodeId)
+    if (!directParentId) return
+
+    const parentNode = findNodeById(menuTreeData.value, directParentId)
+    if (parentNode && parentNode.menuType !== 'button') {
+      const childIds = getNonPermissionChildIds(parentNode.children || [])
+      const hasCheckedChildren = childIds.some(id => currentKeys.includes(id))
+      const isParentChecked = currentKeys.includes(directParentId)
+
+      if (hasCheckedChildren && !isParentChecked) {
+        isUpdatingParent.value = true
+        tree.setCheckedKeys([...currentKeys, directParentId])
+        nextTick(() => {
+          isUpdatingParent.value = false
+        })
+      } else if (!hasCheckedChildren && isParentChecked) {
+        isUpdatingParent.value = true
+        tree.setCheckedKeys(currentKeys.filter((id: number) => id !== directParentId))
+        nextTick(() => {
+          isUpdatingParent.value = false
+        })
+      }
+    }
+  }
+
+  // 获取直接父节点ID
+  const getDirectParentId = (nodes: any[], targetId: number): number | null => {
+    for (const node of nodes) {
+      if (node.children?.length) {
+        if (node.children.some((child: any) => child.id === targetId)) {
+          return node.id
+        }
+        const found = getDirectParentId(node.children, targetId)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  // 根据ID查找节点
+  const findNodeById = (nodes: any[], id: number): any => {
+    for (const node of nodes) {
+      if (node.id === id) return node
+      if (node.children?.length) {
+        const found = findNodeById(node.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
+  // 安全设置树节点选中状态(不触发联动)
+  const setTreeCheckedKeys = (keys: number[]) => {
+    const tree = treeRef.value
+    if (!tree) return
+
+    isInitializing.value = true
+    tree.setCheckedKeys(keys)
+    nextTick(() => {
+      isInitializing.value = false
+    })
+  }
+
   // 切换展开状态
   const toggleExpandAll = () => {
     const tree = treeRef.value
@@ -253,7 +289,6 @@
     for (const node in nodes) {
       nodes[node].expanded = !isExpandAll.value
     }
-
     isExpandAll.value = !isExpandAll.value
   }
 
@@ -279,12 +314,8 @@
     const keys: number[] = []
     const traverse = (nodeList: MenuNode[]) => {
       nodeList.forEach(node => {
-        if (node.id) {
-          keys.push(node.id)
-        }
-        if (node.children && node.children.length > 0) {
-          traverse(node.children)
-        }
+        if (node.id) keys.push(node.id)
+        if (node.children?.length) traverse(node.children)
       })
     }
     traverse(nodes)
@@ -321,9 +352,7 @@
             }
           )
         } catch (error) {
-          if (error === 'cancel') {
-            return
-          }
+          if (error === 'cancel') return
         }
       }
 
@@ -342,10 +371,7 @@
       menuTreeData.value = []
       isSelectAll.value = false
       nextTick(() => {
-        const tree = treeRef.value
-        if (tree) {
-          tree.setCheckedKeys([])
-        }
+        setTreeCheckedKeys([])
       })
     }
   })
