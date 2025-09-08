@@ -1,40 +1,12 @@
 <template>
   <div class="order-page art-full-height">
     <!-- 搜索区域 -->
-    <ElCard class="search-card" shadow="never">
-      <ElForm :model="searchForm" inline>
-        <ElFormItem label="工单编号">
-          <ElInput v-model="searchForm.orderNo" placeholder="请输入工单编号" clearable />
-        </ElFormItem>
-        <ElFormItem label="整车厂">
-          <ElInput v-model="searchForm.customer" placeholder="请输入整车厂名称" clearable />
-        </ElFormItem>
-        <ElFormItem label="车型">
-          <ElInput v-model="searchForm.vehicleModel" placeholder="请输入车型" clearable />
-        </ElFormItem>
-        <ElFormItem label="维修店(4S)">
-          <ElInput v-model="searchForm.repairShop" placeholder="请输入维修店名称" clearable />
-        </ElFormItem>
-        <ElFormItem label="报修人">
-          <ElInput v-model="searchForm.reporterName" placeholder="请输入报修人姓名" clearable />
-        </ElFormItem>
-        <ElFormItem label="报修时间">
-          <ElDatePicker
-            v-model="searchForm.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-          />
-        </ElFormItem>
-        <ElFormItem>
-          <ElButton type="primary" @click="handleSearch" :icon="Search">搜索</ElButton>
-          <ElButton @click="resetSearch" :icon="Refresh">重置</ElButton>
-        </ElFormItem>
-      </ElForm>
-    </ElCard>
+    <OrderSearch
+      v-model="searchForm"
+      :car-model-options="carModelOptions"
+      @search="handleSearch"
+      @reset="resetSearch"
+    />
 
     <!-- 表格区域 -->
     <ElCard class="art-table-card" shadow="never">
@@ -49,7 +21,6 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
-        @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       />
@@ -58,17 +29,26 @@
         v-model:visible="dialogVisible"
         :type="dialogType"
         :order-data="currentOrderData"
+        :car-model-options="carModelOptions"
+        :project-type-options="projectTypeOptions"
+        :project-phase-options="projectPhaseOptions"
         @submit="handleDialogSubmit"
       />
 
-      <OrderViewDialog v-model:visible="viewDialogVisible" :order-data="currentOrderData" />
+      <OrderViewDialog
+        v-model:visible="viewDialogVisible"
+        :order-data="currentOrderData"
+        :car-model-options="carModelOptions"
+        :project-type-options="projectTypeOptions"
+        :project-phase-options="projectPhaseOptions"
+      />
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
   // 组件导入
-  import { Search, Refresh } from '@element-plus/icons-vue'
+  import OrderSearch from './modules/order-search.vue'
   import OrderDialog from './modules/order-dialog.vue'
   import OrderViewDialog from './modules/order-view-dialog.vue'
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
@@ -78,10 +58,10 @@
 
   // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
-  import { useDictionary } from '@/composables/useDictionary'
   import type { ColumnOption } from '@/types/component'
   import type { OrderItem } from '@/types/api'
   import { InternalOrderService } from '@/api/orderApi'
+  import { DictionaryService } from '@/api/dictionaryApi'
 
   defineOptions({ name: 'Order' })
 
@@ -90,19 +70,17 @@
   const dialogVisible = ref(false)
   const viewDialogVisible = ref(false)
   const currentOrderData = ref<Partial<OrderItem>>({})
-  const selectedRows = ref<OrderItem[]>([])
 
   // 字典相关
-  const { getDictionaryData, getDictionaryLabel } = useDictionary()
+  const carModelOptions = ref<any[]>([])
+  const projectTypeOptions = ref<any[]>([])
+  const projectPhaseOptions = ref<any[]>([])
 
   // 搜索表单
   const searchForm = ref({
     orderNo: '',
-    customer: '',
-    vehicleModel: '',
-    repairShop: '',
-    reporterName: '',
-    dateRange: []
+    carSelection: [] as string[],
+    repairShop: ''
   })
 
   const {
@@ -118,7 +96,10 @@
     core: {
       apiFn: InternalOrderService.getOrderList,
       apiParams: {
-        ...searchForm.value
+        orderNo: '',
+        repairShop: '',
+        customer: '',
+        vehicleModel: ''
       },
       immediate: false
     }
@@ -126,7 +107,6 @@
 
   // 表格列配置
   const columns = ref<ColumnOption<OrderItem>[]>([
-    { type: 'selection' as const, width: 55 },
     {
       prop: 'id',
       label: '工单编号',
@@ -137,18 +117,25 @@
       prop: 'customer',
       label: '整车厂',
       width: 120,
-      formatter: row => row.customer || '-'
+      showOverflowTooltip: true,
+      formatter: (row: OrderItem) => {
+        return getCarModelLabel(row.customer) || '-'
+      }
     },
     {
       prop: 'vehicleModel',
       label: '车型',
       width: 120,
-      formatter: row => row.vehicleModel || '-'
+      showOverflowTooltip: true,
+      formatter: (row: OrderItem) => {
+        return getCarModelLabel(row.vehicleModel) || '-'
+      }
     },
     {
       prop: 'repairShop',
       label: '维修店(4S)',
       width: 150,
+      showOverflowTooltip: true,
       formatter: row => row.repairShop || '-'
     },
     {
@@ -174,14 +161,16 @@
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel('order_project_type', row.projectType) || '-'
+        return getProjectTypeLabel(row.projectType) || '-'
       }
     },
     {
       prop: 'projectStage',
       label: '项目阶段',
       width: 100,
-      formatter: row => row.projectStage || '-'
+      formatter: (row: OrderItem) => {
+        return getProjectPhaseLabel(row.projectStage) || '-'
+      }
     },
     {
       prop: 'licensePlate',
@@ -205,12 +194,13 @@
       prop: 'vehicleLocation',
       label: '车辆位置',
       width: 150,
+      showOverflowTooltip: true,
       formatter: row => row.vehicleLocation || '-'
     },
     {
       prop: 'packCode',
       label: 'PACK码',
-      width: 100,
+      width: 230,
       formatter: row => row.packCode || '-'
     },
     {
@@ -227,13 +217,8 @@
       prop: 'faultDescription',
       label: '故障描述',
       width: 200,
+      showOverflowTooltip: true,
       formatter: row => row.faultDescription || '-'
-    },
-    {
-      prop: 'createTime',
-      label: '创建时间',
-      width: 160,
-      formatter: row => row.createTime || '-'
     },
     {
       label: '操作',
@@ -260,19 +245,65 @@
 
   // 搜索处理
   const handleSearch = () => {
-    getData()
+    const params: any = {
+      orderNo: searchForm.value.orderNo,
+      repairShop: searchForm.value.repairShop
+    }
+
+    // 处理级联选择器的值
+    if (searchForm.value.carSelection && searchForm.value.carSelection.length > 0) {
+      params.customer = searchForm.value.carSelection[0] || ''
+      params.vehicleModel = searchForm.value.carSelection[1] || ''
+    }
+
+    getData(params)
   }
 
   const resetSearch = () => {
     searchForm.value = {
       orderNo: '',
-      customer: '',
-      vehicleModel: '',
-      repairShop: '',
-      reporterName: '',
-      dateRange: []
+      carSelection: [],
+      repairShop: ''
     }
     getData()
+  }
+
+  // 获取车型标签
+  const getCarModelLabel = (keyValue: string) => {
+    if (!keyValue || !carModelOptions.value.length) return keyValue
+
+    // 递归查找所有层级的标签
+    const findLabelByKey = (options: any[], targetKey: string): string => {
+      for (const option of options) {
+        if (option.keyValue === targetKey) {
+          return option.dictValue
+        }
+        if (option.children && option.children.length > 0) {
+          const result = findLabelByKey(option.children, targetKey)
+          if (result) return result
+        }
+      }
+      return ''
+    }
+
+    const result = findLabelByKey(carModelOptions.value, keyValue)
+    return result || keyValue
+  }
+
+  // 获取项目类型标签
+  const getProjectTypeLabel = (keyValue: string) => {
+    if (!keyValue || !projectTypeOptions.value.length) return keyValue
+
+    const option = projectTypeOptions.value.find(item => item.keyValue === keyValue)
+    return option ? option.dictValue : keyValue
+  }
+
+  // 获取项目阶段标签
+  const getProjectPhaseLabel = (keyValue: string) => {
+    if (!keyValue || !projectPhaseOptions.value.length) return keyValue
+
+    const option = projectPhaseOptions.value.find(item => item.keyValue === keyValue)
+    return option ? option.dictValue : keyValue
   }
 
   // 弹窗处理
@@ -294,10 +325,6 @@
   }
 
   // 其他操作
-  const handleSelectionChange = (rows: OrderItem[]) => {
-    selectedRows.value = rows
-  }
-
   const handleDelete = async (row: OrderItem) => {
     try {
       await ElMessageBox.confirm(`确定要删除保内工单 ${row.id} 吗？`, '提示', {
@@ -315,9 +342,48 @@
 
   // 初始化
   onMounted(async () => {
-    await getDictionaryData('order_project_type')
+    await Promise.all([loadProjectTypeData(), loadCarModelData(), loadProjectPhaseData()])
     getData()
   })
+
+  // 加载项目类型字典数据
+  const loadProjectTypeData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('order_project_type')
+      if (response?.enums) {
+        projectTypeOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载项目类型字典数据失败:', error)
+      projectTypeOptions.value = []
+    }
+  }
+
+  // 加载车型字典数据
+  const loadCarModelData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('order_car_model')
+      if (response?.enums) {
+        carModelOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载车型字典数据失败:', error)
+      carModelOptions.value = []
+    }
+  }
+
+  // 加载项目阶段字典数据
+  const loadProjectPhaseData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('project_phase')
+      if (response?.enums) {
+        projectPhaseOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载项目阶段字典数据失败:', error)
+      projectPhaseOptions.value = []
+    }
+  }
 </script>
 
 <style lang="scss" scoped>

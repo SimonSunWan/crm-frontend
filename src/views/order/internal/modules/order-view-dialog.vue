@@ -7,13 +7,13 @@
         <ElCol :span="12">
           <div class="info-item">
             <span class="label">整车厂：</span>
-            <span class="value">{{ orderData.customer || '-' }}</span>
+            <span class="value">{{ getCarModelLabel(orderData.customer) || '-' }}</span>
           </div>
         </ElCol>
         <ElCol :span="12">
           <div class="info-item">
             <span class="label">车型：</span>
-            <span class="value">{{ orderData.vehicleModel || '-' }}</span>
+            <span class="value">{{ getCarModelLabel(orderData.vehicleModel) || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>
@@ -57,15 +57,13 @@
         <ElCol :span="12">
           <div class="info-item">
             <span class="label">项目类型：</span>
-            <span class="value">{{
-              getDictionaryLabel('order_project_type', orderData.projectType) || '-'
-            }}</span>
+            <span class="value">{{ getProjectTypeLabel(orderData.projectType) || '-' }}</span>
           </div>
         </ElCol>
         <ElCol :span="12">
           <div class="info-item">
             <span class="label">项目阶段：</span>
-            <span class="value">{{ orderData.projectStage || '-' }}</span>
+            <span class="value">{{ getProjectPhaseLabel(orderData.projectStage) || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>
@@ -145,23 +143,6 @@
           </div>
         </ElCol>
       </ElRow>
-
-      <!-- 系统信息 -->
-      <ElDivider content-position="left">系统信息</ElDivider>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">创建时间：</span>
-            <span class="value">{{ formatDate(orderData.createTime) || '-' }}</span>
-          </div>
-        </ElCol>
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">更新时间：</span>
-            <span class="value">{{ formatDate(orderData.updateTime) || '-' }}</span>
-          </div>
-        </ElCol>
-      </ElRow>
     </div>
 
     <template #footer>
@@ -176,15 +157,15 @@
   // Vue 工具函数
   import { computed } from 'vue'
 
-  // 工具和组合式函数
-  import { useDictionary } from '@/composables/useDictionary'
-
   defineOptions({ name: 'OrderViewDialog' })
 
   // Props 和 Emits
   interface Props {
     visible: boolean
     orderData?: any
+    carModelOptions?: any[]
+    projectTypeOptions?: any[]
+    projectPhaseOptions?: any[]
   }
 
   const props = defineProps<Props>()
@@ -193,28 +174,49 @@
   }>()
 
   // 字典相关
-  const { getDictionaryLabel } = useDictionary()
+
+  // 获取车型标签
+  const getCarModelLabel = (keyValue: string) => {
+    if (!keyValue || !props.carModelOptions?.length) return keyValue
+
+    const findLabelByKey = (options: any[], targetKey: string): string => {
+      for (const option of options) {
+        if (option.keyValue === targetKey) {
+          return option.dictValue
+        }
+        if (option.children && option.children.length > 0) {
+          const result = findLabelByKey(option.children, targetKey)
+          if (result) return result
+        }
+      }
+      return ''
+    }
+
+    const result = findLabelByKey(props.carModelOptions, keyValue)
+    return result || keyValue
+  }
+
+  // 获取项目类型标签
+  const getProjectTypeLabel = (keyValue: string) => {
+    if (!keyValue || !props.projectTypeOptions?.length) return keyValue
+
+    const option = props.projectTypeOptions.find(item => item.keyValue === keyValue)
+    return option ? option.dictValue : keyValue
+  }
+
+  // 获取项目阶段标签
+  const getProjectPhaseLabel = (keyValue: string) => {
+    if (!keyValue || !props.projectPhaseOptions?.length) return keyValue
+
+    const option = props.projectPhaseOptions.find(item => item.keyValue === keyValue)
+    return option ? option.dictValue : keyValue
+  }
 
   // 计算属性
   const dialogVisible = computed({
     get: () => props.visible,
     set: value => emit('update:visible', value)
   })
-
-  // 时间格式化函数
-  const formatDate = (date: string) => {
-    if (!date) return ''
-    return new Date(date)
-      .toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-      .replace(/\//g, '-')
-  }
 </script>
 
 <style lang="scss" scoped>

@@ -5,21 +5,17 @@
       <ElDivider content-position="left">客户信息</ElDivider>
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem label="整车厂" prop="customer">
-            <ElInput v-model="formData.customer" placeholder="请输入整车厂名称" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="车型" prop="vehicleModel">
-            <ArtCascader
-              v-model="formData.vehicleModel"
-              dict-code="car_model"
-              placeholder="请选择车型"
+          <ElFormItem label="整车厂/车型" prop="carSelection">
+            <ElCascader
+              v-model="formData.carSelection"
+              :options="carModelOptions"
+              :props="cascaderProps"
+              placeholder="请选择整车厂/车型"
+              clearable
+              style="width: 100%"
             />
           </ElFormItem>
         </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem label="维修店(4S)" prop="repairShop">
             <ElInput v-model="formData.repairShop" placeholder="请输入维修店名称" />
@@ -61,20 +57,36 @@
       <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem label="项目类型" prop="projectType">
-            <ArtSelect
+            <ElSelect
               v-model="formData.projectType"
-              dict-code="order_project_type"
               placeholder="请选择项目类型"
-            />
+              clearable
+              style="width: 100%"
+            >
+              <ElOption
+                v-for="item in projectTypeOptions"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="项目阶段" prop="projectStage">
-            <ElRadioGroup v-model="formData.projectStage">
-              <ElRadio value="0公里">0公里</ElRadio>
-              <ElRadio value="样车阶段">样车阶段</ElRadio>
-              <ElRadio value="市场流通">市场流通</ElRadio>
-            </ElRadioGroup>
+            <ElSelect
+              v-model="formData.projectStage"
+              placeholder="请选择项目阶段"
+              clearable
+              style="width: 100%"
+            >
+              <ElOption
+                v-for="item in projectPhaseOptions"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -89,7 +101,7 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="车架号" prop="vinNumber">
-            <ElInput v-model="formData.vinNumber" placeholder="请输入正确的车架号" />
+            <ElInput v-model="formData.vinNumber" placeholder="请输入车架号" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -101,7 +113,7 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="车辆位置" prop="vehicleLocation">
-            <ElInput v-model="formData.vehicleLocation" placeholder="请输入详细地址" />
+            <ElInput v-model="formData.vehicleLocation" placeholder="请输入车辆位置" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -184,8 +196,6 @@
   import { InternalOrderService } from '@/api/orderApi'
 
   // 组件
-  import ArtSelect from '@/components/forms/art-select/index.vue'
-  import ArtCascader from '@/components/forms/art-cascader/index.vue'
 
   defineOptions({ name: 'OrderDialog' })
 
@@ -194,6 +204,9 @@
     visible: boolean
     type: 'add' | 'edit'
     orderData?: any
+    carModelOptions?: any[]
+    projectTypeOptions?: any[]
+    projectPhaseOptions?: any[]
   }
 
   const props = defineProps<Props>()
@@ -201,6 +214,15 @@
     'update:visible': [value: boolean]
     submit: []
   }>()
+
+  // 级联选择器配置
+  const cascaderProps = {
+    value: 'keyValue',
+    label: 'dictValue',
+    children: 'children',
+    emitPath: true,
+    checkStrictly: false
+  }
 
   // 响应式数据
   const formRef = ref<FormInstance>()
@@ -210,6 +232,7 @@
     id: '',
     customer: '',
     vehicleModel: '',
+    carSelection: [] as string[],
     repairShop: '',
     reporterName: '',
     contactInfo: '',
@@ -239,21 +262,28 @@
 
   // 表单验证规则
   const rules: FormRules = {
-    customer: [{ required: true, message: '请输入整车厂名称', trigger: 'blur' }],
-    vehicleModel: [{ required: true, message: '请输入车型', trigger: 'blur' }],
+    carSelection: [{ required: true, message: '请选择整车厂/车型', trigger: 'change' }],
     repairShop: [{ required: true, message: '请输入维修店名称', trigger: 'blur' }],
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
     reportDate: [{ required: true, message: '请选择报修日期', trigger: 'change' }],
     projectType: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
     projectStage: [{ required: true, message: '请选择项目阶段', trigger: 'change' }],
-    vinNumber: [{ required: true, message: '请输入车架号', trigger: 'blur' }]
+    vinNumber: [{ required: true, message: '请输入车架号', trigger: 'blur' }],
+    vehicleLocation: [{ required: true, message: '请输入车辆位置', trigger: 'blur' }],
+    vehicleDate: [{ required: true, message: '请选择车辆日期', trigger: 'change' }],
+    underWarranty: [{ required: true, message: '请选择是否在保', trigger: 'change' }],
+    faultDescription: [{ required: true, message: '请输入故障描述', trigger: 'blur' }]
   }
 
   // 初始化表单数据
   const initFormData = () => {
     if (props.type === 'edit' && props.orderData) {
       Object.assign(formData, props.orderData)
+      // 设置级联选择器的值
+      if (props.orderData.customer && props.orderData.vehicleModel) {
+        formData.carSelection = [props.orderData.customer, props.orderData.vehicleModel]
+      }
     } else {
       resetForm()
     }
@@ -266,6 +296,7 @@
       id: '',
       customer: '',
       vehicleModel: '',
+      carSelection: [],
       repairShop: '',
       reporterName: '',
       contactInfo: '',
@@ -304,8 +335,10 @@
         loading.value = true
         try {
           const submitData = {
-            customer: formData.customer,
-            vehicleModel: formData.vehicleModel,
+            customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || '' : '',
+            vehicleModel: Array.isArray(formData.carSelection)
+              ? formData.carSelection[1] || ''
+              : '',
             repairShop: formData.repairShop,
             reporterName: formData.reporterName,
             contactInfo: formData.contactInfo,

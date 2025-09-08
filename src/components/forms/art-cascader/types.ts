@@ -5,6 +5,7 @@ export interface ArtCascaderProps {
   disabled?: boolean
   loading?: boolean
   filterable?: boolean
+  multipleFields?: boolean
   value?: string | string[]
   separator?: string
 }

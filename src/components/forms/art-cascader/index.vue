@@ -29,6 +29,7 @@
     disabled?: boolean
     loading?: boolean
     filterable?: boolean
+    multipleFields?: boolean
   }
 
   interface Emits {
@@ -41,7 +42,8 @@
     clearable: true,
     disabled: false,
     loading: false,
-    filterable: false
+    filterable: false,
+    multipleFields: false
   })
 
   const emit = defineEmits<Emits>()
@@ -53,7 +55,7 @@
     value: 'keyValue',
     label: 'dictValue',
     children: 'children',
-    emitPath: false,
+    emitPath: props.multipleFields,
     checkStrictly: false
   }))
 

@@ -24,5 +24,5 @@ export interface ArtSelectEmits {
 
 export interface ArtSelectExpose {
   fetchDictionaryData: () => Promise<void>
-  options: Readonly<DictionaryEnumItem[]>
+  options: DictionaryEnumItem[]
 }

@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, readonly } from 'vue'
+  import { ref, watch } from 'vue'
   import { ElSelect, ElOption } from 'element-plus'
   import { DictionaryService } from '@/api/dictionaryApi'
   import type { DictionaryEnumItem } from '@/types/api/dictionary'
@@ -95,7 +95,7 @@
   defineExpose<ArtSelectExpose>({
     fetchDictionaryData,
     get options() {
-      return readonly(options.value)
+      return options.value
     }
   })
 </script>
