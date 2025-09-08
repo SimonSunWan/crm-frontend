@@ -18,11 +18,11 @@
           />
         </ElSelect>
       </ElFormItem>
-      <ElFormItem label="key值" prop="keyValue">
-        <ElInput v-model="formData.keyValue" placeholder="请输入key值" />
+      <ElFormItem label="枚举名称" prop="dictValue">
+        <ElInput v-model="formData.dictValue" placeholder="请输入枚举名称" />
       </ElFormItem>
-      <ElFormItem label="字典值" prop="dictValue">
-        <ElInput v-model="formData.dictValue" placeholder="请输入字典值" />
+      <ElFormItem label="枚举编码" prop="keyValue">
+        <ElInput v-model="formData.keyValue" placeholder="请输入枚举编码" />
       </ElFormItem>
       <ElFormItem label="排序" prop="sortOrder">
         <ElInputNumber
@@ -101,8 +101,8 @@
 
   // 表单验证规则
   const rules: FormRules = {
-    keyValue: [{ required: true, message: '请输入key值', trigger: 'blur' }],
-    dictValue: [{ required: true, message: '请输入字典值', trigger: 'blur' }]
+    keyValue: [{ required: true, message: '请输入枚举编码', trigger: 'blur' }],
+    dictValue: [{ required: true, message: '请输入枚举名称', trigger: 'blur' }]
   }
 
   // 获取父级选项
