@@ -1,40 +1,12 @@
 <template>
   <div class="order-page art-full-height">
     <!-- 搜索区域 -->
-    <ElCard class="search-card" shadow="never">
-      <ElForm :model="searchForm" inline>
-        <ElFormItem label="工单编号">
-          <ElInput v-model="searchForm.orderNo" placeholder="请输入工单编号" clearable />
-        </ElFormItem>
-        <ElFormItem label="整车厂">
-          <ElInput v-model="searchForm.customer" placeholder="请输入整车厂名称" clearable />
-        </ElFormItem>
-        <ElFormItem label="车型">
-          <ElInput v-model="searchForm.vehicleModel" placeholder="请输入车型" clearable />
-        </ElFormItem>
-        <ElFormItem label="维修店(4S)">
-          <ElInput v-model="searchForm.repairShop" placeholder="请输入维修店名称" clearable />
-        </ElFormItem>
-        <ElFormItem label="报修人">
-          <ElInput v-model="searchForm.reporterName" placeholder="请输入报修人姓名" clearable />
-        </ElFormItem>
-        <ElFormItem label="报修时间">
-          <ElDatePicker
-            v-model="searchForm.dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-          />
-        </ElFormItem>
-        <ElFormItem>
-          <ElButton type="primary" @click="handleSearch" :icon="Search">搜索</ElButton>
-          <ElButton @click="resetSearch" :icon="Refresh">重置</ElButton>
-        </ElFormItem>
-      </ElForm>
-    </ElCard>
+    <OrderSearch
+      v-model="searchForm"
+      :dictionary-options="dictionaryOptions"
+      @search="handleSearch"
+      @reset="resetSearch"
+    />
 
     <!-- 表格区域 -->
     <ElCard class="art-table-card" shadow="never">
@@ -49,7 +21,6 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
-        @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       />
@@ -58,17 +29,22 @@
         v-model:visible="dialogVisible"
         :type="dialogType"
         :order-data="currentOrderData"
+        :dictionary-options="dictionaryOptions"
         @submit="handleDialogSubmit"
       />
 
-      <OrderViewDialog v-model:visible="viewDialogVisible" :order-data="currentOrderData" />
+      <OrderViewDialog
+        v-model:visible="viewDialogVisible"
+        :order-data="currentOrderData"
+        :dictionary-options="dictionaryOptions"
+      />
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
   // 组件导入
-  import { Search, Refresh } from '@element-plus/icons-vue'
+  import OrderSearch from './modules/order-search.vue'
   import OrderDialog from './modules/order-dialog.vue'
   import OrderViewDialog from './modules/order-view-dialog.vue'
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
@@ -78,10 +54,11 @@
 
   // 工具和组合式函数
   import { useTable } from '@/composables/useTable'
-  import { useDictionary } from '@/composables/useDictionary'
   import type { ColumnOption } from '@/types/component'
   import type { OrderItem } from '@/types/api'
   import { ExternalOrderService } from '@/api/orderApi'
+  import { DictionaryService } from '@/api/dictionaryApi'
+  import { getDictionaryLabel, getHierarchicalDictionaryLabel } from './utils/dictionaryUtils'
 
   defineOptions({ name: 'ExternalOrder' })
 
@@ -89,20 +66,27 @@
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
   const viewDialogVisible = ref(false)
-  const currentOrderData = ref<Partial<OrderItem>>({})
-  const selectedRows = ref<OrderItem[]>([])
+  const currentOrderData = ref<OrderItem | undefined>(undefined)
 
   // 字典相关
-  const { getDictionaryData, getDictionaryLabel } = useDictionary()
+  const dictionaryOptions = ref({
+    carModel: [] as any[],
+    projectType: [] as any[],
+    projectPhase: [] as any[],
+    faultClassification: [] as any[],
+    faultLocation: [] as any[],
+    partCategory: [] as any[],
+    spareLocation: [] as any[],
+    partNumber: [] as any[],
+    feeType: [] as any[],
+    repairItems: [] as any[]
+  })
 
   // 搜索表单
   const searchForm = ref({
     orderNo: '',
-    customer: '',
-    vehicleModel: '',
-    repairShop: '',
-    reporterName: '',
-    dateRange: []
+    carSelection: [] as string[],
+    repairShop: ''
   })
 
   const {
@@ -118,7 +102,10 @@
     core: {
       apiFn: ExternalOrderService.getOrderList,
       apiParams: {
-        ...searchForm.value
+        orderNo: '',
+        repairShop: '',
+        customer: '',
+        vehicleModel: ''
       },
       immediate: false
     }
@@ -126,7 +113,6 @@
 
   // 表格列配置
   const columns = ref<ColumnOption<OrderItem>[]>([
-    { type: 'selection' as const, width: 55 },
     {
       prop: 'id',
       label: '工单编号',
@@ -137,18 +123,27 @@
       prop: 'customer',
       label: '整车厂',
       width: 120,
-      formatter: row => row.customer || '-'
+      showOverflowTooltip: true,
+      formatter: (row: OrderItem) => {
+        return getHierarchicalDictionaryLabel(row.customer, dictionaryOptions.value.carModel) || '-'
+      }
     },
     {
       prop: 'vehicleModel',
       label: '车型',
       width: 120,
-      formatter: row => row.vehicleModel || '-'
+      showOverflowTooltip: true,
+      formatter: (row: OrderItem) => {
+        return (
+          getHierarchicalDictionaryLabel(row.vehicleModel, dictionaryOptions.value.carModel) || '-'
+        )
+      }
     },
     {
       prop: 'repairShop',
       label: '维修店(4S)',
       width: 150,
+      showOverflowTooltip: true,
       formatter: row => row.repairShop || '-'
     },
     {
@@ -174,14 +169,16 @@
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel('order_project_type', row.projectType) || '-'
+        return getDictionaryLabel(row.projectType, dictionaryOptions.value.projectType) || '-'
       }
     },
     {
       prop: 'projectStage',
       label: '项目阶段',
       width: 100,
-      formatter: row => row.projectStage || '-'
+      formatter: (row: OrderItem) => {
+        return getDictionaryLabel(row.projectStage, dictionaryOptions.value.projectPhase) || '-'
+      }
     },
     {
       prop: 'licensePlate',
@@ -205,21 +202,34 @@
       prop: 'vehicleLocation',
       label: '车辆位置',
       width: 150,
+      showOverflowTooltip: true,
       formatter: row => row.vehicleLocation || '-'
+    },
+    {
+      prop: 'vehicleDate',
+      label: '车辆日期',
+      width: 150,
+      formatter: row => row.vehicleDate || '-'
     },
     {
       prop: 'packCode',
       label: 'PACK码',
-      width: 100,
+      width: 230,
       formatter: row => row.packCode || '-'
     },
     {
+      prop: 'packDate',
+      label: 'PACK日期',
+      width: 150,
+      formatter: row => row.packDate || '-'
+    },
+    {
       prop: 'underWarranty',
-      label: '保修状态',
+      label: '是否在保',
       width: 100,
       formatter: (row: OrderItem) => {
         return h(ElTag, { type: row.underWarranty ? 'success' : 'danger' }, () =>
-          row.underWarranty ? '保内' : '保外'
+          row.underWarranty ? '是' : '否'
         )
       }
     },
@@ -227,13 +237,8 @@
       prop: 'faultDescription',
       label: '故障描述',
       width: 200,
+      showOverflowTooltip: true,
       formatter: row => row.faultDescription || '-'
-    },
-    {
-      prop: 'createTime',
-      label: '创建时间',
-      width: 160,
-      formatter: row => row.createTime || '-'
     },
     {
       label: '操作',
@@ -260,17 +265,25 @@
 
   // 搜索处理
   const handleSearch = () => {
-    getData()
+    const params: any = {
+      orderNo: searchForm.value.orderNo,
+      repairShop: searchForm.value.repairShop
+    }
+
+    // 处理级联选择器的值
+    if (searchForm.value.carSelection && searchForm.value.carSelection.length > 0) {
+      params.customer = searchForm.value.carSelection[0] || ''
+      params.vehicleModel = searchForm.value.carSelection[1] || ''
+    }
+
+    getData(params)
   }
 
   const resetSearch = () => {
     searchForm.value = {
       orderNo: '',
-      customer: '',
-      vehicleModel: '',
-      repairShop: '',
-      reporterName: '',
-      dateRange: []
+      carSelection: [],
+      repairShop: ''
     }
     getData()
   }
@@ -278,12 +291,12 @@
   // 弹窗处理
   const showDialog = (type: 'add' | 'edit', row?: OrderItem) => {
     dialogType.value = type
-    currentOrderData.value = type === 'edit' ? { ...row } : {}
+    currentOrderData.value = type === 'edit' && row ? row : undefined
     dialogVisible.value = true
   }
 
   const showViewDialog = (row: OrderItem) => {
-    currentOrderData.value = { ...row }
+    currentOrderData.value = row
     viewDialogVisible.value = true
   }
 
@@ -294,16 +307,12 @@
   }
 
   // 其他操作
-  const handleSelectionChange = (rows: OrderItem[]) => {
-    selectedRows.value = rows
-  }
-
   const handleDelete = async (row: OrderItem) => {
     try {
       await ElMessageBox.confirm(`确定要删除保外工单 ${row.id} 吗？`, '提示', {
         type: 'warning'
       })
-      await ExternalOrderService.deleteOrder(row.id)
+      await ExternalOrderService.deleteOrder(row.id || '')
       ElMessage.success('删除成功')
       refreshData()
     } catch (error) {
@@ -315,9 +324,37 @@
 
   // 初始化
   onMounted(async () => {
-    await getDictionaryData('order_project_type')
+    await loadDictionaryData()
     getData()
   })
+
+  // 通用字典数据加载函数
+  const loadDictionaryData = async () => {
+    const dictionaryCodes = {
+      carModel: 'order_car_model',
+      projectType: 'order_project_type',
+      projectPhase: 'order_project_phase',
+      faultClassification: 'order_fault_classification',
+      faultLocation: 'order_fault_location',
+      partCategory: 'order_part_category',
+      spareLocation: 'order_spare_location',
+      partNumber: 'order_part_number',
+      feeType: 'order_fee_type',
+      repairItems: 'order_repair_items'
+    }
+
+    const loadPromises = Object.entries(dictionaryCodes).map(async ([key, code]) => {
+      try {
+        const response = await DictionaryService.getDictionaryByCode(code)
+        dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = response?.enums || []
+      } catch (error) {
+        console.error(error)
+        dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = []
+      }
+    })
+
+    await Promise.all(loadPromises)
+  }
 </script>
 
 <style lang="scss" scoped>

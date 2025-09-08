@@ -348,7 +348,7 @@
         const response = await DictionaryService.getDictionaryByCode(code)
         dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = response?.enums || []
       } catch (error) {
-        console.error(`加载字典 ${code} 失败:`, error)
+        console.error(error)
         dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = []
       }
     })
