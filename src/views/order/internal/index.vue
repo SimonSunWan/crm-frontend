@@ -3,7 +3,7 @@
     <!-- 搜索区域 -->
     <OrderSearch
       v-model="searchForm"
-      :car-model-options="carModelOptions"
+      :car-model-options="dictionaryOptions.carModel"
       @search="handleSearch"
       @reset="resetSearch"
     />
@@ -29,21 +29,14 @@
         v-model:visible="dialogVisible"
         :type="dialogType"
         :order-data="currentOrderData"
-        :car-model-options="carModelOptions"
-        :project-type-options="projectTypeOptions"
-        :project-phase-options="projectPhaseOptions"
-        :fault-classification-options="faultClassificationOptions"
-        :fault-location-options="faultLocationOptions"
-        :part-category-options="partCategoryOptions"
+        :dictionary-options="dictionaryOptions"
         @submit="handleDialogSubmit"
       />
 
       <OrderViewDialog
         v-model:visible="viewDialogVisible"
         :order-data="currentOrderData"
-        :car-model-options="carModelOptions"
-        :project-type-options="projectTypeOptions"
-        :project-phase-options="projectPhaseOptions"
+        :dictionary-options="dictionaryOptions"
       />
     </ElCard>
   </div>
@@ -65,6 +58,7 @@
   import type { OrderItem } from '@/types/api'
   import { InternalOrderService } from '@/api/orderApi'
   import { DictionaryService } from '@/api/dictionaryApi'
+  import { getDictionaryLabel, getHierarchicalDictionaryLabel } from './utils/dictionaryUtils'
 
   defineOptions({ name: 'Order' })
 
@@ -75,12 +69,18 @@
   const currentOrderData = ref<OrderItem | undefined>(undefined)
 
   // 字典相关
-  const carModelOptions = ref<any[]>([])
-  const projectTypeOptions = ref<any[]>([])
-  const projectPhaseOptions = ref<any[]>([])
-  const faultClassificationOptions = ref<any[]>([])
-  const faultLocationOptions = ref<any[]>([])
-  const partCategoryOptions = ref<any[]>([])
+  const dictionaryOptions = ref({
+    carModel: [] as any[],
+    projectType: [] as any[],
+    projectPhase: [] as any[],
+    faultClassification: [] as any[],
+    faultLocation: [] as any[],
+    partCategory: [] as any[],
+    spareLocation: [] as any[],
+    partNumber: [] as any[],
+    feeType: [] as any[],
+    repairItems: [] as any[]
+  })
 
   // 搜索表单
   const searchForm = ref({
@@ -125,7 +125,7 @@
       width: 120,
       showOverflowTooltip: true,
       formatter: (row: OrderItem) => {
-        return getCarModelLabel(row.customer) || '-'
+        return getHierarchicalDictionaryLabel(row.customer, dictionaryOptions.value.carModel) || '-'
       }
     },
     {
@@ -134,7 +134,9 @@
       width: 120,
       showOverflowTooltip: true,
       formatter: (row: OrderItem) => {
-        return getCarModelLabel(row.vehicleModel) || '-'
+        return (
+          getHierarchicalDictionaryLabel(row.vehicleModel, dictionaryOptions.value.carModel) || '-'
+        )
       }
     },
     {
@@ -167,7 +169,7 @@
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getProjectTypeLabel(row.projectType) || '-'
+        return getDictionaryLabel(row.projectType, dictionaryOptions.value.projectType) || '-'
       }
     },
     {
@@ -175,7 +177,7 @@
       label: '项目阶段',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getProjectPhaseLabel(row.projectStage) || '-'
+        return getDictionaryLabel(row.projectStage, dictionaryOptions.value.projectPhase) || '-'
       }
     },
     {
@@ -204,18 +206,30 @@
       formatter: row => row.vehicleLocation || '-'
     },
     {
+      prop: 'vehicleDate',
+      label: '车辆日期',
+      width: 150,
+      formatter: row => row.vehicleDate || '-'
+    },
+    {
       prop: 'packCode',
       label: 'PACK码',
       width: 230,
       formatter: row => row.packCode || '-'
     },
     {
+      prop: 'packDate',
+      label: 'PACK日期',
+      width: 150,
+      formatter: row => row.packDate || '-'
+    },
+    {
       prop: 'underWarranty',
-      label: '保修状态',
+      label: '是否在保',
       width: 100,
       formatter: (row: OrderItem) => {
         return h(ElTag, { type: row.underWarranty ? 'success' : 'danger' }, () =>
-          row.underWarranty ? '保内' : '保外'
+          row.underWarranty ? '是' : '否'
         )
       }
     },
@@ -274,44 +288,6 @@
     getData()
   }
 
-  // 获取车型标签
-  const getCarModelLabel = (keyValue: string) => {
-    if (!keyValue || !carModelOptions.value.length) return keyValue
-
-    // 递归查找所有层级的标签
-    const findLabelByKey = (options: any[], targetKey: string): string => {
-      for (const option of options) {
-        if (option.keyValue === targetKey) {
-          return option.dictValue
-        }
-        if (option.children && option.children.length > 0) {
-          const result = findLabelByKey(option.children, targetKey)
-          if (result) return result
-        }
-      }
-      return ''
-    }
-
-    const result = findLabelByKey(carModelOptions.value, keyValue)
-    return result || keyValue
-  }
-
-  // 获取项目类型标签
-  const getProjectTypeLabel = (keyValue: string) => {
-    if (!keyValue || !projectTypeOptions.value.length) return keyValue
-
-    const option = projectTypeOptions.value.find(item => item.keyValue === keyValue)
-    return option ? option.dictValue : keyValue
-  }
-
-  // 获取项目阶段标签
-  const getProjectPhaseLabel = (keyValue: string) => {
-    if (!keyValue || !projectPhaseOptions.value.length) return keyValue
-
-    const option = projectPhaseOptions.value.find(item => item.keyValue === keyValue)
-    return option ? option.dictValue : keyValue
-  }
-
   // 弹窗处理
   const showDialog = (type: 'add' | 'edit', row?: OrderItem) => {
     dialogType.value = type
@@ -348,93 +324,36 @@
 
   // 初始化
   onMounted(async () => {
-    await Promise.all([
-      loadProjectTypeData(),
-      loadCarModelData(),
-      loadProjectPhaseData(),
-      loadFaultClassificationData(),
-      loadFaultLocationData(),
-      loadPartCategoryData()
-    ])
+    await loadDictionaryData()
     getData()
   })
 
-  // 加载项目类型字典数据
-  const loadProjectTypeData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_project_type')
-      if (response?.enums) {
-        projectTypeOptions.value = response.enums
-      }
-    } catch (error) {
-      console.error(error)
-      projectTypeOptions.value = []
+  // 通用字典数据加载函数
+  const loadDictionaryData = async () => {
+    const dictionaryCodes = {
+      carModel: 'order_car_model',
+      projectType: 'order_project_type',
+      projectPhase: 'order_project_phase',
+      faultClassification: 'order_fault_classification',
+      faultLocation: 'order_fault_location',
+      partCategory: 'order_part_category',
+      spareLocation: 'order_spare_location',
+      partNumber: 'order_part_number',
+      feeType: 'order_fee_type',
+      repairItems: 'order_repair_items'
     }
-  }
 
-  // 加载车型字典数据
-  const loadCarModelData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_car_model')
-      if (response?.enums) {
-        carModelOptions.value = response.enums
+    const loadPromises = Object.entries(dictionaryCodes).map(async ([key, code]) => {
+      try {
+        const response = await DictionaryService.getDictionaryByCode(code)
+        dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = response?.enums || []
+      } catch (error) {
+        console.error(`加载字典 ${code} 失败:`, error)
+        dictionaryOptions.value[key as keyof typeof dictionaryOptions.value] = []
       }
-    } catch (error) {
-      console.error(error)
-      carModelOptions.value = []
-    }
-  }
+    })
 
-  // 加载项目阶段字典数据
-  const loadProjectPhaseData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_project_phase')
-      if (response?.enums) {
-        projectPhaseOptions.value = response.enums
-      }
-    } catch (error) {
-      console.error(error)
-      projectPhaseOptions.value = []
-    }
-  }
-
-  // 加载故障分类字典数据
-  const loadFaultClassificationData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_fault_classification')
-      if (response?.enums) {
-        faultClassificationOptions.value = response.enums
-      }
-    } catch (error) {
-      console.error(error)
-      faultClassificationOptions.value = []
-    }
-  }
-
-  // 加载故障位置字典数据
-  const loadFaultLocationData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_fault_location')
-      if (response?.enums) {
-        faultLocationOptions.value = response.enums
-      }
-    } catch (error) {
-      console.error(error)
-      faultLocationOptions.value = []
-    }
-  }
-
-  // 加载零件类别字典数据
-  const loadPartCategoryData = async () => {
-    try {
-      const response = await DictionaryService.getDictionaryByCode('order_part_category')
-      if (response?.enums) {
-        partCategoryOptions.value = response.enums
-      }
-    } catch (error) {
-      console.error(error)
-      partCategoryOptions.value = []
-    }
+    await Promise.all(loadPromises)
   }
 </script>
 

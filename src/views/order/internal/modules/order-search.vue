@@ -13,10 +13,13 @@
   import { ref, computed } from 'vue'
   import ArtSearchBar from '@/components/forms/art-search-bar/index.vue'
   import type { SearchFormItem } from '@/components/forms/art-search-bar/index.vue'
+  import { cascaderProps } from '../utils/dictionaryUtils'
 
   interface Props {
     modelValue: Record<string, any>
-    carModelOptions?: any[]
+    dictionaryOptions?: {
+      carModel: any[]
+    }
   }
 
   interface Emits {
@@ -36,14 +39,6 @@
 
   const rules = {}
 
-  const cascaderProps = {
-    value: 'keyValue',
-    label: 'dictValue',
-    children: 'children',
-    emitPath: true,
-    checkStrictly: false
-  }
-
   const formItems = computed((): SearchFormItem[] => [
     {
       label: '工单编号',
@@ -60,7 +55,7 @@
       type: 'cascader',
       labelWidth: '90px',
       props: {
-        options: props.carModelOptions || [],
+        options: props.dictionaryOptions?.carModel || [],
         props: cascaderProps,
         placeholder: '请选择整车厂/车型',
         clearable: true,

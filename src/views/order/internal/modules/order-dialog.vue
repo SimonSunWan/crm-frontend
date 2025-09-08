@@ -24,7 +24,7 @@
           <ElFormItem label="整车厂/车型" prop="carSelection">
             <ElCascader
               v-model="formData.carSelection"
-              :options="carModelOptions"
+              :options="props.dictionaryOptions?.carModel || []"
               :props="cascaderProps"
               placeholder="请选择整车厂/车型"
               clearable
@@ -80,7 +80,7 @@
               style="width: 100%"
             >
               <ElOption
-                v-for="item in projectTypeOptions"
+                v-for="item in props.dictionaryOptions?.projectType || []"
                 :key="item.keyValue"
                 :label="item.dictValue"
                 :value="item.keyValue"
@@ -97,7 +97,7 @@
               style="width: 100%"
             >
               <ElOption
-                v-for="item in projectPhaseOptions"
+                v-for="item in props.dictionaryOptions?.projectPhase || []"
                 :key="item.keyValue"
                 :label="item.dictValue"
                 :value="item.keyValue"
@@ -172,7 +172,7 @@
       <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem label="是否在保" prop="underWarranty">
-            <ElRadioGroup v-model="formData.underWarranty">
+            <ElRadioGroup v-model="formData.underWarranty as any">
               <ElRadio :value="true">是</ElRadio>
               <ElRadio :value="false">否</ElRadio>
             </ElRadioGroup>
@@ -223,7 +223,7 @@
       <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem label="中航责任" prop="avicResponsibility">
-            <ElRadioGroup v-model="repairData.avicResponsibility">
+            <ElRadioGroup v-model="repairData.avicResponsibility as any">
               <ElRadio :value="true">是</ElRadio>
               <ElRadio :value="false">否</ElRadio>
             </ElRadioGroup>
@@ -238,7 +238,7 @@
               style="width: 100%"
             >
               <ElOption
-                v-for="item in faultClassificationOptions"
+                v-for="item in props.dictionaryOptions?.faultClassification || []"
                 :key="item.keyValue"
                 :label="item.dictValue"
                 :value="item.keyValue"
@@ -257,7 +257,7 @@
               style="width: 100%"
             >
               <ElOption
-                v-for="item in faultLocationOptions"
+                v-for="item in props.dictionaryOptions?.faultLocation || []"
                 :key="item.keyValue"
                 :label="item.dictValue"
                 :value="item.keyValue"
@@ -269,7 +269,7 @@
           <ElFormItem label="零件类别/定位" prop="partSelection">
             <ElCascader
               v-model="repairData.partSelection"
-              :options="partCategoryOptions"
+              :options="props.dictionaryOptions?.partCategory || []"
               :props="cascaderProps"
               placeholder="请选择零件类别/定位"
               clearable
@@ -299,13 +299,18 @@
         <div class="section-header">
           <h3>备件使用详情</h3>
           <ElFormItem label="备件所属库位" class="header-form-item">
-            <ArtSelect
-              ref="spareLocationSelectRef"
+            <ElSelect
               v-model="sparePartLocation"
-              dict-code="order_spare_location"
               placeholder="请选择备件所属库位"
               style="width: 300px"
-            />
+            >
+              <ElOption
+                v-for="item in props.dictionaryOptions?.spareLocation || []"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
           </ElFormItem>
         </div>
 
@@ -317,13 +322,19 @@
           </ElTableColumn>
           <ElTableColumn prop="name" label="备件名称" width="120">
             <template #default="{ row }">
-              <ArtSelect
+              <ElSelect
                 v-model="row.name"
-                dict-code="order_part_number"
                 placeholder="请选择备件名称"
                 @change="value => handlePartNameChange(row, value)"
                 style="width: 100%"
-              />
+              >
+                <ElOption
+                  v-for="item in props.dictionaryOptions?.partNumber || []"
+                  :key="item.keyValue"
+                  :label="item.dictValue"
+                  :value="item.keyValue"
+                />
+              </ElSelect>
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="使用数量" width="120">
@@ -369,12 +380,14 @@
         <ElTable :data="costs" border style="width: 100%">
           <ElTableColumn prop="category" label="费用类别">
             <template #default="{ row }">
-              <ArtSelect
-                v-model="row.category"
-                dict-code="order_fee_type"
-                placeholder="请选择费用类别"
-                style="width: 100%"
-              />
+              <ElSelect v-model="row.category" placeholder="请选择费用类别" style="width: 100%">
+                <ElOption
+                  v-for="item in props.dictionaryOptions?.feeType || []"
+                  :key="item.keyValue"
+                  :label="item.dictValue"
+                  :value="item.keyValue"
+                />
+              </ElSelect>
             </template>
           </ElTableColumn>
           <ElTableColumn prop="amount" label="费用金额(元)">
@@ -410,11 +423,11 @@
         <ElTable :data="labors" border style="width: 100%">
           <ElTableColumn prop="repairSelection" label="故障位置/维修项目">
             <template #default="{ row }">
-              <ArtCascader
+              <ElCascader
                 v-model="row.repairSelection"
-                dict-code="order_repair_items"
+                :options="props.dictionaryOptions?.repairItems || []"
+                :props="cascaderProps"
                 placeholder="请选择故障位置/维修项目"
-                :multiple-fields="true"
                 @change="value => handleRepairSelectionChange(row, value)"
                 style="width: 100%"
               />
@@ -472,6 +485,7 @@
   // API服务
   import { InternalOrderService } from '@/api/orderApi'
   import type { OrderItem } from '@/types/api'
+  import { cleanFieldValue, cascaderProps } from '../utils/dictionaryUtils'
 
   // 组件
 
@@ -482,12 +496,18 @@
     visible: boolean
     type: 'add' | 'edit'
     orderData?: OrderItem
-    carModelOptions?: any[]
-    projectTypeOptions?: any[]
-    projectPhaseOptions?: any[]
-    faultClassificationOptions?: any[]
-    faultLocationOptions?: any[]
-    partCategoryOptions?: any[]
+    dictionaryOptions?: {
+      carModel: any[]
+      projectType: any[]
+      projectPhase: any[]
+      faultClassification: any[]
+      faultLocation: any[]
+      partCategory: any[]
+      spareLocation: any[]
+      partNumber: any[]
+      feeType: any[]
+      repairItems: any[]
+    }
   }
 
   const props = defineProps<Props>()
@@ -496,19 +516,9 @@
     submit: []
   }>()
 
-  // 级联选择器配置
-  const cascaderProps = {
-    value: 'keyValue',
-    label: 'dictValue',
-    children: 'children',
-    emitPath: true,
-    checkStrictly: false
-  }
-
   // 响应式数据
   const formRef = ref<FormInstance>()
   const repairFormRef = ref<FormInstance>()
-  const spareLocationSelectRef = ref()
   const loading = ref(false)
   const currentStep = ref(0)
 
@@ -530,14 +540,14 @@
     vehicleDate: '',
     packCode: '',
     packDate: '',
-    underWarranty: true,
+    underWarranty: null,
     faultDescription: ''
   })
 
   const repairData = reactive({
     repairPerson: '',
     repairDate: '',
-    avicResponsibility: true,
+    avicResponsibility: null,
     faultClassification: '',
     faultLocation: '',
     partSelection: [] as string[],
@@ -628,7 +638,7 @@
           Object.assign(repairData, {
             repairPerson: detail.repairPerson || '',
             repairDate: detail.repairDate || '',
-            avicResponsibility: detail.avicResponsibility ?? true,
+            avicResponsibility: detail.avicResponsibility ?? null,
             faultClassification: detail.faultClassification || '',
             faultLocation: detail.faultLocation || '',
             partSelection:
@@ -656,7 +666,10 @@
             }
           ]
           labors.value = (detail.labors || []).map((labor: any) => ({
-            repairSelection: [] as string[],
+            repairSelection:
+              labor.faultLocation && labor.repairItem
+                ? [labor.faultLocation, labor.repairItem]
+                : [],
             faultLocation: labor.faultLocation || '',
             repairItem: labor.repairItem || '',
             quantity: labor.quantity || '',
@@ -695,13 +708,13 @@
       vehicleDate: '',
       packCode: '',
       packDate: '',
-      underWarranty: true,
+      underWarranty: null,
       faultDescription: ''
     })
     Object.assign(repairData, {
       repairPerson: '',
       repairDate: '',
-      avicResponsibility: true,
+      avicResponsibility: null,
       faultClassification: '',
       faultLocation: '',
       partSelection: [],
@@ -737,9 +750,37 @@
   }
 
   // 步骤控制
-  const nextStep = () => {
+  const nextStep = async () => {
     if (currentStep.value < 2) {
-      currentStep.value++
+      // 验证当前步骤的表单
+      let isValid = true
+
+      if (currentStep.value === 0) {
+        // 验证第一步：报修信息
+        if (formRef.value) {
+          try {
+            await formRef.value.validate()
+          } catch (error) {
+            console.error(error)
+            isValid = false
+          }
+        }
+      } else if (currentStep.value === 1) {
+        // 验证第二步：维修记录
+        if (repairFormRef.value) {
+          try {
+            await repairFormRef.value.validate()
+          } catch (error) {
+            console.error(error)
+            isValid = false
+          }
+        }
+      }
+
+      // 只有验证通过才允许进入下一步
+      if (isValid) {
+        currentStep.value++
+      }
     }
   }
 
@@ -804,20 +845,54 @@
   }
 
   // 处理维修项目级联选择变化
-  const handleRepairSelectionChange = (row: any, value: string[] | undefined) => {
-    // ArtCascader组件会提供路径数组，第一个是故障位置，第二个是维修项目
+  const handleRepairSelectionChange = (row: any, value: any) => {
+    // ElCascader组件会提供路径数组，第一个是故障位置，第二个是维修项目
     if (Array.isArray(value) && value.length >= 2) {
       row.faultLocation = value[0]
       row.repairItem = value[1]
     }
   }
 
-  // 数据清理函数 - 确保字段不是数组格式
-  const cleanFieldValue = (value: any): any => {
-    if (Array.isArray(value)) {
-      return value[0] || ''
+  // 构建提交数据
+  const buildSubmitData = () => {
+    return {
+      // 报修信息
+      customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || '' : '',
+      vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || '' : '',
+      repairShop: cleanFieldValue(formData.repairShop),
+      reporterName: cleanFieldValue(formData.reporterName),
+      contactInfo: cleanFieldValue(formData.contactInfo),
+      reportDate: cleanFieldValue(formData.reportDate),
+      projectType: cleanFieldValue(formData.projectType),
+      projectStage: cleanFieldValue(formData.projectStage),
+      licensePlate: cleanFieldValue(formData.licensePlate),
+      vinNumber: cleanFieldValue(formData.vinNumber),
+      mileage: formData.mileage,
+      vehicleLocation: cleanFieldValue(formData.vehicleLocation),
+      vehicleDate: cleanFieldValue(formData.vehicleDate),
+      packCode: cleanFieldValue(formData.packCode),
+      packDate: cleanFieldValue(formData.packDate),
+      underWarranty: formData.underWarranty ?? false,
+      faultDescription: cleanFieldValue(formData.faultDescription),
+      // 维修记录
+      repairPerson: cleanFieldValue(repairData.repairPerson),
+      repairDate: cleanFieldValue(repairData.repairDate),
+      avicResponsibility: repairData.avicResponsibility ?? false,
+      faultClassification: cleanFieldValue(repairData.faultClassification),
+      faultLocation: cleanFieldValue(repairData.faultLocation),
+      partCategory: Array.isArray(repairData.partSelection)
+        ? repairData.partSelection[0] || ''
+        : '',
+      partLocation: Array.isArray(repairData.partSelection)
+        ? repairData.partSelection[1] || ''
+        : '',
+      repairDescription: cleanFieldValue(repairData.repairDescription),
+      // 详情记录
+      sparePartLocation: sparePartLocation.value,
+      spareParts: spareParts.value,
+      costs: costs.value,
+      labors: labors.value
     }
-    return value
   }
 
   // 统一保存所有步骤
@@ -836,44 +911,7 @@
         return
       }
 
-      const submitData = {
-        // 报修信息
-        customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || '' : '',
-        vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || '' : '',
-        repairShop: cleanFieldValue(formData.repairShop),
-        reporterName: cleanFieldValue(formData.reporterName),
-        contactInfo: cleanFieldValue(formData.contactInfo),
-        reportDate: cleanFieldValue(formData.reportDate),
-        projectType: cleanFieldValue(formData.projectType),
-        projectStage: cleanFieldValue(formData.projectStage),
-        licensePlate: cleanFieldValue(formData.licensePlate),
-        vinNumber: cleanFieldValue(formData.vinNumber),
-        mileage: formData.mileage,
-        vehicleLocation: cleanFieldValue(formData.vehicleLocation),
-        vehicleDate: cleanFieldValue(formData.vehicleDate),
-        packCode: cleanFieldValue(formData.packCode),
-        packDate: cleanFieldValue(formData.packDate),
-        underWarranty: formData.underWarranty,
-        faultDescription: cleanFieldValue(formData.faultDescription),
-        // 维修记录
-        repairPerson: cleanFieldValue(repairData.repairPerson),
-        repairDate: cleanFieldValue(repairData.repairDate),
-        avicResponsibility: repairData.avicResponsibility,
-        faultClassification: cleanFieldValue(repairData.faultClassification),
-        faultLocation: cleanFieldValue(repairData.faultLocation),
-        partCategory: Array.isArray(repairData.partSelection)
-          ? repairData.partSelection[0] || ''
-          : '',
-        partLocation: Array.isArray(repairData.partSelection)
-          ? repairData.partSelection[1] || ''
-          : '',
-        repairDescription: cleanFieldValue(repairData.repairDescription),
-        // 详情记录
-        sparePartLocation: sparePartLocation.value,
-        spareParts: spareParts.value,
-        costs: costs.value,
-        labors: labors.value
-      }
+      const submitData = buildSubmitData()
 
       if (props.type === 'add') {
         await InternalOrderService.createOrder(submitData)
@@ -899,32 +937,6 @@
       }
     },
     { immediate: true }
-  )
-
-  // 设置备件库位默认值
-  const setDefaultSpareLocation = async () => {
-    if (spareLocationSelectRef.value && !sparePartLocation.value) {
-      try {
-        await spareLocationSelectRef.value.fetchDictionaryData()
-        const options = spareLocationSelectRef.value.options
-        if (options && options.length > 0) {
-          sparePartLocation.value = options[0].keyValue
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }
-
-  // 监听步骤变化，设置默认值
-  watch(
-    () => currentStep.value,
-    async newStep => {
-      if (newStep === 2) {
-        // 进入第三步时，设置备件库位默认值
-        await setDefaultSpareLocation()
-      }
-    }
   )
 </script>
 
