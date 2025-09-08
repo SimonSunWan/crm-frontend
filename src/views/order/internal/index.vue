@@ -32,6 +32,9 @@
         :car-model-options="carModelOptions"
         :project-type-options="projectTypeOptions"
         :project-phase-options="projectPhaseOptions"
+        :fault-classification-options="faultClassificationOptions"
+        :fault-location-options="faultLocationOptions"
+        :part-category-options="partCategoryOptions"
         @submit="handleDialogSubmit"
       />
 
@@ -69,12 +72,15 @@
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
   const viewDialogVisible = ref(false)
-  const currentOrderData = ref<Partial<OrderItem>>({})
+  const currentOrderData = ref<OrderItem | undefined>(undefined)
 
   // 字典相关
   const carModelOptions = ref<any[]>([])
   const projectTypeOptions = ref<any[]>([])
   const projectPhaseOptions = ref<any[]>([])
+  const faultClassificationOptions = ref<any[]>([])
+  const faultLocationOptions = ref<any[]>([])
+  const partCategoryOptions = ref<any[]>([])
 
   // 搜索表单
   const searchForm = ref({
@@ -309,12 +315,12 @@
   // 弹窗处理
   const showDialog = (type: 'add' | 'edit', row?: OrderItem) => {
     dialogType.value = type
-    currentOrderData.value = type === 'edit' ? { ...row } : {}
+    currentOrderData.value = type === 'edit' ? row : undefined
     dialogVisible.value = true
   }
 
   const showViewDialog = (row: OrderItem) => {
-    currentOrderData.value = { ...row }
+    currentOrderData.value = row
     viewDialogVisible.value = true
   }
 
@@ -342,7 +348,14 @@
 
   // 初始化
   onMounted(async () => {
-    await Promise.all([loadProjectTypeData(), loadCarModelData(), loadProjectPhaseData()])
+    await Promise.all([
+      loadProjectTypeData(),
+      loadCarModelData(),
+      loadProjectPhaseData(),
+      loadFaultClassificationData(),
+      loadFaultLocationData(),
+      loadPartCategoryData()
+    ])
     getData()
   })
 
@@ -375,13 +388,52 @@
   // 加载项目阶段字典数据
   const loadProjectPhaseData = async () => {
     try {
-      const response = await DictionaryService.getDictionaryByCode('project_phase')
+      const response = await DictionaryService.getDictionaryByCode('order_project_phase')
       if (response?.enums) {
         projectPhaseOptions.value = response.enums
       }
     } catch (error) {
       console.error('加载项目阶段字典数据失败:', error)
       projectPhaseOptions.value = []
+    }
+  }
+
+  // 加载故障分类字典数据
+  const loadFaultClassificationData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('order_fault_classification')
+      if (response?.enums) {
+        faultClassificationOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载故障分类字典数据失败:', error)
+      faultClassificationOptions.value = []
+    }
+  }
+
+  // 加载故障位置字典数据
+  const loadFaultLocationData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('order_fault_location')
+      if (response?.enums) {
+        faultLocationOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载故障位置字典数据失败:', error)
+      faultLocationOptions.value = []
+    }
+  }
+
+  // 加载零件类别字典数据
+  const loadPartCategoryData = async () => {
+    try {
+      const response = await DictionaryService.getDictionaryByCode('order_part_category')
+      if (response?.enums) {
+        partCategoryOptions.value = response.enums
+      }
+    } catch (error) {
+      console.error('加载零件类别字典数据失败:', error)
+      partCategoryOptions.value = []
     }
   }
 </script>

@@ -2,9 +2,43 @@
  * 工单相关类型定义
  */
 
+// 工单详情记录
+export interface OrderDetail {
+  id: number
+  orderId: string
+  repairPerson?: string
+  repairDate?: string
+  avicResponsibility?: boolean
+  faultClassification?: string
+  faultLocation?: string
+  partCategory?: string
+  partLocation?: string
+  repairDescription?: string
+  sparePartLocation?: string
+  spareParts?: Array<{
+    partNumber: string
+    name: string
+    quantity: string
+    oldPartCode: string
+    newPartCode: string
+  }>
+  costs?: Array<{
+    category: string
+    amount: string
+  }>
+  labors?: Array<{
+    faultLocation: string
+    repairItem: string
+    quantity: string
+    coefficient: string
+  }>
+  createTime: string
+  updateTime?: string
+}
+
 // 工单基础信息
 export interface OrderItem {
-  id: string
+  id?: string
   customer: string
   vehicleModel: string
   repairShop: string
@@ -24,6 +58,8 @@ export interface OrderItem {
   faultDescription?: string
   createTime: string
   updateTime?: string
+  // 详情记录
+  details?: OrderDetail[]
 }
 
 // 工单列表数据
@@ -74,4 +110,32 @@ export interface OrderUpdateParams {
   packDate?: string
   underWarranty?: boolean
   faultDescription?: string
+  // 维修记录字段
+  repairPerson?: string
+  repairDate?: string
+  avicResponsibility?: boolean
+  faultClassification?: string
+  faultLocation?: string
+  partCategory?: string
+  partLocation?: string
+  repairDescription?: string
+  // 详情记录字段
+  sparePartLocation?: string
+  spareParts?: Array<{
+    partNumber: string
+    name: string
+    quantity: string
+    oldPartCode: string
+    newPartCode: string
+  }>
+  costs?: Array<{
+    category: string
+    amount: string
+  }>
+  labors?: Array<{
+    faultLocation: string
+    repairItem: string
+    quantity: string
+    coefficient: string
+  }>
 }
