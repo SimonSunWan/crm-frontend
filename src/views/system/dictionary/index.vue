@@ -1,77 +1,76 @@
 <template>
   <div class="dictionary-page art-full-height">
-    <div class="dictionary-layout">
-      <!-- 左侧字典分类面板 -->
-      <div class="left-panel">
-        <ElCard class="type-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>字典分类</span>
-              <ElButton @click="showTypeDialog('add')" v-ripple> 新增字典分类 </ElButton>
+    <!-- 左侧字典分类面板 -->
+    <div class="left-panel">
+      <ElCard class="art-table-card" shadow="never">
+        <template #header>
+          <div class="card-header">
+            <span>字典分类</span>
+            <ElButton @click="showTypeDialog('add')" v-ripple> 新增字典分类 </ElButton>
+          </div>
+        </template>
+
+        <div class="search-type-section">
+          <ElInput
+            v-model="typeSearchKeyword"
+            placeholder="请输入字典名称"
+            clearable
+            @input="filterTypes"
+            class="search-input"
+          />
+        </div>
+
+        <ArtTable
+          :data="typeData"
+          :columns="typeColumns"
+          :loading="typeLoading"
+          :pagination="typePagination"
+          :pagination-options="{
+            layout: 'prev, pager, next',
+            pageSizes: [],
+            hideOnSinglePage: false
+          }"
+          @row-click="selectType"
+          @pagination:current-change="handleTypeCurrentChange"
+        />
+      </ElCard>
+    </div>
+
+    <!-- 右侧字典枚举面板 -->
+    <div class="right-panel">
+      <ElCard class="art-table-card" shadow="never">
+        <template #header>
+          <div class="card-header">
+            <span>字典枚举</span>
+            <div class="header-actions">
+              <ElButton v-if="selectedType" @click="toggleExpand" v-ripple>
+                {{ isExpanded ? '收起' : '展开' }}
+              </ElButton>
+              <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
+                新增字典枚举
+              </ElButton>
             </div>
-          </template>
-
-          <div class="search-type-section">
-            <ElInput
-              v-model="typeSearchKeyword"
-              placeholder="请输入字典名称"
-              clearable
-              @input="filterTypes"
-              class="search-input"
-            />
           </div>
+        </template>
 
-          <div class="type-list">
-            <div class="type-items">
-              <div
-                v-for="type in filteredTypes"
-                :key="type.id"
-                :class="['type-item', { active: selectedType?.id === type.id }]"
-                @click="selectType(type)"
-              >
-                <span class="type-name">{{ type.name }}</span>
-                <div class="type-actions">
-                  <ArtButtonTable type="edit" @click="showTypeDialog('edit', type)" />
-                  <ArtButtonTable type="delete" @click="deleteType(type)" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </ElCard>
-      </div>
-
-      <!-- 右侧字典枚举面板 -->
-      <div class="right-panel">
-        <ElCard class="enum-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>字典枚举</span>
-              <div class="header-actions">
-                <ElButton v-if="selectedType" @click="toggleExpand" v-ripple>
-                  {{ isExpanded ? '收起' : '展开' }}
-                </ElButton>
-                <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
-                  新增字典枚举
-                </ElButton>
-              </div>
-            </div>
-          </template>
-
-          <div v-if="selectedType" class="enum-table">
-            <ArtTable
-              ref="enumTableRef"
-              :loading="enumLoading"
-              :data="enumData"
-              :columns="enumColumns"
-              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-              row-key="id"
-            />
-          </div>
-          <div v-else class="no-selection">
-            <p>请选择左侧字典分类</p>
-          </div>
-        </ElCard>
-      </div>
+        <ArtTable
+          v-if="selectedType"
+          ref="enumTableRef"
+          :loading="enumLoading"
+          :data="enumData"
+          :columns="enumColumns"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          row-key="id"
+          :pagination="{ current: 1, size: 1000, total: enumData.length }"
+          :pagination-options="{
+            layout: '',
+            hideOnSinglePage: true
+          }"
+        />
+        <div v-else class="no-selection">
+          <p>请选择左侧字典分类</p>
+        </div>
+      </ElCard>
     </div>
 
     <!-- 字典分类弹窗 -->
@@ -94,8 +93,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, nextTick, onMounted } from 'vue'
+  import { ref, nextTick, onMounted, h } from 'vue'
   import ArtButtonTable from '@/components/forms/art-button-table/index.vue'
+  import ArtTable from '@/components/tables/art-table/index.vue'
   import TypeDialog from './modules/type-dialog.vue'
   import EnumDialog from './modules/enum-dialog.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
@@ -108,7 +108,12 @@
     DictionaryService
 
   const typeData = ref<DictionaryTypeItem[]>([])
-  const filteredTypes = ref<DictionaryTypeItem[]>([])
+  const typeLoading = ref(false)
+  const typePagination = ref({
+    current: 1,
+    size: 10,
+    total: 0
+  })
   const selectedType = ref<DictionaryTypeItem | null>(null)
   const typeSearchKeyword = ref('')
   const typeDialogVisible = ref(false)
@@ -117,6 +122,37 @@
 
   const enumLoading = ref(false)
   const enumData = ref<DictionaryEnumItem[]>([])
+
+  const typeColumns = [
+    {
+      prop: 'name',
+      label: '字典名称',
+      formatter: (row: DictionaryTypeItem) => row.name || '-'
+    },
+    {
+      prop: 'code',
+      label: '字典编码',
+      formatter: (row: DictionaryTypeItem) => row.code || '-'
+    },
+    {
+      prop: 'operation',
+      label: '操作',
+      width: 120,
+      fixed: 'right' as const,
+      formatter: (row: DictionaryTypeItem) => {
+        return h('div', [
+          h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => showTypeDialog('edit', row)
+          }),
+          h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => deleteType(row)
+          })
+        ])
+      }
+    }
+  ]
 
   const enumColumns = [
     {
@@ -166,26 +202,30 @@
   const enumTableRef = ref()
 
   const getTypeData = async () => {
+    typeLoading.value = true
     try {
       const response = await getDictionaryTypes({
-        current: 1,
-        size: 1000
+        current: typePagination.value.current,
+        size: typePagination.value.size,
+        name: typeSearchKeyword.value || undefined
       })
       typeData.value = response.records || []
-      filteredTypes.value = [...typeData.value]
+      typePagination.value.total = response.total || 0
     } catch (error) {
       console.error(error)
+    } finally {
+      typeLoading.value = false
     }
   }
 
   const filterTypes = () => {
-    if (!typeSearchKeyword.value) {
-      filteredTypes.value = [...typeData.value]
-    } else {
-      filteredTypes.value = typeData.value.filter(type =>
-        type.name.toLowerCase().includes(typeSearchKeyword.value.toLowerCase())
-      )
-    }
+    typePagination.value.current = 1
+    getTypeData()
+  }
+
+  const handleTypeCurrentChange = (current: number) => {
+    typePagination.value.current = current
+    getTypeData()
   }
 
   const selectType = (type: DictionaryTypeItem) => {

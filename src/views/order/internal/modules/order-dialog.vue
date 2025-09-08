@@ -454,15 +454,8 @@
       <span class="dialog-footer">
         <ElButton @click="dialogVisible = false">取 消</ElButton>
         <ElButton v-if="currentStep > 0" @click="prevStep">上一步</ElButton>
-        <ElButton v-if="currentStep < 2" type="primary" @click="saveCurrentStep" :loading="loading">
-          保存并下一步
-        </ElButton>
-        <ElButton
-          v-if="currentStep === 2"
-          type="primary"
-          @click="saveCurrentStep"
-          :loading="loading"
-        >
+        <ElButton v-if="currentStep < 2" type="primary" @click="nextStep"> 下一步 </ElButton>
+        <ElButton v-if="currentStep === 2" type="primary" @click="saveAllSteps" :loading="loading">
           保存并完成
         </ElButton>
       </span>
@@ -518,7 +511,6 @@
   const spareLocationSelectRef = ref()
   const loading = ref(false)
   const currentStep = ref(0)
-  const currentOrderId = ref('')
 
   const formData = reactive({
     id: '',
@@ -621,23 +613,18 @@
   // 初始化表单数据
   const initFormData = async () => {
     if (props.type === 'edit' && props.orderData) {
-      // 如果是编辑模式，从后端获取完整的工单数据
       try {
-        const response = await InternalOrderService.getOrderById(props.orderData.id)
-        const orderData = response.data
-
         // 设置基本信息
-        Object.assign(formData, orderData)
-        currentOrderId.value = orderData.id
+        Object.assign(formData, props.orderData)
 
         // 设置级联选择器的值
-        if (orderData.customer && orderData.vehicleModel) {
-          formData.carSelection = [orderData.customer, orderData.vehicleModel]
+        if (props.orderData.customer && props.orderData.vehicleModel) {
+          formData.carSelection = [props.orderData.customer, props.orderData.vehicleModel]
         }
 
-        // 设置维修记录数据
-        if (orderData.details && orderData.details.length > 0) {
-          const detail = orderData.details[0]
+        // 如果有详情数据，设置维修记录数据
+        if (props.orderData.details && props.orderData.details.length > 0) {
+          const detail = props.orderData.details[0]
           Object.assign(repairData, {
             repairPerson: detail.repairPerson || '',
             repairDate: detail.repairDate || '',
@@ -677,13 +664,8 @@
           }))
         }
       } catch (error) {
-        console.error('获取工单详情失败:', error)
-        // 如果获取失败，使用传入的基础数据
-        Object.assign(formData, props.orderData)
-        if (props.orderData.customer && props.orderData.vehicleModel) {
-          formData.carSelection = [props.orderData.customer, props.orderData.vehicleModel]
-        }
-        currentOrderId.value = props.orderData.id
+        console.error(error)
+        resetForm()
       }
     } else {
       resetForm()
@@ -695,7 +677,6 @@
     formRef.value?.resetFields()
     repairFormRef.value?.resetFields()
     currentStep.value = 0
-    currentOrderId.value = ''
     Object.assign(formData, {
       id: '',
       customer: '',
@@ -753,6 +734,13 @@
         coefficient: ''
       }
     ]
+  }
+
+  // 步骤控制
+  const nextStep = () => {
+    if (currentStep.value < 2) {
+      currentStep.value++
+    }
   }
 
   const prevStep = () => {
@@ -824,131 +812,81 @@
     }
   }
 
-  // 分步保存函数
-  const saveCurrentStep = async () => {
+  // 数据清理函数 - 确保字段不是数组格式
+  const cleanFieldValue = (value: any): any => {
+    if (Array.isArray(value)) {
+      return value[0] || ''
+    }
+    return value
+  }
+
+  // 统一保存所有步骤
+  const saveAllSteps = async () => {
     loading.value = true
     try {
-      if (currentStep.value === 0) {
-        // 第一步：保存报修信息
-        await saveStep1()
-      } else if (currentStep.value === 1) {
-        // 第二步：保存维修记录
-        await saveStep2()
-      } else if (currentStep.value === 2) {
-        // 第三步：保存详情记录
-        await saveStep3()
+      // 验证所有步骤的表单
+      if (!formRef.value || !repairFormRef.value) return
+
+      const [step1Valid, step2Valid] = await Promise.all([
+        formRef.value.validate(),
+        repairFormRef.value.validate()
+      ])
+
+      if (!step1Valid || !step2Valid) {
+        return
       }
 
-      // 如果不是最后一步，进入下一步
-      if (currentStep.value < 2) {
-        currentStep.value++
-      } else {
-        // 最后一步，关闭对话框
-        dialogVisible.value = false
-        emit('submit')
-      }
-    } catch (error) {
-      console.error('保存失败:', error)
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // 保存第一步：报修信息
-  const saveStep1 = async () => {
-    if (!formRef.value) return
-
-    await formRef.value.validate(async valid => {
-      if (!valid) return
-
-      const step1Data = {
+      const submitData = {
+        // 报修信息
         customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || '' : '',
         vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || '' : '',
-        repairShop: formData.repairShop,
-        reporterName: formData.reporterName,
-        contactInfo: formData.contactInfo,
-        reportDate: formData.reportDate,
-        projectType: formData.projectType,
-        projectStage: formData.projectStage,
-        licensePlate: formData.licensePlate,
-        vinNumber: formData.vinNumber,
+        repairShop: cleanFieldValue(formData.repairShop),
+        reporterName: cleanFieldValue(formData.reporterName),
+        contactInfo: cleanFieldValue(formData.contactInfo),
+        reportDate: cleanFieldValue(formData.reportDate),
+        projectType: cleanFieldValue(formData.projectType),
+        projectStage: cleanFieldValue(formData.projectStage),
+        licensePlate: cleanFieldValue(formData.licensePlate),
+        vinNumber: cleanFieldValue(formData.vinNumber),
         mileage: formData.mileage,
-        vehicleLocation: formData.vehicleLocation,
-        vehicleDate: formData.vehicleDate,
-        packCode: formData.packCode,
-        packDate: formData.packDate,
+        vehicleLocation: cleanFieldValue(formData.vehicleLocation),
+        vehicleDate: cleanFieldValue(formData.vehicleDate),
+        packCode: cleanFieldValue(formData.packCode),
+        packDate: cleanFieldValue(formData.packDate),
         underWarranty: formData.underWarranty,
-        faultDescription: formData.faultDescription
-      }
-
-      if (props.type === 'add') {
-        const result = await InternalOrderService.createOrder(step1Data)
-        currentOrderId.value = result.data.id
-        formData.id = result.data.id
-      } else {
-        await InternalOrderService.updateOrder(formData.id, step1Data)
-        currentOrderId.value = formData.id
-      }
-    })
-  }
-
-  // 保存第二步：维修记录
-  const saveStep2 = async () => {
-    if (!repairFormRef.value) return
-
-    await repairFormRef.value.validate(async valid => {
-      if (!valid) return
-
-      const step2Data = {
-        repairPerson: repairData.repairPerson,
-        repairDate: repairData.repairDate,
+        faultDescription: cleanFieldValue(formData.faultDescription),
+        // 维修记录
+        repairPerson: cleanFieldValue(repairData.repairPerson),
+        repairDate: cleanFieldValue(repairData.repairDate),
         avicResponsibility: repairData.avicResponsibility,
-        faultClassification: repairData.faultClassification,
-        faultLocation: repairData.faultLocation,
+        faultClassification: cleanFieldValue(repairData.faultClassification),
+        faultLocation: cleanFieldValue(repairData.faultLocation),
         partCategory: Array.isArray(repairData.partSelection)
           ? repairData.partSelection[0] || ''
           : '',
         partLocation: Array.isArray(repairData.partSelection)
           ? repairData.partSelection[1] || ''
           : '',
-        repairDescription: repairData.repairDescription
+        repairDescription: cleanFieldValue(repairData.repairDescription),
+        // 详情记录
+        sparePartLocation: sparePartLocation.value,
+        spareParts: spareParts.value,
+        costs: costs.value,
+        labors: labors.value
       }
 
-      await InternalOrderService.updateOrder(currentOrderId.value, step2Data)
-    })
-  }
-
-  // 保存第三步：详情记录
-  const saveStep3 = async () => {
-    // 处理工时数据，确保包含faultLocation和repairItem字段
-    const processedLabors = labors.value.map(labor => ({
-      ...labor,
-      faultLocation: labor.faultLocation || '',
-      repairItem: labor.repairItem || ''
-    }))
-
-    const step3Data = {
-      sparePartLocation: sparePartLocation.value,
-      spareParts: spareParts.value,
-      costs: costs.value,
-      labors: processedLabors
-    }
-
-    await InternalOrderService.updateOrder(currentOrderId.value, step3Data)
-  }
-
-  // 设置备件库位默认值
-  const setDefaultSpareLocation = async () => {
-    if (spareLocationSelectRef.value && !sparePartLocation.value) {
-      try {
-        await spareLocationSelectRef.value.fetchDictionaryData()
-        const options = spareLocationSelectRef.value.options
-        if (options && options.length > 0) {
-          sparePartLocation.value = options[0].keyValue
-        }
-      } catch (error) {
-        console.error('设置默认备件库位失败:', error)
+      if (props.type === 'add') {
+        await InternalOrderService.createOrder(submitData)
+      } else {
+        await InternalOrderService.updateOrder(formData.id, submitData)
       }
+
+      dialogVisible.value = false
+      emit('submit')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -962,6 +900,21 @@
     },
     { immediate: true }
   )
+
+  // 设置备件库位默认值
+  const setDefaultSpareLocation = async () => {
+    if (spareLocationSelectRef.value && !sparePartLocation.value) {
+      try {
+        await spareLocationSelectRef.value.fetchDictionaryData()
+        const options = spareLocationSelectRef.value.options
+        if (options && options.length > 0) {
+          sparePartLocation.value = options[0].keyValue
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
 
   // 监听步骤变化，设置默认值
   watch(

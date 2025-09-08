@@ -315,7 +315,7 @@
   // 弹窗处理
   const showDialog = (type: 'add' | 'edit', row?: OrderItem) => {
     dialogType.value = type
-    currentOrderData.value = type === 'edit' ? row : undefined
+    currentOrderData.value = type === 'edit' && row ? row : undefined
     dialogVisible.value = true
   }
 
@@ -336,7 +336,7 @@
       await ElMessageBox.confirm(`确定要删除保内工单 ${row.id} 吗？`, '提示', {
         type: 'warning'
       })
-      await InternalOrderService.deleteOrder(row.id)
+      await InternalOrderService.deleteOrder(row.id || '')
       ElMessage.success('删除成功')
       refreshData()
     } catch (error) {
@@ -367,7 +367,7 @@
         projectTypeOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载项目类型字典数据失败:', error)
+      console.error(error)
       projectTypeOptions.value = []
     }
   }
@@ -380,7 +380,7 @@
         carModelOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载车型字典数据失败:', error)
+      console.error(error)
       carModelOptions.value = []
     }
   }
@@ -393,7 +393,7 @@
         projectPhaseOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载项目阶段字典数据失败:', error)
+      console.error(error)
       projectPhaseOptions.value = []
     }
   }
@@ -406,7 +406,7 @@
         faultClassificationOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载故障分类字典数据失败:', error)
+      console.error(error)
       faultClassificationOptions.value = []
     }
   }
@@ -419,7 +419,7 @@
         faultLocationOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载故障位置字典数据失败:', error)
+      console.error(error)
       faultLocationOptions.value = []
     }
   }
@@ -432,7 +432,7 @@
         partCategoryOptions.value = response.enums
       }
     } catch (error) {
-      console.error('加载零件类别字典数据失败:', error)
+      console.error(error)
       partCategoryOptions.value = []
     }
   }

@@ -12,7 +12,7 @@ import type {
 } from '@/types/api'
 
 export class DictionaryService {
-  static getDictionaryTypes(params: Api.Common.PaginatingSearchParams) {
+  static getDictionaryTypes(params: Api.Common.PaginatingSearchParams & { name?: string }) {
     return request.get<DictionaryTypeListData>({
       url: '/dictionary/types',
       params

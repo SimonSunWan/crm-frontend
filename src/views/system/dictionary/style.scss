@@ -1,96 +1,67 @@
 .dictionary-page {
-  .dictionary-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 16px;
+
+  .left-panel {
     display: flex;
-    gap: 16px;
-    height: 100%;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 500px;
 
-    .left-panel {
-      flex-shrink: 0;
-      width: 300px;
+    .art-table-card {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-top: 0;
+    }
 
-      .type-card {
-        height: 100%;
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        .card-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
+    .search-type-section {
+      margin-bottom: 16px;
+    }
 
-        .search-type-section {
-          margin-bottom: 16px;
-        }
+    :deep(.el-table__row) {
+      cursor: pointer;
+    }
+  }
 
-        .type-list {
-          .type-items {
-            .type-item {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding: 8px 12px;
-              margin-bottom: 4px;
-              cursor: pointer;
-              border-radius: 4px;
-              transition: all 0.2s;
+  .right-panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
 
-              &:hover {
-                background-color: var(--art-gray-100);
-              }
+    .art-table-card {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-top: 0;
+    }
 
-              &.active {
-                color: white;
-                background-color: var(--main-color);
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 36px;
 
-                .el-button {
-                  color: white;
-                }
-              }
-
-              .type-name {
-                flex: 1;
-                margin-right: 8px;
-              }
-
-              .type-actions {
-                display: flex;
-
-                :deep(.btn-text) {
-                  min-width: 0;
-                }
-              }
-            }
-          }
-        }
+      .header-actions {
+        display: flex;
+        gap: 8px;
       }
     }
 
-    .right-panel {
-      flex: 1;
-      min-width: 0;
-
-      .enum-card {
-        height: 100%;
-
-        .card-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          height: 36px;
-
-          .header-actions {
-            display: flex;
-            gap: 8px;
-          }
-        }
-
-        .no-selection {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 200px;
-          color: var(--art-text-gray-500);
-        }
-      }
+    .no-selection {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--art-text-gray-500);
     }
   }
 }
