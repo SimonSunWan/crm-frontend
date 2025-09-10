@@ -294,7 +294,7 @@
     if (type === 'edit' && enumData) {
       currentEditEnum.value = enumData
     } else if (type === 'add' && enumData) {
-      // 添加子级枚举，设置父级ID
+      // 添加子级枚举, 设置父级ID
       currentEditEnum.value = { parentId: enumData.id } as DictionaryEnumItem
     } else {
       currentEditEnum.value = null

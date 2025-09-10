@@ -9,7 +9,7 @@
       </ElSteps>
     </div>
 
-    <!-- 第一步：工单信息 -->
+    <!-- 第一步: 工单信息 -->
     <ElForm
       ref="formRef"
       :model="formData"
@@ -193,7 +193,7 @@
       </ElRow>
     </ElForm>
 
-    <!-- 第二步：维修记录 -->
+    <!-- 第二步: 维修记录 -->
     <ElForm
       ref="repairFormRef"
       :model="repairData"
@@ -292,7 +292,7 @@
       </ElRow>
     </ElForm>
 
-    <!-- 第三步：详情记录 -->
+    <!-- 第三步: 详情记录 -->
     <div v-show="currentStep === 2">
       <!-- 备件使用详情 -->
       <div class="detail-section">
@@ -632,7 +632,7 @@
           formData.carSelection = [props.orderData.customer, props.orderData.vehicleModel]
         }
 
-        // 如果有详情数据，设置维修记录数据
+        // 如果有详情数据, 设置维修记录数据
         if (props.orderData.details && props.orderData.details.length > 0) {
           const detail = props.orderData.details[0]
           Object.assign(repairData, {
@@ -756,7 +756,7 @@
       let isValid = true
 
       if (currentStep.value === 0) {
-        // 验证第一步：报修信息
+        // 验证第一步: 报修信息
         if (formRef.value) {
           try {
             await formRef.value.validate()
@@ -766,7 +766,7 @@
           }
         }
       } else if (currentStep.value === 1) {
-        // 验证第二步：维修记录
+        // 验证第二步: 维修记录
         if (repairFormRef.value) {
           try {
             await repairFormRef.value.validate()
@@ -838,7 +838,7 @@
 
   // 处理备件名称选择变化
   const handlePartNameChange = (row: any, value: string | string[] | undefined) => {
-    // ArtSelect组件会直接提供keyValue，所以直接赋值
+    // ArtSelect组件会直接提供keyValue, 所以直接赋值
     if (typeof value === 'string') {
       row.partNumber = value
     }
@@ -846,7 +846,7 @@
 
   // 处理维修项目级联选择变化
   const handleRepairSelectionChange = (row: any, value: any) => {
-    // ElCascader组件会提供路径数组，第一个是故障位置，第二个是维修项目
+    // ElCascader组件会提供路径数组, 第一个是故障位置, 第二个是维修项目
     if (Array.isArray(value) && value.length >= 2) {
       row.faultLocation = value[0]
       row.repairItem = value[1]
