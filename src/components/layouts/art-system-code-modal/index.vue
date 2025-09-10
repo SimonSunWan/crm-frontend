@@ -27,7 +27,7 @@
       <ElCol :span="24">
         <div class="tips">
           <el-icon><Warning /></el-icon>
-          <span>系统码每10分钟自动更新，请及时使用</span>
+          <span>系统码每半小时自动更新，请及时使用</span>
         </div>
       </ElCol>
     </ElRow>
