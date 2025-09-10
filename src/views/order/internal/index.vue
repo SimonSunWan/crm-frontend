@@ -59,6 +59,8 @@
   import { InternalOrderService } from '@/api/orderApi'
   import { DictionaryService } from '@/api/dictionaryApi'
   import { getDictionaryLabel, getHierarchicalDictionaryLabel } from './utils/dictionaryUtils'
+  import { PermissionManager } from '@/utils/permissionManager'
+  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'Order' })
 
@@ -89,6 +91,15 @@
     repairShop: ''
   })
 
+  // 用户store
+  const userStore = useUserStore()
+  const getOrderListWithPermission = async (params: any) => {
+    if (!PermissionManager.hasPermission('view_all')) {
+      params.createdBy = userStore.getUserInfo.id
+    }
+    return InternalOrderService.getOrderList(params)
+  }
+
   const {
     columnChecks,
     data,
@@ -100,7 +111,7 @@
     refreshData
   } = useTable<OrderItem>({
     core: {
-      apiFn: InternalOrderService.getOrderList,
+      apiFn: getOrderListWithPermission,
       apiParams: {
         orderNo: '',
         repairShop: '',
