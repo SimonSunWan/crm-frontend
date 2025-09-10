@@ -7,13 +7,10 @@ export interface UserInfo {
   id: number
   userName: string
   nickName?: string
-  full_name: string
   email: string
   phone?: string
   avatar?: string
-  is_active: boolean
-  created_at: string
-  updated_at: string | null
+  status: boolean // 统一使用status字段
   roles?: string[] // 可选的角色字段
   roleNames?: string[] // 可选的角色名称字段
   buttons?: string[] // 按钮权限列表
@@ -30,11 +27,7 @@ export interface UserListData {
 // 用户列表项
 export interface UserListItem {
   id: number
-  createBy: string
-  createTime: string
-  updateBy: string
-  updateTime: string
-  status: string
+  status: boolean // 改为boolean类型
   userName: string
   nickName: string
   phone: string
