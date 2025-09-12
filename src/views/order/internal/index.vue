@@ -3,7 +3,7 @@
     <!-- 搜索区域 -->
     <OrderSearch
       v-model="searchForm"
-      :car-model-options="dictionaryOptions.carModel"
+      :dictionary-options="dictionaryOptions"
       @search="handleSearch"
       @reset="resetSearch"
     />

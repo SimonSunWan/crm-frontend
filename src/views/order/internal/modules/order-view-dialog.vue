@@ -349,7 +349,7 @@
 
   // 获取故障位置标签
   const getFaultLocationLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.repairItems || [], true)
+    getLabel(keyValue, props.dictionaryOptions?.faultLocation || [])
 
   // 获取零件类别标签
   const getPartCategoryLabel = (categoryKey: string, locationKey: string) => {
