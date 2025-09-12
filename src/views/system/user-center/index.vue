@@ -3,7 +3,7 @@
     <div class="content">
       <div class="left-wrap">
         <div class="user-wrap box-style">
-          <img class="bg" src="@imgs/user/bg.webp" />
+          <img class="bg" src="@imgs/user/bg.png" />
           <div class="avatar-container">
             <img v-if="userInfo.avatar" class="avatar" :src="getAvatarUrl(userInfo.avatar)" />
             <div v-else class="avatar-placeholder">
