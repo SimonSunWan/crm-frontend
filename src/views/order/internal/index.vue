@@ -94,7 +94,7 @@
   // 用户store
   const userStore = useUserStore()
   const getOrderListWithPermission = async (params: any) => {
-    if (!PermissionManager.hasPermission('view_all')) {
+    if (!PermissionManager.hasPagePermission('/order/internal', 'view_all')) {
       params.createdBy = userStore.getUserInfo.id
     }
     return InternalOrderService.getOrderList(params)
