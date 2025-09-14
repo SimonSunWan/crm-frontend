@@ -31,6 +31,7 @@
         :order-data="currentOrderData"
         :dictionary-options="dictionaryOptions"
         @submit="handleDialogSubmit"
+        @updateList="refreshData"
       />
 
       <OrderViewDialog

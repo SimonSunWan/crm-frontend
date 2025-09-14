@@ -10,7 +10,7 @@ export class InternalOrderService {
   }
 
   static createOrder(data: OrderCreateParams) {
-    return request.post<{ data: OrderItem; message: string }>({
+    return request.post<{ data: OrderItem; message: string; id: string }>({
       url: '/orders/internal/',
       data
     })
@@ -45,7 +45,7 @@ export class ExternalOrderService {
   }
 
   static createOrder(data: OrderCreateParams) {
-    return request.post<{ data: OrderItem; message: string }>({
+    return request.post<{ data: OrderItem; message: string; id: string }>({
       url: '/orders/external/',
       data
     })

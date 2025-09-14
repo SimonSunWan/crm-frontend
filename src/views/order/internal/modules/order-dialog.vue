@@ -514,6 +514,7 @@
   const emit = defineEmits<{
     'update:visible': [value: boolean]
     submit: []
+    updateList: []
   }>()
 
   // 响应式数据
@@ -622,6 +623,8 @@
 
   // 初始化表单数据
   const initFormData = async () => {
+    // 重置步骤状态
+    currentStep.value = 0
     if (props.type === 'edit' && props.orderData) {
       try {
         // 设置基本信息
@@ -779,7 +782,23 @@
 
       // 只有验证通过才允许进入下一步
       if (isValid) {
-        currentStep.value++
+        try {
+          const submitData = buildSubmitData()
+          console.log(submitData)
+          if (props.type === 'add' && !formData.id) {
+            const result = await InternalOrderService.createOrder(submitData)
+            if (result) {
+              formData.id = result.id
+            }
+          } else {
+            await InternalOrderService.updateOrder(formData.id, submitData)
+          }
+          // 更新列表
+          emit('updateList')
+          currentStep.value++
+        } catch (error) {
+          console.error(error)
+        }
       }
     }
   }
@@ -857,8 +876,8 @@
   const buildSubmitData = () => {
     return {
       // 报修信息
-      customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || '' : '',
-      vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || '' : '',
+      customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || null : null,
+      vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || null : null,
       repairShop: cleanFieldValue(formData.repairShop),
       reporterName: cleanFieldValue(formData.reporterName),
       contactInfo: cleanFieldValue(formData.contactInfo),
@@ -881,11 +900,11 @@
       faultClassification: cleanFieldValue(repairData.faultClassification),
       faultLocation: cleanFieldValue(repairData.faultLocation),
       partCategory: Array.isArray(repairData.partSelection)
-        ? repairData.partSelection[0] || ''
-        : '',
+        ? repairData.partSelection[0] || null
+        : null,
       partLocation: Array.isArray(repairData.partSelection)
-        ? repairData.partSelection[1] || ''
-        : '',
+        ? repairData.partSelection[1] || null
+        : null,
       repairDescription: cleanFieldValue(repairData.repairDescription),
       // 详情记录
       sparePartLocation: sparePartLocation.value,

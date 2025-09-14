@@ -42,9 +42,9 @@ export const getHierarchicalDictionaryLabel = (
 // 数据清理函数 - 确保字段不是数组格式
 export const cleanFieldValue = (value: any): any => {
   if (Array.isArray(value)) {
-    return value[0] || ''
+    return value[0] || null
   }
-  return value || ''
+  return value || null
 }
 
 // 级联选择器配置

@@ -72,55 +72,55 @@ export interface OrderListData {
 
 // 创建工单参数
 export interface OrderCreateParams {
-  customer: string
-  vehicleModel: string
-  repairShop: string
-  reporterName: string
-  contactInfo: string
-  reportDate: string
-  projectType: string
-  projectStage: string
-  licensePlate?: string
-  vinNumber: string
+  customer: string | null
+  vehicleModel: string | null
+  repairShop: string | null
+  reporterName: string | null
+  contactInfo: string | null
+  reportDate: string | null
+  projectType: string | null
+  projectStage: string | null
+  licensePlate?: string | null
+  vinNumber: string | null
   mileage?: number
-  vehicleLocation?: string
-  vehicleDate?: string
-  packCode?: string
-  packDate?: string
+  vehicleLocation?: string | null
+  vehicleDate?: string | null
+  packCode?: string | null
+  packDate?: string | null
   underWarranty: boolean
-  faultDescription?: string
+  faultDescription?: string | null
 }
 
 // 更新工单参数
 export interface OrderUpdateParams {
-  customer?: string
-  vehicleModel?: string
-  repairShop?: string
-  reporterName?: string
-  contactInfo?: string
-  reportDate?: string
-  projectType?: string
-  projectStage?: string
-  licensePlate?: string
-  vinNumber?: string
+  customer?: string | null
+  vehicleModel?: string | null
+  repairShop?: string | null
+  reporterName?: string | null
+  contactInfo?: string | null
+  reportDate?: string | null
+  projectType?: string | null
+  projectStage?: string | null
+  licensePlate?: string | null
+  vinNumber?: string | null
   mileage?: number
-  vehicleLocation?: string
-  vehicleDate?: string
-  packCode?: string
-  packDate?: string
+  vehicleLocation?: string | null
+  vehicleDate?: string | null
+  packCode?: string | null
+  packDate?: string | null
   underWarranty?: boolean
-  faultDescription?: string
+  faultDescription?: string | null
   // 维修记录字段
-  repairPerson?: string
-  repairDate?: string
+  repairPerson?: string | null
+  repairDate?: string | null
   avicResponsibility?: boolean
-  faultClassification?: string
-  faultLocation?: string
-  partCategory?: string
-  partLocation?: string
-  repairDescription?: string
+  faultClassification?: string | null
+  faultLocation?: string | null
+  partCategory?: string | null
+  partLocation?: string | null
+  repairDescription?: string | null
   // 详情记录字段
-  sparePartLocation?: string
+  sparePartLocation?: string | null
   spareParts?: Array<{
     partNumber: string
     name: string
