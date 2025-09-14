@@ -783,7 +783,6 @@
       if (isValid) {
         try {
           const submitData = buildSubmitData()
-          console.log(submitData)
           if (props.type === 'add' && !formData.id) {
             const result = await ExternalOrderService.createOrder(submitData)
             if (result) {
