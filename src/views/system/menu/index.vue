@@ -247,8 +247,8 @@
         params.path = appliedFilters.route.trim()
       }
       const response = await MenuService.getMenus(params)
-      if (response) {
-        tableData.value = response
+      if (response && response.records) {
+        tableData.value = response.records
       } else {
         tableData.value = []
       }

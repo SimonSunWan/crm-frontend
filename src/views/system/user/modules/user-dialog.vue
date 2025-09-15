@@ -91,8 +91,8 @@
   const fetchRoleList = async () => {
     try {
       const response = await RoleService.getAllRoles()
-      if (response && Array.isArray(response)) {
-        roleList.value = response.map(role => ({
+      if (response && response.records && Array.isArray(response.records)) {
+        roleList.value = response.records.map(role => ({
           label: role.roleName,
           value: role.roleCode
         }))

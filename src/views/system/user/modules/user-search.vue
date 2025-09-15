@@ -84,8 +84,8 @@
   const getRoleList = async () => {
     try {
       const response = await RoleService.getAllRoles()
-      if (response) {
-        roleList.value = response.map((role: any) => ({
+      if (response && response.records) {
+        roleList.value = response.records.map((role: any) => ({
           label: role.roleName,
           value: role.roleCode
         }))

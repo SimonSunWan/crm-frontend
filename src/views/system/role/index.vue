@@ -139,10 +139,6 @@
     }
   })
 
-  onMounted(() => {
-    getData()
-  })
-
   const dialogType = ref<'add' | 'edit'>('add')
 
   const showDialog = (type: 'add' | 'edit', row?: Role) => {

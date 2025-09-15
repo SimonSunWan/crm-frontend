@@ -16,7 +16,7 @@ export class RoleService {
   }
 
   static getAllRoles() {
-    return request.get<Role[]>({
+    return request.get<RoleListResponse>({
       url: '/roles/all'
     })
   }

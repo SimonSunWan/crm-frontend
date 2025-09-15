@@ -1,10 +1,10 @@
 import { AppRouteRecord } from '@/types/router'
 import request from '@/utils/http'
-import type { Menu, CreateMenuParams, UpdateMenuParams } from '@/types/api'
+import type { Menu, MenuListResponse, CreateMenuParams, UpdateMenuParams } from '@/types/api'
 
 export class MenuService {
   static getMenus(params?: { name?: string; path?: string; menuType?: string }) {
-    return request.get<Menu[]>({
+    return request.get<MenuListResponse>({
       url: '/menus/',
       params
     })
