@@ -174,7 +174,7 @@
     "toLogin": "去登录",
     "validation": {
       "username": "请输入账号",
-      "usernameFormat": "字母开头, 5-20位, 支持字母、数字、下划线",
+      "usernameFormat": "字母开头, 4-20位, 支持字母、数字、下划线",
       "nickName": "请输入姓名",
       "nickNameFormat": "2-20位, 支持中文、英文字母、空格",
       "phone": "请输入手机号",

@@ -174,7 +174,7 @@
     "toLogin": "To login",
     "validation": {
       "username": "Please enter your account",
-      "usernameFormat": "Start with letter, 5-20 characters, support letters, numbers, underscores",
+      "usernameFormat": "Start with letter, 4-20 characters, support letters, numbers, underscores",
       "nickName": "Please enter your name",
       "nickNameFormat": "2-20 characters, support Chinese, English letters, spaces",
       "phone": "Please enter your phone number",
