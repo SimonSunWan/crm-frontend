@@ -315,16 +315,17 @@
         </div>
 
         <ElTable :data="spareParts" border style="width: 100%">
-          <ElTableColumn prop="partNumber" label="备件料号" width="122">
+          <ElTableColumn prop="partNumber" label="备件料号">
             <template #default="{ row }">
               <ElInput v-model="row.partNumber" placeholder="备件料号" readonly />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="name" label="备件名称" width="120">
+          <ElTableColumn prop="name" label="备件名称">
             <template #default="{ row }">
               <ElSelect
                 v-model="row.name"
                 placeholder="请选择备件名称"
+                filterable
                 @change="value => handlePartNameChange(row, value)"
                 style="width: 100%"
               >
@@ -342,12 +343,12 @@
               <ElInput v-model="row.quantity" placeholder="请输入使用数量" />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="oldPartCode" label="旧件编码">
+          <ElTableColumn prop="oldPartCode" label="旧件编码" width="120">
             <template #default="{ row }">
               <ElInput v-model="row.oldPartCode" placeholder="请输入旧件编码" />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="newPartCode" label="新件编码">
+          <ElTableColumn prop="newPartCode" label="新件编码" width="120">
             <template #default="{ row }">
               <ElInput v-model="row.newPartCode" placeholder="请输入新件编码" />
             </template>
@@ -438,9 +439,9 @@
               <ElInput v-model="row.quantity" placeholder="请输入维修数量" />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="coefficient" label="系数" width="182">
+          <ElTableColumn prop="coefficient" label="工时" width="182">
             <template #default="{ row }">
-              <ElInput v-model="row.coefficient" placeholder="请输入系数" />
+              <ElInput v-model="row.coefficient" placeholder="请输入工时" />
             </template>
           </ElTableColumn>
           <ElTableColumn label="操作" width="100" fixed="right">
@@ -931,8 +932,11 @@
 
       const submitData = buildSubmitData()
 
-      if (props.type === 'add') {
-        await InternalOrderService.createOrder(submitData)
+      if (props.type === 'add' && !formData.id) {
+        const result = await InternalOrderService.createOrder(submitData)
+        if (result) {
+          formData.id = result.id
+        }
       } else {
         await InternalOrderService.updateOrder(formData.id, submitData)
       }

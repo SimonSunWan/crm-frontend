@@ -279,7 +279,7 @@
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" width="182" />
-          <ElTableColumn prop="coefficient" label="系数" width="182" />
+          <ElTableColumn prop="coefficient" label="工时" width="182" />
         </ElTable>
         <div v-else class="no-data">暂无工时记录</div>
       </div>
