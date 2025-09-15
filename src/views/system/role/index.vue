@@ -71,7 +71,7 @@
       apiFn: RoleService.getRoles,
       apiParams: {
         current: 1,
-        size: 20,
+        size: 10,
         ...searchForm
       },
       excludeParams: ['daterange'],
@@ -131,10 +131,10 @@
             records: records || [],
             total: total || 0,
             current: current || 1,
-            size: size || 20
+            size: size || 10
           }
         }
-        return { records: [], total: 0, current: 1, size: 20 }
+        return { records: [], total: 0, current: 1, size: 10 }
       }
     }
   })
