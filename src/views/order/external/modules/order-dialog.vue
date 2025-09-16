@@ -315,11 +315,6 @@
         </div>
 
         <ElTable :data="spareParts" border style="width: 100%">
-          <ElTableColumn prop="partNumber" label="备件料号">
-            <template #default="{ row }">
-              <ElInput v-model="row.partNumber" placeholder="备件料号" readonly />
-            </template>
-          </ElTableColumn>
           <ElTableColumn prop="name" label="备件名称">
             <template #default="{ row }">
               <ElSelect
