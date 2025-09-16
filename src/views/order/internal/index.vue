@@ -195,7 +195,7 @@
     {
       prop: 'licensePlate',
       label: '车牌号',
-      width: 100,
+      width: 110,
       formatter: row => row.licensePlate || '-'
     },
     {

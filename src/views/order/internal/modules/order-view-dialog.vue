@@ -231,12 +231,12 @@
           style="width: 100%"
           v-if="getSpareParts().length > 0"
         >
-          <ElTableColumn prop="name" label="备件名称" width="242">
+          <ElTableColumn prop="name" label="备件名称">
             <template #default="{ row }">
               {{ getPartNameLabel(row.name) || row.name || '-' }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="quantity" label="使用数量" width="120" />
+          <ElTableColumn prop="quantity" label="使用数量" />
           <ElTableColumn prop="oldPartCode" label="旧件编码" />
           <ElTableColumn prop="newPartCode" label="新件编码" />
         </ElTable>
@@ -269,7 +269,7 @@
         <ElTable :data="getLabors()" border style="width: 100%" v-if="getLabors().length > 0">
           <ElTableColumn prop="faultLocation" label="故障位置">
             <template #default="{ row }">
-              {{ getFaultLocationLabel(row.faultLocation) || row.faultLocation || '-' }}
+              {{ getRepairItemLabel(row.faultLocation) || row.faultLocation || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="repairItem" label="维修项目">
@@ -277,8 +277,8 @@
               {{ getRepairItemLabel(row.repairItem) || row.repairItem || '-' }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="quantity" label="维修数量" width="182" />
-          <ElTableColumn prop="coefficient" label="工时" width="182" />
+          <ElTableColumn prop="quantity" label="维修数量" />
+          <ElTableColumn prop="coefficient" label="工时" />
         </ElTable>
         <div v-else class="no-data">暂无工时记录</div>
       </div>
