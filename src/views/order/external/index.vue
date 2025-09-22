@@ -263,20 +263,29 @@
       width: 180,
       fixed: 'right' as const,
       formatter: (row: OrderItem) => {
-        return h('div', { class: 'action-buttons' }, [
+        const children: any[] = [
           h(ArtButtonTable, {
             type: 'view',
             onClick: () => showViewDialog(row)
-          }),
-          h(ArtButtonTable, {
-            type: 'edit',
-            onClick: () => showDialog('edit', row)
-          }),
-          h(ArtButtonTable, {
-            type: 'delete',
-            onClick: () => handleDelete(row)
           })
-        ])
+        ]
+        if (PermissionManager.hasPagePermission('/order/external', 'view_all')) {
+          children.push(
+            h(ArtButtonTable, {
+              type: 'edit',
+              onClick: () => showDialog('edit', row)
+            })
+          )
+        }
+        if (PermissionManager.hasPagePermission('/order/external', 'view_all')) {
+          children.push(
+            h(ArtButtonTable, {
+              type: 'delete',
+              onClick: () => handleDelete(row)
+            })
+          )
+        }
+        return h('div', { class: 'action-buttons' }, children)
       }
     }
   ])
