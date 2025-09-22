@@ -54,6 +54,7 @@ export interface OrderItem {
   vehicleDate?: string
   packCode?: string
   packDate?: string
+  sealCode?: string
   underWarranty: boolean
   faultDescription?: string
   createTime: string
@@ -87,6 +88,7 @@ export interface OrderCreateParams {
   vehicleDate?: string | null
   packCode?: string | null
   packDate?: string | null
+  sealCode?: string | null
   underWarranty: boolean
   faultDescription?: string | null
 }
@@ -108,6 +110,7 @@ export interface OrderUpdateParams {
   vehicleDate?: string | null
   packCode?: string | null
   packDate?: string | null
+  sealCode?: string | null
   underWarranty?: boolean
   faultDescription?: string | null
   // 维修记录字段

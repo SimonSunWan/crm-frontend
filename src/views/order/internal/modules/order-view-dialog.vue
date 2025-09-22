@@ -119,6 +119,12 @@
             <span class="value">{{ orderData.packDate || '-' }}</span>
           </div>
         </ElCol>
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">封签编码：</span>
+            <span class="value">{{ orderData.sealCode || '-' }}</span>
+          </div>
+        </ElCol>
       </ElRow>
 
       <!-- 故障信息 -->

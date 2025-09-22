@@ -236,6 +236,12 @@
       formatter: row => row.packDate || '-'
     },
     {
+      prop: 'sealCode',
+      label: '封签编码',
+      width: 150,
+      formatter: row => row.sealCode || '-'
+    },
+    {
       prop: 'underWarranty',
       label: '是否在保',
       width: 100,

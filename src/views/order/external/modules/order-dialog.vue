@@ -165,6 +165,11 @@
             />
           </ElFormItem>
         </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="封签编码" prop="sealCode">
+            <ElInput v-model="formData.sealCode" placeholder="请输入封签编码" />
+          </ElFormItem>
+        </ElCol>
       </ElRow>
 
       <!-- 故障信息 -->
@@ -535,6 +540,7 @@
     vehicleDate: '',
     packCode: '',
     packDate: '',
+    sealCode: '',
     underWarranty: null,
     faultDescription: ''
   })
@@ -706,6 +712,7 @@
       vehicleDate: '',
       packCode: '',
       packDate: '',
+      sealCode: '',
       underWarranty: null,
       faultDescription: ''
     })
@@ -885,6 +892,7 @@
       vehicleDate: cleanFieldValue(formData.vehicleDate),
       packCode: cleanFieldValue(formData.packCode),
       packDate: cleanFieldValue(formData.packDate),
+      sealCode: cleanFieldValue(formData.sealCode),
       underWarranty: formData.underWarranty ?? false,
       faultDescription: cleanFieldValue(formData.faultDescription),
       // 维修记录
