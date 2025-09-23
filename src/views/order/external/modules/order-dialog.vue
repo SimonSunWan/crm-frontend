@@ -736,7 +736,7 @@
       // 只有验证通过才允许进入下一步
       if (isValid) {
         try {
-          const submitData = buildSubmitData()
+          const submitData = buildSubmitData(false) // 前面步骤不传递isEnd字段
           if (props.type === 'add' && !formData.id) {
             const result = await ExternalOrderService.createOrder(submitData)
             if (result) {
@@ -818,8 +818,8 @@
   }
 
   // 构建提交数据
-  const buildSubmitData = () => {
-    return {
+  const buildSubmitData = (isEnd = false) => {
+    const data = {
       // 报修信息
       customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || null : null,
       vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || null : null,
@@ -851,6 +851,13 @@
       costs: costs.value,
       labors: labors.value
     }
+
+    // 只有最后一步才传递isEnd字段
+    if (isEnd) {
+      return { ...data, isEnd: true }
+    }
+
+    return data
   }
 
   // 统一保存所有步骤
@@ -869,7 +876,7 @@
         return
       }
 
-      const submitData = buildSubmitData()
+      const submitData = buildSubmitData(true) // 最后一步保存，传递 isEnd=true
 
       if (props.type === 'add' && !formData.id) {
         const result = await ExternalOrderService.createOrder(submitData)

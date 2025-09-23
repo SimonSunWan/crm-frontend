@@ -276,7 +276,14 @@
             onClick: () => showViewDialog(row)
           })
         ]
-        if (PermissionManager.hasPagePermission('/order/external', 'view_all')) {
+        // 当没有view_all权限并且isEnd为true时，不展示编辑和删除按钮
+        const hasViewAllPermission = PermissionManager.hasPagePermission(
+          '/order/external',
+          'view_all'
+        )
+        const shouldShowEditDelete = hasViewAllPermission || !row.isEnd
+
+        if (shouldShowEditDelete) {
           children.push(
             h(ArtButtonTable, {
               type: 'edit',
@@ -284,7 +291,7 @@
             })
           )
         }
-        if (PermissionManager.hasPagePermission('/order/external', 'view_all')) {
+        if (shouldShowEditDelete) {
           children.push(
             h(ArtButtonTable, {
               type: 'delete',

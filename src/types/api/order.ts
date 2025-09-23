@@ -60,6 +60,7 @@ export interface OrderItem {
   sealCode?: string
   underWarranty: boolean
   faultDescription?: string
+  isEnd?: boolean
   createTime: string
   updateTime?: string
   // 详情记录
@@ -94,6 +95,7 @@ export interface OrderCreateParams {
   sealCode?: string | null
   underWarranty: boolean
   faultDescription?: string | null
+  isEnd?: boolean
 }
 
 // 更新工单参数
@@ -116,6 +118,7 @@ export interface OrderUpdateParams {
   sealCode?: string | null
   underWarranty?: boolean
   faultDescription?: string | null
+  isEnd?: boolean
   // 维修记录字段
   repairPerson?: string | null
   repairDate?: string | null
