@@ -19,15 +19,13 @@
     modelValue: Record<string, any>
     dictionaryOptions?: {
       carModel: any[]
-      projectType: any[]
-      projectPhase: any[]
-      faultClassification: any[]
+      insurer: any[]
+      outRepairItems: any[]
+      repairProgress: any[]
       faultLocation: any[]
-      partCategory: any[]
       spareLocation: any[]
       partNumber: any[]
       feeType: any[]
-      repairItems: any[]
     }
   }
 
