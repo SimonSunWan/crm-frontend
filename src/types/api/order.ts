@@ -9,13 +9,18 @@ export interface OrderDetail {
   repairPerson?: string
   repairDate?: string
   avicResponsibility?: boolean
+  faultClassification?: string
   faultLocation?: string
+  partCategory?: string
+  partLocation?: string
   repairDescription?: string
   sparePartLocation?: string
   spareParts?: Array<{
     partNumber: string
     name: string
     quantity: string
+    oldPartCode?: string
+    newPartCode?: string
   }>
   costs?: Array<{
     category: string
@@ -24,6 +29,7 @@ export interface OrderDetail {
   labors?: Array<{
     repairSelection: string[]
     faultLocation?: string
+    repairItem?: string
     quantity: string
     coefficient: string
   }>

@@ -19,6 +19,15 @@
     modelValue: Record<string, any>
     dictionaryOptions?: {
       carModel: any[]
+      projectType: any[]
+      projectPhase: any[]
+      faultClassification: any[]
+      faultLocation: any[]
+      partCategory: any[]
+      spareLocation: any[]
+      partNumber: any[]
+      feeType: any[]
+      repairItems: any[]
     }
   }
 
@@ -70,6 +79,21 @@
       props: {
         placeholder: '请输入维修店名称',
         clearable: true
+      }
+    },
+    {
+      label: '备件所属库位',
+      key: 'sparePartLocation',
+      type: 'select',
+      labelWidth: '110px',
+      props: {
+        options: (props.dictionaryOptions?.spareLocation || []).map(item => ({
+          label: item.dictValue,
+          value: item.keyValue
+        })),
+        placeholder: '请选择备件所属库位',
+        clearable: true,
+        style: { width: '100%' }
       }
     }
   ])

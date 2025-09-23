@@ -49,6 +49,14 @@
             <span class="value">{{ orderData.reportDate || '-' }}</span>
           </div>
         </ElCol>
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">备件所属库位：</span>
+            <span class="value">{{
+              getSpareLocationLabel(getDetailValue('sparePartLocation')) || '-'
+            }}</span>
+          </div>
+        </ElCol>
       </ElRow>
 
       <!-- 保司信息 -->
@@ -119,12 +127,6 @@
             <span class="value">{{ orderData.packDate || '-' }}</span>
           </div>
         </ElCol>
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">封签编码：</span>
-            <span class="value">{{ orderData.sealCode || '-' }}</span>
-          </div>
-        </ElCol>
       </ElRow>
 
       <!-- 故障信息 -->
@@ -187,6 +189,14 @@
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">封签编码：</span>
+            <span class="value">{{ orderData.sealCode || '-' }}</span>
+          </div>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <div class="info-item">
             <span class="label">维修描述：</span>
@@ -202,12 +212,6 @@
       <div class="detail-section">
         <div class="section-header">
           <h3>备件使用详情</h3>
-          <div class="info-item">
-            <span class="label">备件所属库位：</span>
-            <span class="value">{{
-              getSpareLocationLabel(getDetailValue('sparePartLocation')) || '-'
-            }}</span>
-          </div>
         </div>
 
         <ElTable
@@ -255,9 +259,9 @@
               {{ getRepairSelectionText(row.repairSelection) || '-' }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="faultLocation" label="故障位置">
+          <ElTableColumn prop="repairProgress" label="维修进度">
             <template #default="{ row }">
-              {{ getFaultLocationLabel(row.faultLocation) || '-' }}
+              {{ getRepairProgressLabel(row.repairProgress) || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" />
@@ -334,6 +338,10 @@
   // 获取费用类型标签
   const getFeeTypeLabel = (keyValue: string) =>
     getLabel(keyValue, props.dictionaryOptions?.feeType || [])
+
+  // 获取维修进度标签
+  const getRepairProgressLabel = (keyValue: string) =>
+    getLabel(keyValue, props.dictionaryOptions?.repairProgress || [])
 
   // 获取保外维修项目标签
   const getOutRepairItemLabel = (keyValue: string) =>

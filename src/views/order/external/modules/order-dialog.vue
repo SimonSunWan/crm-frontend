@@ -66,6 +66,23 @@
             />
           </ElFormItem>
         </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="备件所属库位" prop="sparePartLocation">
+            <ElSelect
+              v-model="formData.sparePartLocation"
+              placeholder="请选择备件所属库位"
+              clearable
+              style="width: 100%"
+            >
+              <ElOption
+                v-for="item in props.dictionaryOptions?.spareLocation || []"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
+          </ElFormItem>
+        </ElCol>
       </ElRow>
 
       <!-- 保司信息 -->
@@ -153,11 +170,6 @@
             />
           </ElFormItem>
         </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="封签编码" prop="sealCode">
-            <ElInput v-model="formData.sealCode" placeholder="请输入封签编码" />
-          </ElFormItem>
-        </ElCol>
       </ElRow>
 
       <!-- 故障信息 -->
@@ -241,6 +253,13 @@
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="封签编码" prop="sealCode">
+            <ElInput v-model="formData.sealCode" placeholder="请输入封签编码" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem label="维修描述" prop="repairDescription">
             <ElInput
@@ -260,20 +279,6 @@
       <div class="detail-section">
         <div class="section-header">
           <h3>备件使用详情</h3>
-          <ElFormItem label="备件所属库位" class="header-form-item">
-            <ElSelect
-              v-model="sparePartLocation"
-              placeholder="请选择备件所属库位"
-              style="width: 300px"
-            >
-              <ElOption
-                v-for="item in props.dictionaryOptions?.spareLocation || []"
-                :key="item.keyValue"
-                :label="item.dictValue"
-                :value="item.keyValue"
-              />
-            </ElSelect>
-          </ElFormItem>
         </div>
 
         <ElTable :data="spareParts" border style="width: 100%">
@@ -492,6 +497,7 @@
     reporterName: '',
     contactInfo: '',
     reportDate: '',
+    sparePartLocation: '',
     insurer: '',
     assessor: '',
     licensePlate: '',
@@ -515,7 +521,6 @@
   })
 
   // 第三步数据
-  const sparePartLocation = ref('')
   const spareParts = ref([
     {
       partNumber: '',
@@ -557,6 +562,7 @@
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
     reportDate: [{ required: true, message: '请选择报修日期', trigger: 'change' }],
+    sparePartLocation: [{ required: true, message: '请选择备件所属库位', trigger: 'change' }],
     insurer: [{ required: true, message: '请选择出险公司', trigger: 'change' }],
     assessor: [{ required: true, message: '请输入定损员姓名', trigger: 'blur' }],
     vinNumber: [{ required: true, message: '请输入车架号', trigger: 'blur' }],
@@ -604,7 +610,7 @@
           })
 
           // 设置详情记录数据
-          sparePartLocation.value = detail.sparePartLocation || ''
+          formData.sparePartLocation = detail.sparePartLocation || ''
           spareParts.value = detail.spareParts || [
             {
               partNumber: '',
@@ -670,7 +676,7 @@
     })
 
     // 重置第三步数据
-    sparePartLocation.value = ''
+    formData.sparePartLocation = ''
     spareParts.value = [
       {
         partNumber: '',
@@ -839,7 +845,7 @@
       faultLocation: cleanFieldValue(repairData.faultLocation),
       repairDescription: cleanFieldValue(repairData.repairDescription),
       // 详情记录
-      sparePartLocation: sparePartLocation.value,
+      sparePartLocation: formData.sparePartLocation,
       spareParts: spareParts.value,
       costs: costs.value,
       labors: labors.value

@@ -49,6 +49,14 @@
             <span class="value">{{ orderData.reportDate || '-' }}</span>
           </div>
         </ElCol>
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">备件所属库位：</span>
+            <span class="value">{{
+              getSpareLocationLabel(getDetailValue('sparePartLocation')) || '-'
+            }}</span>
+          </div>
+        </ElCol>
       </ElRow>
 
       <!-- 产品信息 -->
@@ -117,12 +125,6 @@
           <div class="info-item">
             <span class="label">PACK日期：</span>
             <span class="value">{{ orderData.packDate || '-' }}</span>
-          </div>
-        </ElCol>
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">封签编码：</span>
-            <span class="value">{{ orderData.sealCode || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>
@@ -208,6 +210,14 @@
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">封签编码：</span>
+            <span class="value">{{ orderData.sealCode || '-' }}</span>
+          </div>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <div class="info-item">
             <span class="label">维修描述：</span>
@@ -223,12 +233,6 @@
       <div class="detail-section">
         <div class="section-header">
           <h3>备件使用详情</h3>
-          <div class="info-item">
-            <span class="label">备件所属库位：</span>
-            <span class="value">{{
-              getSpareLocationLabel(getDetailValue('sparePartLocation')) || '-'
-            }}</span>
-          </div>
         </div>
 
         <ElTable

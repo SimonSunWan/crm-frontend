@@ -66,6 +66,23 @@
             />
           </ElFormItem>
         </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="备件所属库位" prop="sparePartLocation">
+            <ElSelect
+              v-model="formData.sparePartLocation"
+              placeholder="请选择备件所属库位"
+              clearable
+              style="width: 100%"
+            >
+              <ElOption
+                v-for="item in props.dictionaryOptions?.spareLocation || []"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
+          </ElFormItem>
+        </ElCol>
       </ElRow>
 
       <!-- 产品信息 -->
@@ -163,11 +180,6 @@
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
             />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="封签编码" prop="sealCode">
-            <ElInput v-model="formData.sealCode" placeholder="请输入封签编码" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -284,6 +296,13 @@
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="封签编码" prop="sealCode">
+            <ElInput v-model="formData.sealCode" placeholder="请输入封签编码" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem label="维修描述" prop="repairDescription">
             <ElInput
@@ -303,20 +322,6 @@
       <div class="detail-section">
         <div class="section-header">
           <h3>备件使用详情</h3>
-          <ElFormItem label="备件所属库位" class="header-form-item">
-            <ElSelect
-              v-model="sparePartLocation"
-              placeholder="请选择备件所属库位"
-              style="width: 300px"
-            >
-              <ElOption
-                v-for="item in props.dictionaryOptions?.spareLocation || []"
-                :key="item.keyValue"
-                :label="item.dictValue"
-                :value="item.keyValue"
-              />
-            </ElSelect>
-          </ElFormItem>
         </div>
 
         <ElTable :data="spareParts" border style="width: 100%">
@@ -533,6 +538,7 @@
     reporterName: '',
     contactInfo: '',
     reportDate: '',
+    sparePartLocation: '',
     projectType: '',
     projectStage: '',
     licensePlate: '',
@@ -558,7 +564,6 @@
   })
 
   // 第三步数据
-  const sparePartLocation = ref('')
   const spareParts = ref([
     {
       partNumber: '',
@@ -603,6 +608,7 @@
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
     reportDate: [{ required: true, message: '请选择报修日期', trigger: 'change' }],
+    sparePartLocation: [{ required: true, message: '请选择备件所属库位', trigger: 'change' }],
     projectType: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
     projectStage: [{ required: true, message: '请选择项目阶段', trigger: 'change' }],
     vinNumber: [{ required: true, message: '请输入车架号', trigger: 'blur' }],
@@ -654,16 +660,25 @@
           })
 
           // 设置详情记录数据
-          sparePartLocation.value = detail.sparePartLocation || ''
-          spareParts.value = detail.spareParts || [
-            {
-              partNumber: '',
-              name: '',
-              quantity: '',
-              oldPartCode: '',
-              newPartCode: ''
-            }
-          ]
+          formData.sparePartLocation = detail.sparePartLocation || ''
+          spareParts.value = (detail.spareParts || []).map((part: any) => ({
+            partNumber: part.partNumber || '',
+            name: part.name || '',
+            quantity: part.quantity || '',
+            oldPartCode: part.oldPartCode || '',
+            newPartCode: part.newPartCode || ''
+          }))
+          if (spareParts.value.length === 0) {
+            spareParts.value = [
+              {
+                partNumber: '',
+                name: '',
+                quantity: '',
+                oldPartCode: '',
+                newPartCode: ''
+              }
+            ]
+          }
           costs.value = detail.costs || [
             {
               category: '',
@@ -728,7 +743,7 @@
     })
 
     // 重置第三步数据
-    sparePartLocation.value = ''
+    formData.sparePartLocation = ''
     spareParts.value = [
       {
         partNumber: '',
@@ -788,7 +803,7 @@
         try {
           const submitData = buildSubmitData()
           if (props.type === 'add' && !formData.id) {
-            const result = await InternalOrderService.createOrder(submitData)
+            const result = await InternalOrderService.createOrder(submitData as any)
             if (result) {
               formData.id = result.id
             }
@@ -910,7 +925,7 @@
         : null,
       repairDescription: cleanFieldValue(repairData.repairDescription),
       // 详情记录
-      sparePartLocation: sparePartLocation.value,
+      sparePartLocation: formData.sparePartLocation,
       spareParts: spareParts.value,
       costs: costs.value,
       labors: labors.value
@@ -936,7 +951,7 @@
       const submitData = buildSubmitData()
 
       if (props.type === 'add' && !formData.id) {
-        const result = await InternalOrderService.createOrder(submitData)
+        const result = await InternalOrderService.createOrder(submitData as any)
         if (result) {
           formData.id = result.id
         }

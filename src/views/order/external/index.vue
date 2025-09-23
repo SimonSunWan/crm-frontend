@@ -87,7 +87,8 @@
   const searchForm = ref({
     orderNo: '',
     carSelection: [] as string[],
-    repairShop: ''
+    repairShop: '',
+    sparePartLocation: ''
   })
 
   // 用户store
@@ -232,12 +233,6 @@
       label: 'PACK日期',
       width: 150,
       formatter: row => row.packDate || '-'
-    },
-    {
-      prop: 'sealCode',
-      label: '封签编码',
-      width: 150,
-      formatter: row => row.sealCode || '-'
     },
     {
       prop: 'underWarranty',
