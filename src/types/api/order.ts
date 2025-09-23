@@ -9,26 +9,21 @@ export interface OrderDetail {
   repairPerson?: string
   repairDate?: string
   avicResponsibility?: boolean
-  faultClassification?: string
   faultLocation?: string
-  partCategory?: string
-  partLocation?: string
   repairDescription?: string
   sparePartLocation?: string
   spareParts?: Array<{
     partNumber: string
     name: string
     quantity: string
-    oldPartCode: string
-    newPartCode: string
   }>
   costs?: Array<{
     category: string
     amount: string
   }>
   labors?: Array<{
-    faultLocation: string
-    repairItem: string
+    repairSelection: string[]
+    faultLocation?: string
     quantity: string
     coefficient: string
   }>
@@ -45,8 +40,10 @@ export interface OrderItem {
   reporterName: string
   contactInfo: string
   reportDate: string
-  projectType: string
-  projectStage: string
+  projectType?: string
+  projectStage?: string
+  insurer?: string
+  assessor?: string
   licensePlate?: string
   vinNumber: string
   mileage?: number
@@ -79,8 +76,8 @@ export interface OrderCreateParams {
   reporterName: string | null
   contactInfo: string | null
   reportDate: string | null
-  projectType: string | null
-  projectStage: string | null
+  insurer: string | null
+  assessor: string | null
   licensePlate?: string | null
   vinNumber: string | null
   mileage?: number
@@ -101,8 +98,8 @@ export interface OrderUpdateParams {
   reporterName?: string | null
   contactInfo?: string | null
   reportDate?: string | null
-  projectType?: string | null
-  projectStage?: string | null
+  insurer?: string | null
+  assessor?: string | null
   licensePlate?: string | null
   vinNumber?: string | null
   mileage?: number
@@ -117,10 +114,7 @@ export interface OrderUpdateParams {
   repairPerson?: string | null
   repairDate?: string | null
   avicResponsibility?: boolean
-  faultClassification?: string | null
   faultLocation?: string | null
-  partCategory?: string | null
-  partLocation?: string | null
   repairDescription?: string | null
   // 详情记录字段
   sparePartLocation?: string | null
@@ -128,16 +122,14 @@ export interface OrderUpdateParams {
     partNumber: string
     name: string
     quantity: string
-    oldPartCode: string
-    newPartCode: string
   }>
   costs?: Array<{
     category: string
     amount: string
   }>
   labors?: Array<{
-    faultLocation: string
-    repairItem: string
+    repairSelection: string[]
+    faultLocation?: string
     quantity: string
     coefficient: string
   }>

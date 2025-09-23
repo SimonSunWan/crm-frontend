@@ -51,19 +51,19 @@
         </ElCol>
       </ElRow>
 
-      <!-- 产品信息 -->
-      <ElDivider content-position="left">产品信息</ElDivider>
+      <!-- 保司信息 -->
+      <ElDivider content-position="left">保司信息</ElDivider>
       <ElRow :gutter="20">
         <ElCol :span="12">
           <div class="info-item">
-            <span class="label">项目类型：</span>
-            <span class="value">{{ getProjectTypeLabel(orderData.projectType) || '-' }}</span>
+            <span class="label">出险公司：</span>
+            <span class="value">{{ getInsurerLabel(orderData.insurer) || '-' }}</span>
           </div>
         </ElCol>
         <ElCol :span="12">
           <div class="info-item">
-            <span class="label">项目阶段：</span>
-            <span class="value">{{ getProjectPhaseLabel(orderData.projectStage) || '-' }}</span>
+            <span class="label">定损员：</span>
+            <span class="value">{{ orderData.assessor || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>
@@ -179,30 +179,9 @@
         </ElCol>
         <ElCol :span="12">
           <div class="info-item">
-            <span class="label">故障分类：</span>
-            <span class="value">{{
-              getFaultClassificationLabel(getDetailValue('faultClassification')) || '-'
-            }}</span>
-          </div>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <div class="info-item">
             <span class="label">故障位置：</span>
             <span class="value">{{
               getFaultLocationLabel(getDetailValue('faultLocation')) || '-'
-            }}</span>
-          </div>
-        </ElCol>
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">零件类别/定位：</span>
-            <span class="value">{{
-              getPartCategoryLabel(
-                getDetailValue('partCategory'),
-                getDetailValue('partLocation')
-              ) || '-'
             }}</span>
           </div>
         </ElCol>
@@ -243,8 +222,6 @@
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="使用数量" />
-          <ElTableColumn prop="oldPartCode" label="旧件编码" />
-          <ElTableColumn prop="newPartCode" label="新件编码" />
         </ElTable>
         <div v-else class="no-data">暂无备件使用记录</div>
       </div>
@@ -273,14 +250,14 @@
         </div>
 
         <ElTable :data="getLabors()" border style="width: 100%" v-if="getLabors().length > 0">
-          <ElTableColumn prop="faultLocation" label="故障位置">
+          <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
-              {{ getRepairItemLabel(row.faultLocation) || row.faultLocation || '-' }}
+              {{ getRepairSelectionText(row.repairSelection) || '-' }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="repairItem" label="维修项目">
+          <ElTableColumn prop="faultLocation" label="故障位置">
             <template #default="{ row }">
-              {{ getRepairItemLabel(row.repairItem) || row.repairItem || '-' }}
+              {{ getFaultLocationLabel(row.faultLocation) || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" />
@@ -311,15 +288,13 @@
     orderData?: any
     dictionaryOptions?: {
       carModel: any[]
-      projectType: any[]
-      projectPhase: any[]
-      faultClassification: any[]
+      insurer: any[]
+      outRepairItems: any[]
+      repairProgress: any[]
       faultLocation: any[]
-      partCategory: any[]
       spareLocation: any[]
       partNumber: any[]
       feeType: any[]
-      repairItems: any[]
     }
   }
 
@@ -340,31 +315,13 @@
   const getCarModelLabel = (keyValue: string) =>
     getLabel(keyValue, props.dictionaryOptions?.carModel || [], true)
 
-  // 获取项目类型标签
-  const getProjectTypeLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.projectType || [])
-
-  // 获取项目阶段标签
-  const getProjectPhaseLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.projectPhase || [])
-
-  // 获取故障分类标签
-  const getFaultClassificationLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.faultClassification || [])
+  // 获取出险公司标签
+  const getInsurerLabel = (keyValue: string) =>
+    getLabel(keyValue, props.dictionaryOptions?.insurer || [])
 
   // 获取故障位置标签
   const getFaultLocationLabel = (keyValue: string) =>
     getLabel(keyValue, props.dictionaryOptions?.faultLocation || [])
-
-  // 获取零件类别标签
-  const getPartCategoryLabel = (categoryKey: string, locationKey: string) => {
-    const category = getLabel(categoryKey, props.dictionaryOptions?.partCategory || [], true)
-    const location = getLabel(locationKey, props.dictionaryOptions?.partCategory || [], true)
-    if (category && location) {
-      return `${category}/${location}`
-    }
-    return category || location || '-'
-  }
 
   // 获取备件库位标签
   const getSpareLocationLabel = (keyValue: string) =>
@@ -378,9 +335,32 @@
   const getFeeTypeLabel = (keyValue: string) =>
     getLabel(keyValue, props.dictionaryOptions?.feeType || [])
 
-  // 获取维修项目标签
-  const getRepairItemLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.repairItems || [], true)
+  // 获取保外维修项目标签
+  const getOutRepairItemLabel = (keyValue: string) =>
+    getLabel(keyValue, props.dictionaryOptions?.outRepairItems || [], true)
+
+  // 获取维修项目选择文本
+  const getRepairSelectionText = (repairSelection: any) => {
+    if (!repairSelection) return null
+
+    if (Array.isArray(repairSelection)) {
+      const texts = repairSelection
+        .map(item => {
+          if (typeof item === 'object' && item.text) {
+            return item.text
+          }
+          if (typeof item === 'string') {
+            return getOutRepairItemLabel(item)
+          }
+          return item
+        })
+        .filter(text => text)
+
+      return texts.length > 0 ? texts.join(' / ') : null
+    }
+
+    return repairSelection
+  }
 
   // 获取详情数据
   const getDetailValue = (key: string) => {

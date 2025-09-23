@@ -68,19 +68,19 @@
         </ElCol>
       </ElRow>
 
-      <!-- 产品信息 -->
-      <ElDivider content-position="left">产品信息</ElDivider>
+      <!-- 保司信息 -->
+      <ElDivider content-position="left">保司信息</ElDivider>
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem label="项目类型" prop="projectType">
+          <ElFormItem label="出险公司" prop="insurer">
             <ElSelect
-              v-model="formData.projectType"
-              placeholder="请选择项目类型"
+              v-model="formData.insurer"
+              placeholder="请选择出险公司"
               clearable
               style="width: 100%"
             >
               <ElOption
-                v-for="item in props.dictionaryOptions?.projectType || []"
+                v-for="item in props.dictionaryOptions?.insurer || []"
                 :key="item.keyValue"
                 :label="item.dictValue"
                 :value="item.keyValue"
@@ -89,20 +89,8 @@
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem label="项目阶段" prop="projectStage">
-            <ElSelect
-              v-model="formData.projectStage"
-              placeholder="请选择项目阶段"
-              clearable
-              style="width: 100%"
-            >
-              <ElOption
-                v-for="item in props.dictionaryOptions?.projectPhase || []"
-                :key="item.keyValue"
-                :label="item.dictValue"
-                :value="item.keyValue"
-              />
-            </ElSelect>
+          <ElFormItem label="定损员" prop="assessor">
+            <ElInput v-model="formData.assessor" placeholder="请输入定损员姓名" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -235,25 +223,6 @@
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem label="故障分类" prop="faultClassification">
-            <ElSelect
-              v-model="repairData.faultClassification"
-              placeholder="请选择故障分类"
-              clearable
-              style="width: 100%"
-            >
-              <ElOption
-                v-for="item in props.dictionaryOptions?.faultClassification || []"
-                :key="item.keyValue"
-                :label="item.dictValue"
-                :value="item.keyValue"
-              />
-            </ElSelect>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
           <ElFormItem label="故障位置" prop="faultLocation">
             <ElSelect
               v-model="repairData.faultLocation"
@@ -268,18 +237,6 @@
                 :value="item.keyValue"
               />
             </ElSelect>
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="零件类别/定位" prop="partSelection">
-            <ElCascader
-              v-model="repairData.partSelection"
-              :options="props.dictionaryOptions?.partCategory || []"
-              :props="cascaderProps"
-              placeholder="请选择零件类别/定位"
-              clearable
-              style="width: 100%"
-            />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -338,19 +295,9 @@
               </ElSelect>
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="quantity" label="使用数量" width="120">
+          <ElTableColumn prop="quantity" label="使用数量">
             <template #default="{ row }">
               <ElInput v-model="row.quantity" placeholder="请输入使用数量" />
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="oldPartCode" label="旧件编码" width="120">
-            <template #default="{ row }">
-              <ElInput v-model="row.oldPartCode" placeholder="请输入旧件编码" />
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="newPartCode" label="新件编码" width="120">
-            <template #default="{ row }">
-              <ElInput v-model="row.newPartCode" placeholder="请输入新件编码" />
             </template>
           </ElTableColumn>
           <ElTableColumn label="操作" width="100" fixed="right">
@@ -422,24 +369,40 @@
         </div>
 
         <ElTable :data="labors" border style="width: 100%">
-          <ElTableColumn prop="repairSelection" label="故障位置/维修项目">
+          <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
               <ElCascader
                 v-model="row.repairSelection"
-                :options="props.dictionaryOptions?.repairItems || []"
+                :options="props.dictionaryOptions?.outRepairItems || []"
                 :props="cascaderProps"
-                placeholder="请选择故障位置/维修项目"
+                placeholder="请选择保外维修项目"
                 @change="value => handleRepairSelectionChange(row, value)"
                 style="width: 100%"
               />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="quantity" label="维修数量" width="182">
+          <ElTableColumn prop="repairProgress" label="维修进度" width="150">
+            <template #default="{ row }">
+              <ElSelect
+                v-model="row.repairProgress"
+                placeholder="请选择维修进度"
+                style="width: 100%"
+              >
+                <ElOption
+                  v-for="item in props.dictionaryOptions?.repairProgress || []"
+                  :key="item.keyValue"
+                  :label="item.dictValue"
+                  :value="item.keyValue"
+                />
+              </ElSelect>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="quantity" label="维修数量" width="120">
             <template #default="{ row }">
               <ElInput v-model="row.quantity" placeholder="请输入维修数量" />
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="coefficient" label="工时" width="182">
+          <ElTableColumn prop="coefficient" label="工时" width="120">
             <template #default="{ row }">
               <ElInput v-model="row.coefficient" placeholder="请输入工时" />
             </template>
@@ -497,15 +460,13 @@
     orderData?: OrderItem
     dictionaryOptions?: {
       carModel: any[]
-      projectType: any[]
-      projectPhase: any[]
-      faultClassification: any[]
+      insurer: any[]
+      outRepairItems: any[]
+      repairProgress: any[]
       faultLocation: any[]
-      partCategory: any[]
       spareLocation: any[]
       partNumber: any[]
       feeType: any[]
-      repairItems: any[]
     }
   }
 
@@ -531,8 +492,8 @@
     reporterName: '',
     contactInfo: '',
     reportDate: '',
-    projectType: '',
-    projectStage: '',
+    insurer: '',
+    assessor: '',
     licensePlate: '',
     vinNumber: '',
     mileage: 0,
@@ -549,9 +510,7 @@
     repairPerson: '',
     repairDate: '',
     avicResponsibility: null,
-    faultClassification: '',
     faultLocation: '',
-    partSelection: [] as string[],
     repairDescription: ''
   })
 
@@ -561,9 +520,7 @@
     {
       partNumber: '',
       name: '',
-      quantity: '',
-      oldPartCode: '',
-      newPartCode: ''
+      quantity: ''
     }
   ])
 
@@ -577,8 +534,7 @@
   const labors = ref([
     {
       repairSelection: [] as string[],
-      faultLocation: '',
-      repairItem: '',
+      repairProgress: '',
       quantity: '',
       coefficient: ''
     }
@@ -601,8 +557,8 @@
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
     reportDate: [{ required: true, message: '请选择报修日期', trigger: 'change' }],
-    projectType: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
-    projectStage: [{ required: true, message: '请选择项目阶段', trigger: 'change' }],
+    insurer: [{ required: true, message: '请选择出险公司', trigger: 'change' }],
+    assessor: [{ required: true, message: '请输入定损员姓名', trigger: 'blur' }],
     vinNumber: [{ required: true, message: '请输入车架号', trigger: 'blur' }],
     vehicleLocation: [{ required: true, message: '请输入车辆位置', trigger: 'blur' }],
     vehicleDate: [{ required: true, message: '请选择车辆日期', trigger: 'change' }],
@@ -643,12 +599,7 @@
             repairPerson: detail.repairPerson || '',
             repairDate: detail.repairDate || '',
             avicResponsibility: detail.avicResponsibility ?? null,
-            faultClassification: detail.faultClassification || '',
             faultLocation: detail.faultLocation || '',
-            partSelection:
-              detail.partCategory && detail.partLocation
-                ? [detail.partCategory, detail.partLocation]
-                : [],
             repairDescription: detail.repairDescription || ''
           })
 
@@ -658,9 +609,7 @@
             {
               partNumber: '',
               name: '',
-              quantity: '',
-              oldPartCode: '',
-              newPartCode: ''
+              quantity: ''
             }
           ]
           costs.value = detail.costs || [
@@ -670,12 +619,8 @@
             }
           ]
           labors.value = (detail.labors || []).map((labor: any) => ({
-            repairSelection:
-              labor.faultLocation && labor.repairItem
-                ? [labor.faultLocation, labor.repairItem]
-                : [],
-            faultLocation: labor.faultLocation || '',
-            repairItem: labor.repairItem || '',
+            repairSelection: labor.repairSelection || [],
+            repairProgress: labor.repairProgress || '',
             quantity: labor.quantity || '',
             coefficient: labor.coefficient || ''
           }))
@@ -703,8 +648,8 @@
       reporterName: '',
       contactInfo: '',
       reportDate: '',
-      projectType: '',
-      projectStage: '',
+      insurer: '',
+      assessor: '',
       licensePlate: '',
       vinNumber: '',
       mileage: 0,
@@ -720,9 +665,7 @@
       repairPerson: '',
       repairDate: '',
       avicResponsibility: null,
-      faultClassification: '',
       faultLocation: '',
-      partSelection: [],
       repairDescription: ''
     })
 
@@ -732,9 +675,7 @@
       {
         partNumber: '',
         name: '',
-        quantity: '',
-        oldPartCode: '',
-        newPartCode: ''
+        quantity: ''
       }
     ]
     costs.value = [
@@ -746,8 +687,7 @@
     labors.value = [
       {
         repairSelection: [] as string[],
-        faultLocation: '',
-        repairItem: '',
+        repairProgress: '',
         quantity: '',
         coefficient: ''
       }
@@ -815,9 +755,7 @@
     spareParts.value.push({
       partNumber: '',
       name: '',
-      quantity: '',
-      oldPartCode: '',
-      newPartCode: ''
+      quantity: ''
     })
   }
 
@@ -843,8 +781,7 @@
   const addLabor = () => {
     labors.value.push({
       repairSelection: [] as string[],
-      faultLocation: '',
-      repairItem: '',
+      repairProgress: '',
       quantity: '',
       coefficient: ''
     })
@@ -883,8 +820,8 @@
       reporterName: cleanFieldValue(formData.reporterName),
       contactInfo: cleanFieldValue(formData.contactInfo),
       reportDate: cleanFieldValue(formData.reportDate),
-      projectType: cleanFieldValue(formData.projectType),
-      projectStage: cleanFieldValue(formData.projectStage),
+      insurer: cleanFieldValue(formData.insurer),
+      assessor: cleanFieldValue(formData.assessor),
       licensePlate: cleanFieldValue(formData.licensePlate),
       vinNumber: cleanFieldValue(formData.vinNumber),
       mileage: formData.mileage,
@@ -899,14 +836,7 @@
       repairPerson: cleanFieldValue(repairData.repairPerson),
       repairDate: cleanFieldValue(repairData.repairDate),
       avicResponsibility: repairData.avicResponsibility ?? false,
-      faultClassification: cleanFieldValue(repairData.faultClassification),
       faultLocation: cleanFieldValue(repairData.faultLocation),
-      partCategory: Array.isArray(repairData.partSelection)
-        ? repairData.partSelection[0] || null
-        : null,
-      partLocation: Array.isArray(repairData.partSelection)
-        ? repairData.partSelection[1] || null
-        : null,
       repairDescription: cleanFieldValue(repairData.repairDescription),
       // 详情记录
       sparePartLocation: sparePartLocation.value,

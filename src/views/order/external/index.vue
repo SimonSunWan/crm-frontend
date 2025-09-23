@@ -74,15 +74,13 @@
   // 字典相关
   const dictionaryOptions = ref({
     carModel: [] as any[],
-    projectType: [] as any[],
-    projectPhase: [] as any[],
-    faultClassification: [] as any[],
+    insurer: [] as any[],
+    outRepairItems: [] as any[],
+    repairProgress: [] as any[],
     faultLocation: [] as any[],
-    partCategory: [] as any[],
     spareLocation: [] as any[],
     partNumber: [] as any[],
-    feeType: [] as any[],
-    repairItems: [] as any[]
+    feeType: [] as any[]
   })
 
   // 搜索表单
@@ -177,19 +175,19 @@
       formatter: row => row.reportDate || '-'
     },
     {
-      prop: 'projectType',
-      label: '项目类型',
+      prop: 'insurer',
+      label: '出险公司',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel(row.projectType, dictionaryOptions.value.projectType) || '-'
+        return getDictionaryLabel(row.insurer || '', dictionaryOptions.value.insurer) || '-'
       }
     },
     {
-      prop: 'projectStage',
-      label: '项目阶段',
+      prop: 'assessor',
+      label: '定损员',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel(row.projectStage, dictionaryOptions.value.projectPhase) || '-'
+        return row.assessor || '-'
       }
     },
     {
@@ -359,15 +357,13 @@
   const loadDictionaryData = async () => {
     const dictionaryCodes = {
       carModel: 'order_car_model',
-      projectType: 'order_project_type',
-      projectPhase: 'order_project_phase',
-      faultClassification: 'order_fault_classification',
+      insurer: 'order_insurer',
+      outRepairItems: 'order_out_repair_items',
+      repairProgress: 'order_repair_progress',
       faultLocation: 'order_fault_location',
-      partCategory: 'order_part_category',
       spareLocation: 'order_spare_location',
       partNumber: 'order_part_number',
-      feeType: 'order_fee_type',
-      repairItems: 'order_repair_items'
+      feeType: 'order_fee_type'
     }
 
     const loadPromises = Object.entries(dictionaryCodes).map(async ([key, code]) => {
