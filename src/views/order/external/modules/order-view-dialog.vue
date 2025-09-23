@@ -345,29 +345,12 @@
 
   // 获取保外维修项目标签
   const getOutRepairItemLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.outRepairItems || [], true)
+    getLabel(keyValue, props.dictionaryOptions?.outRepairItems || [])
 
   // 获取维修项目选择文本
   const getRepairSelectionText = (repairSelection: any) => {
     if (!repairSelection) return null
-
-    if (Array.isArray(repairSelection)) {
-      const texts = repairSelection
-        .map(item => {
-          if (typeof item === 'object' && item.text) {
-            return item.text
-          }
-          if (typeof item === 'string') {
-            return getOutRepairItemLabel(item)
-          }
-          return item
-        })
-        .filter(text => text)
-
-      return texts.length > 0 ? texts.join(' / ') : null
-    }
-
-    return repairSelection
+    return getOutRepairItemLabel(repairSelection)
   }
 
   // 获取详情数据

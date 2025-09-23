@@ -376,14 +376,19 @@
         <ElTable :data="labors" border style="width: 100%">
           <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
-              <ElCascader
+              <ElSelect
                 v-model="row.repairSelection"
-                :options="props.dictionaryOptions?.outRepairItems || []"
-                :props="cascaderProps"
                 placeholder="请选择保外维修项目"
                 @change="value => handleRepairSelectionChange(row, value)"
                 style="width: 100%"
-              />
+              >
+                <ElOption
+                  v-for="item in props.dictionaryOptions?.outRepairItems || []"
+                  :key="item.keyValue"
+                  :label="item.dictValue"
+                  :value="item.keyValue"
+                />
+              </ElSelect>
             </template>
           </ElTableColumn>
           <ElTableColumn prop="repairProgress" label="维修进度" width="150">
@@ -538,7 +543,7 @@
 
   const labors = ref([
     {
-      repairSelection: [] as string[],
+      repairSelection: '',
       repairProgress: '',
       quantity: '',
       coefficient: ''
@@ -692,7 +697,7 @@
     ]
     labors.value = [
       {
-        repairSelection: [] as string[],
+        repairSelection: '',
         repairProgress: '',
         quantity: '',
         coefficient: ''
@@ -786,7 +791,7 @@
 
   const addLabor = () => {
     labors.value.push({
-      repairSelection: [] as string[],
+      repairSelection: '',
       repairProgress: '',
       quantity: '',
       coefficient: ''
@@ -807,13 +812,9 @@
     }
   }
 
-  // 处理维修项目级联选择变化
+  // 处理维修项目选择变化
   const handleRepairSelectionChange = (row: any, value: any) => {
-    // ElCascader组件会提供路径数组, 第一个是故障位置, 第二个是维修项目
-    if (Array.isArray(value) && value.length >= 2) {
-      row.faultLocation = value[0]
-      row.repairItem = value[1]
-    }
+    row.repairSelection = value
   }
 
   // 构建提交数据

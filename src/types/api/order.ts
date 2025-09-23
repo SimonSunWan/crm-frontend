@@ -27,7 +27,7 @@ export interface OrderDetail {
     amount: string
   }>
   labors?: Array<{
-    repairSelection: string[]
+    repairSelection: string
     faultLocation?: string
     repairItem?: string
     quantity: string
@@ -134,7 +134,7 @@ export interface OrderUpdateParams {
     amount: string
   }>
   labors?: Array<{
-    repairSelection: string[]
+    repairSelection: string
     faultLocation?: string
     quantity: string
     coefficient: string
