@@ -28,6 +28,10 @@
 
     :deep(.el-table__row) {
       cursor: pointer;
+
+      &.selected-row {
+        background-color: #f5f7fa !important;
+      }
     }
   }
 

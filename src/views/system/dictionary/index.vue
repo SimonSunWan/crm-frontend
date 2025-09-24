@@ -30,6 +30,7 @@
             pageSizes: [],
             hideOnSinglePage: false
           }"
+          :row-class-name="getRowClassName"
           @row-click="selectType"
           @pagination:current-change="handleTypeCurrentChange"
         />
@@ -231,6 +232,10 @@
   const selectType = (type: DictionaryTypeItem) => {
     selectedType.value = type
     getEnumData()
+  }
+
+  const getRowClassName = ({ row }: { row: Record<string, any>; rowIndex: number }) => {
+    return row.id === selectedType.value?.id ? 'selected-row' : ''
   }
 
   const getEnumData = async () => {
