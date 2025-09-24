@@ -182,7 +182,7 @@
       label: '项目类型',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel(row.projectType, dictionaryOptions.value.projectType) || '-'
+        return getDictionaryLabel(row.projectType || '', dictionaryOptions.value.projectType) || '-'
       }
     },
     {
@@ -190,7 +190,9 @@
       label: '项目阶段',
       width: 100,
       formatter: (row: OrderItem) => {
-        return getDictionaryLabel(row.projectStage, dictionaryOptions.value.projectPhase) || '-'
+        return (
+          getDictionaryLabel(row.projectStage || '', dictionaryOptions.value.projectPhase) || '-'
+        )
       }
     },
     {
@@ -312,7 +314,8 @@
     searchForm.value = {
       orderNo: '',
       carSelection: [],
-      repairShop: ''
+      repairShop: '',
+      sparePartLocation: ''
     }
     getData()
   }

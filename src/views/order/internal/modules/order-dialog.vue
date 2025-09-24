@@ -928,7 +928,14 @@
       sparePartLocation: formData.sparePartLocation,
       spareParts: spareParts.value,
       costs: costs.value,
-      labors: labors.value
+      labors: labors.value.map(labor => ({
+        repairSelection: Array.isArray(labor.repairSelection)
+          ? labor.repairSelection.join(',')
+          : labor.repairSelection || '',
+        faultLocation: labor.faultLocation,
+        quantity: labor.quantity,
+        coefficient: labor.coefficient
+      }))
     }
 
     // 只有最后一步才传递isEnd字段
