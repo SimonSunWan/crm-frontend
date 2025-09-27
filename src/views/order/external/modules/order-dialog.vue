@@ -21,15 +21,8 @@
       <ElDivider content-position="left">客户信息</ElDivider>
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem label="整车厂/车型" prop="carSelection">
-            <ElCascader
-              v-model="formData.carSelection"
-              :options="props.dictionaryOptions?.carModel || []"
-              :props="cascaderProps"
-              placeholder="请选择整车厂/车型"
-              clearable
-              style="width: 100%"
-            />
+          <ElFormItem label="整车厂/车型" prop="carModelText">
+            <ElInput v-model="formData.carModelText" placeholder="请输入整车厂/车型" />
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
@@ -464,7 +457,7 @@
   // API服务
   import { ExternalOrderService } from '@/api/orderApi'
   import type { OrderItem } from '@/types/api'
-  import { cleanFieldValue, cascaderProps } from '../utils/dictionaryUtils'
+  import { cleanFieldValue } from '../utils/dictionaryUtils'
 
   defineOptions({ name: 'ExternalOrderDialog' })
 
@@ -502,7 +495,7 @@
     id: '',
     customer: '',
     vehicleModel: '',
-    carSelection: [] as string[],
+    carModelText: '',
     repairShop: '',
     reporterName: '',
     contactInfo: '',
@@ -568,7 +561,7 @@
 
   // 表单验证规则
   const rules: FormRules = {
-    carSelection: [{ required: true, message: '请选择整车厂/车型', trigger: 'change' }],
+    carModelText: [{ required: true, message: '请输入整车厂/车型', trigger: 'blur' }],
     repairShop: [{ required: true, message: '请输入维修店名称', trigger: 'blur' }],
     reporterName: [{ required: true, message: '请输入报修人姓名', trigger: 'blur' }],
     contactInfo: [{ required: true, message: '请输入联系方式', trigger: 'blur' }],
@@ -604,10 +597,8 @@
         // 设置基本信息
         Object.assign(formData, props.orderData)
 
-        // 设置级联选择器的值
-        if (props.orderData.customer && props.orderData.vehicleModel) {
-          formData.carSelection = [props.orderData.customer, props.orderData.vehicleModel]
-        }
+        // 设置整车厂/车型文本
+        formData.carModelText = props.orderData.customer || ''
 
         // 如果有详情数据, 设置维修记录数据
         if (props.orderData.details && props.orderData.details.length > 0) {
@@ -659,7 +650,7 @@
       id: '',
       customer: '',
       vehicleModel: '',
-      carSelection: [],
+      carModelText: '',
       repairShop: '',
       reporterName: '',
       contactInfo: '',
@@ -828,8 +819,8 @@
   const buildSubmitData = (isEnd = false) => {
     const data = {
       // 报修信息
-      customer: Array.isArray(formData.carSelection) ? formData.carSelection[0] || null : null,
-      vehicleModel: Array.isArray(formData.carSelection) ? formData.carSelection[1] || null : null,
+      customer: formData.carModelText || null,
+      vehicleModel: formData.carModelText || null,
       repairShop: cleanFieldValue(formData.repairShop),
       reporterName: cleanFieldValue(formData.reporterName),
       contactInfo: cleanFieldValue(formData.contactInfo),

@@ -6,14 +6,8 @@
       <ElRow :gutter="20">
         <ElCol :span="12">
           <div class="info-item">
-            <span class="label">整车厂：</span>
-            <span class="value">{{ getCarModelLabel(orderData.customer) || '-' }}</span>
-          </div>
-        </ElCol>
-        <ElCol :span="12">
-          <div class="info-item">
-            <span class="label">车型：</span>
-            <span class="value">{{ getCarModelLabel(orderData.vehicleModel) || '-' }}</span>
+            <span class="label">整车厂/车型：</span>
+            <span class="value">{{ orderData.customer || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>
@@ -319,10 +313,6 @@
       ? getHierarchicalDictionaryLabel(keyValue, options)
       : getDictionaryLabel(keyValue, options)
   }
-
-  // 获取车型标签
-  const getCarModelLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.carModel || [], true)
 
   // 获取出险公司标签
   const getInsurerLabel = (keyValue: string) =>

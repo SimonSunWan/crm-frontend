@@ -59,7 +59,7 @@
   import type { OrderItem } from '@/types/api'
   import { ExternalOrderService } from '@/api/orderApi'
   import { DictionaryService } from '@/api/dictionaryApi'
-  import { getDictionaryLabel, getHierarchicalDictionaryLabel } from './utils/dictionaryUtils'
+  import { getDictionaryLabel } from './utils/dictionaryUtils'
   import { PermissionManager } from '@/utils/permissionManager'
   import { useUserStore } from '@/store/modules/user'
 
@@ -86,7 +86,7 @@
   // 搜索表单
   const searchForm = ref({
     orderNo: '',
-    carSelection: [] as string[],
+    carModelText: '',
     repairShop: '',
     sparePartLocation: ''
   })
@@ -132,22 +132,11 @@
     },
     {
       prop: 'customer',
-      label: '整车厂',
-      width: 120,
+      label: '整车厂/车型',
+      width: 150,
       showOverflowTooltip: true,
       formatter: (row: OrderItem) => {
-        return getHierarchicalDictionaryLabel(row.customer, dictionaryOptions.value.carModel) || '-'
-      }
-    },
-    {
-      prop: 'vehicleModel',
-      label: '车型',
-      width: 120,
-      showOverflowTooltip: true,
-      formatter: (row: OrderItem) => {
-        return (
-          getHierarchicalDictionaryLabel(row.vehicleModel, dictionaryOptions.value.carModel) || '-'
-        )
+        return row.customer || '-'
       }
     },
     {
@@ -312,10 +301,9 @@
       sparePartLocation: searchForm.value.sparePartLocation
     }
 
-    // 处理级联选择器的值
-    if (searchForm.value.carSelection && searchForm.value.carSelection.length > 0) {
-      params.customer = searchForm.value.carSelection[0] || ''
-      params.vehicleModel = searchForm.value.carSelection[1] || ''
+    // 处理整车厂/车型搜索
+    if (searchForm.value.carModelText) {
+      params.customer = searchForm.value.carModelText
     }
 
     getData(params)
@@ -324,7 +312,7 @@
   const resetSearch = () => {
     searchForm.value = {
       orderNo: '',
-      carSelection: [],
+      carModelText: '',
       repairShop: '',
       sparePartLocation: ''
     }

@@ -13,7 +13,6 @@
   import { ref, computed } from 'vue'
   import ArtSearchBar from '@/components/forms/art-search-bar/index.vue'
   import type { SearchFormItem } from '@/components/forms/art-search-bar/index.vue'
-  import { cascaderProps } from '../utils/dictionaryUtils'
 
   interface Props {
     modelValue: Record<string, any>
@@ -58,15 +57,12 @@
     },
     {
       label: '整车厂/车型',
-      key: 'carSelection',
-      type: 'cascader',
+      key: 'carModelText',
+      type: 'input',
       labelWidth: '90px',
       props: {
-        options: props.dictionaryOptions?.carModel || [],
-        props: cascaderProps,
-        placeholder: '请选择整车厂/车型',
-        clearable: true,
-        style: { width: '100%' }
+        placeholder: '请输入整车厂/车型',
+        clearable: true
       }
     },
     {
