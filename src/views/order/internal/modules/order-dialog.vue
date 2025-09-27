@@ -686,8 +686,9 @@
             }
           ]
           labors.value = (detail.labors || []).map((labor: any) => ({
-            repairSelection:
-              labor.faultLocation && labor.repairItem
+            repairSelection: Array.isArray(labor.repairSelection)
+              ? labor.repairSelection
+              : labor.faultLocation && labor.repairItem
                 ? [labor.faultLocation, labor.repairItem]
                 : [],
             faultLocation: labor.faultLocation || '',
@@ -930,8 +931,8 @@
       costs: costs.value,
       labors: labors.value.map(labor => ({
         repairSelection: Array.isArray(labor.repairSelection)
-          ? labor.repairSelection.join(',')
-          : labor.repairSelection || '',
+          ? labor.repairSelection
+          : labor.repairSelection || [],
         faultLocation: labor.faultLocation,
         quantity: labor.quantity,
         coefficient: labor.coefficient

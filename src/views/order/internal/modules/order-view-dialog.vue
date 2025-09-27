@@ -279,12 +279,12 @@
         <ElTable :data="getLabors()" border style="width: 100%" v-if="getLabors().length > 0">
           <ElTableColumn prop="faultLocation" label="故障位置">
             <template #default="{ row }">
-              {{ getRepairItemLabel(row.faultLocation) || row.faultLocation || '-' }}
+              {{ getRepairSelectionLabel(row.repairSelection, 0) || row.faultLocation || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="repairItem" label="维修项目">
             <template #default="{ row }">
-              {{ getRepairItemLabel(row.repairItem) || row.repairItem || '-' }}
+              {{ getRepairSelectionLabel(row.repairSelection, 1) || row.repairItem || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" />
@@ -385,6 +385,15 @@
   // 获取维修项目标签
   const getRepairItemLabel = (keyValue: string) =>
     getLabel(keyValue, props.dictionaryOptions?.repairItems || [], true)
+
+  // 获取维修选择标签
+  const getRepairSelectionLabel = (repairSelection: any, index: number) => {
+    if (!repairSelection || !Array.isArray(repairSelection) || !repairSelection[index]) {
+      return null
+    }
+
+    return getRepairItemLabel(repairSelection[index])
+  }
 
   // 获取详情数据
   const getDetailValue = (key: string) => {
