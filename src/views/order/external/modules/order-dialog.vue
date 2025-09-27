@@ -275,11 +275,11 @@
         </div>
 
         <ElTable :data="spareParts" border style="width: 100%">
-          <ElTableColumn prop="name" label="备件名称">
+          <ElTableColumn prop="name" label="保外备件名称">
             <template #default="{ row }">
               <ElSelect
                 v-model="row.name"
-                placeholder="请选择备件名称"
+                placeholder="请选择保外备件名称"
                 filterable
                 @change="value => handlePartNameChange(row, value)"
                 style="width: 100%"

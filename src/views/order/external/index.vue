@@ -368,7 +368,7 @@
       repairProgress: 'order_repair_progress',
       faultLocation: 'order_fault_location',
       spareLocation: 'order_spare_location',
-      partNumber: 'order_part_number',
+      partNumber: 'order_out_part_number',
       feeType: 'order_fee_type'
     }
 

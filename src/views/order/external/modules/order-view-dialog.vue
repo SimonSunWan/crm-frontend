@@ -214,7 +214,7 @@
           style="width: 100%"
           v-if="getSpareParts().length > 0"
         >
-          <ElTableColumn prop="name" label="备件名称">
+          <ElTableColumn prop="name" label="保外备件名称">
             <template #default="{ row }">
               {{ getPartNameLabel(row.name) || row.name || '-' }}
             </template>
