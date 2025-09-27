@@ -348,6 +348,11 @@
               <ElInput v-model="row.amount" placeholder="请输入费用金额(元)" />
             </template>
           </ElTableColumn>
+          <ElTableColumn prop="remark" label="备注">
+            <template #default="{ row }">
+              <ElInput v-model="row.remark" placeholder="请输入备注" />
+            </template>
+          </ElTableColumn>
           <ElTableColumn label="操作" width="100" fixed="right">
             <template #default="{ $index }">
               <div class="operation-buttons">
@@ -537,7 +542,8 @@
   const costs = ref([
     {
       category: '',
-      amount: ''
+      amount: '',
+      remark: ''
     }
   ])
 
@@ -623,12 +629,11 @@
               quantity: ''
             }
           ]
-          costs.value = detail.costs || [
-            {
-              category: '',
-              amount: ''
-            }
-          ]
+          costs.value = (detail.costs || []).map((cost: any) => ({
+            category: cost.category || '',
+            amount: cost.amount || '',
+            remark: cost.remark || ''
+          }))
           labors.value = (detail.labors || []).map((labor: any) => ({
             repairSelection: labor.repairSelection || [],
             repairProgress: labor.repairProgress || '',
@@ -692,7 +697,8 @@
     costs.value = [
       {
         category: '',
-        amount: ''
+        amount: '',
+        remark: ''
       }
     ]
     labors.value = [
@@ -779,7 +785,8 @@
   const addCost = () => {
     costs.value.push({
       category: '',
-      amount: ''
+      amount: '',
+      remark: ''
     })
   }
 

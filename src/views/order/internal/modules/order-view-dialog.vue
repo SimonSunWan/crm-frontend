@@ -266,6 +266,11 @@
             </template>
           </ElTableColumn>
           <ElTableColumn prop="amount" label="费用金额(元)" />
+          <ElTableColumn prop="remark" label="备注">
+            <template #default="{ row }">
+              {{ row.remark || '-' }}
+            </template>
+          </ElTableColumn>
         </ElTable>
         <div v-else class="no-data">暂无费用使用记录</div>
       </div>

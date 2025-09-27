@@ -25,6 +25,7 @@ export interface OrderDetail {
   costs?: Array<{
     category: string
     amount: string
+    remark?: string
   }>
   labors?: Array<{
     repairSelection: string | string[]
@@ -135,6 +136,7 @@ export interface OrderUpdateParams {
   costs?: Array<{
     category: string
     amount: string
+    remark?: string
   }>
   labors?: Array<{
     repairSelection: string | string[]
