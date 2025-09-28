@@ -131,6 +131,13 @@
       formatter: row => row.id || '-'
     },
     {
+      prop: 'orderProgress',
+      label: '工单进度',
+      width: 120,
+      showOverflowTooltip: true,
+      formatter: row => row.orderProgress || '-'
+    },
+    {
       prop: 'customer',
       label: '整车厂/车型',
       width: 150,
@@ -253,13 +260,6 @@
       width: 200,
       showOverflowTooltip: true,
       formatter: row => row.faultDescription || '-'
-    },
-    {
-      prop: 'orderProgress',
-      label: '工单进度',
-      width: 200,
-      showOverflowTooltip: true,
-      formatter: row => row.orderProgress || '-'
     },
     {
       label: '操作',
