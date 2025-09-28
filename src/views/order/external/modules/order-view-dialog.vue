@@ -263,15 +263,18 @@
           <h3>工时详情</h3>
         </div>
 
+        <!-- 维修进度显示 -->
+        <div class="repair-progress-section">
+          <div class="info-item">
+            <span class="label">维修进度：</span>
+            <span class="value">{{ getRepairProgressLabel(getRepairProgress()) || '-' }}</span>
+          </div>
+        </div>
+
         <ElTable :data="getLabors()" border style="width: 100%" v-if="getLabors().length > 0">
           <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
               {{ getRepairSelectionText(row.repairSelection) || '-' }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="repairProgress" label="维修进度">
-            <template #default="{ row }">
-              {{ getRepairProgressLabel(row.repairProgress) || '-' }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" />
@@ -385,6 +388,11 @@
     return Array.isArray(labors) ? labors : []
   }
 
+  // 获取维修进度
+  const getRepairProgress = () => {
+    return getDetailValue('repairProgress')
+  }
+
   // 计算属性
   const dialogVisible = computed({
     get: () => props.visible,
@@ -442,6 +450,27 @@
             margin-right: 8px;
             font-size: 14px;
             color: #606266;
+          }
+        }
+      }
+
+      .repair-progress-section {
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+
+        .info-item {
+          margin: 0;
+
+          .label {
+            font-weight: 600;
+            color: #495057;
+          }
+
+          .value {
+            color: #212529;
           }
         }
       }

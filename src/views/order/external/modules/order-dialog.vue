@@ -387,6 +387,20 @@
           <h3>工时详情</h3>
         </div>
 
+        <!-- 维修进度选择 -->
+        <div class="repair-progress-section">
+          <ElFormItem label="维修进度" prop="repairProgress">
+            <ElSelect v-model="repairProgress" placeholder="请选择维修进度" style="width: 200px">
+              <ElOption
+                v-for="item in props.dictionaryOptions?.repairProgress || []"
+                :key="item.keyValue"
+                :label="item.dictValue"
+                :value="item.keyValue"
+              />
+            </ElSelect>
+          </ElFormItem>
+        </div>
+
         <ElTable :data="labors" border style="width: 100%">
           <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
@@ -398,22 +412,6 @@
               >
                 <ElOption
                   v-for="item in props.dictionaryOptions?.outRepairItems || []"
-                  :key="item.keyValue"
-                  :label="item.dictValue"
-                  :value="item.keyValue"
-                />
-              </ElSelect>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="repairProgress" label="维修进度" width="150">
-            <template #default="{ row }">
-              <ElSelect
-                v-model="row.repairProgress"
-                placeholder="请选择维修进度"
-                style="width: 100%"
-              >
-                <ElOption
-                  v-for="item in props.dictionaryOptions?.repairProgress || []"
                   :key="item.keyValue"
                   :label="item.dictValue"
                   :value="item.keyValue"
@@ -561,11 +559,13 @@
   const labors = ref([
     {
       repairSelection: '',
-      repairProgress: '',
       quantity: '',
       coefficient: ''
     }
   ])
+
+  // 维修进度字段（从工时详情中移出）
+  const repairProgress = ref('')
 
   // 计算属性
   const dialogVisible = computed({
@@ -650,10 +650,12 @@
           }))
           labors.value = (detail.labors || []).map((labor: any) => ({
             repairSelection: labor.repairSelection || [],
-            repairProgress: labor.repairProgress || '',
             quantity: labor.quantity || '',
             coefficient: labor.coefficient || ''
           }))
+
+          // 设置维修进度（从详情记录中获取）
+          repairProgress.value = detail.repairProgress || ''
         }
       } catch (error) {
         console.error(error)
@@ -719,11 +721,11 @@
     labors.value = [
       {
         repairSelection: '',
-        repairProgress: '',
         quantity: '',
         coefficient: ''
       }
     ]
+    repairProgress.value = ''
   }
 
   // 步骤控制
@@ -814,7 +816,6 @@
   const addLabor = () => {
     labors.value.push({
       repairSelection: '',
-      repairProgress: '',
       quantity: '',
       coefficient: ''
     })
@@ -872,7 +873,8 @@
       sparePartLocation: formData.sparePartLocation,
       spareParts: spareParts.value,
       costs: costs.value,
-      labors: labors.value
+      labors: labors.value,
+      repairProgress: cleanFieldValue(repairProgress.value)
     }
 
     // 只有最后一步才传递isEnd字段
@@ -969,6 +971,23 @@
 
         :deep(.el-form-item__content) {
           margin-left: 0;
+        }
+      }
+    }
+
+    .repair-progress-section {
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+
+      :deep(.el-form-item) {
+        margin: 0;
+
+        .el-form-item__label {
+          font-weight: 600;
+          color: #495057;
         }
       }
     }
