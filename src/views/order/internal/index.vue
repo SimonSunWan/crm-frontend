@@ -185,6 +185,18 @@
       formatter: row => row.reportDate || '-'
     },
     {
+      prop: 'sparePartLocation',
+      label: '备件所属库位',
+      width: 140,
+      showOverflowTooltip: true,
+      formatter: (row: OrderItem) => {
+        return (
+          getDictionaryLabel(row.sparePartLocation || '', dictionaryOptions.value.spareLocation) ||
+          '-'
+        )
+      }
+    },
+    {
       prop: 'projectType',
       label: '项目类型',
       width: 100,
@@ -305,7 +317,8 @@
   const handleSearch = () => {
     const params: any = {
       orderNo: searchForm.value.orderNo,
-      repairShop: searchForm.value.repairShop
+      repairShop: searchForm.value.repairShop,
+      sparePartLocation: searchForm.value.sparePartLocation
     }
 
     // 处理级联选择器的值

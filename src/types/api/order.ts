@@ -64,6 +64,7 @@ export interface OrderItem {
   faultDescription?: string
   isEnd?: boolean
   orderProgress?: string
+  sparePartLocation?: string
   createTime: string
   updateTime?: string
   // 详情记录
