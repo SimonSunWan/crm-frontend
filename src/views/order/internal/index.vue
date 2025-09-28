@@ -256,6 +256,13 @@
       formatter: row => row.faultDescription || '-'
     },
     {
+      prop: 'orderProgress',
+      label: '工单进度',
+      width: 200,
+      showOverflowTooltip: true,
+      formatter: row => row.orderProgress || '-'
+    },
+    {
       label: '操作',
       width: 180,
       fixed: 'right' as const,

@@ -17,6 +17,22 @@
       label-width="120px"
       v-show="currentStep === 0"
     >
+      <!-- 工单进度 -->
+      <ElDivider content-position="left">工单进度</ElDivider>
+      <ElRow :gutter="20">
+        <ElCol :span="24">
+          <ElFormItem label="工单进度" prop="orderProgress">
+            <ElInput
+              v-model="formData.orderProgress"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入工单进度"
+              :disabled="!hasViewAllPermission"
+            />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+
       <!-- 客户信息 -->
       <ElDivider content-position="left">客户信息</ElDivider>
       <ElRow :gutter="20">
@@ -497,6 +513,7 @@
   import { InternalOrderService } from '@/api/orderApi'
   import type { OrderItem } from '@/types/api'
   import { cleanFieldValue, cascaderProps } from '../utils/dictionaryUtils'
+  import { PermissionManager } from '@/utils/permissionManager'
 
   // 组件
 
@@ -555,7 +572,8 @@
     packDate: '',
     sealCode: '',
     underWarranty: null,
-    faultDescription: ''
+    faultDescription: '',
+    orderProgress: ''
   })
 
   const repairData = reactive({
@@ -605,6 +623,11 @@
 
   const dialogTitle = computed(() => {
     return props.type === 'edit' ? '编辑保内工单' : '新增保内工单'
+  })
+
+  // 权限检查
+  const hasViewAllPermission = computed(() => {
+    return PermissionManager.hasPagePermission('/order/internal', 'view_all')
   })
 
   // 表单验证规则
@@ -736,7 +759,8 @@
       packDate: '',
       sealCode: '',
       underWarranty: null,
-      faultDescription: ''
+      faultDescription: '',
+      orderProgress: ''
     })
     Object.assign(repairData, {
       repairPerson: '',
@@ -919,6 +943,7 @@
       sealCode: cleanFieldValue(formData.sealCode),
       underWarranty: formData.underWarranty ?? false,
       faultDescription: cleanFieldValue(formData.faultDescription),
+      orderProgress: cleanFieldValue(formData.orderProgress),
       // 维修记录
       repairPerson: cleanFieldValue(repairData.repairPerson),
       repairDate: cleanFieldValue(repairData.repairDate),
