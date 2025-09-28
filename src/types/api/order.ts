@@ -15,6 +15,7 @@ export interface OrderDetail {
   partLocation?: string
   repairDescription?: string
   sparePartLocation?: string
+  repairProgress?: string
   spareParts?: Array<{
     partNumber: string
     name: string
@@ -62,6 +63,7 @@ export interface OrderItem {
   underWarranty: boolean
   faultDescription?: string
   isEnd?: boolean
+  orderProgress?: string
   createTime: string
   updateTime?: string
   // 详情记录
@@ -120,12 +122,14 @@ export interface OrderUpdateParams {
   underWarranty?: boolean
   faultDescription?: string | null
   isEnd?: boolean
+  orderProgress?: string | null
   // 维修记录字段
   repairPerson?: string | null
   repairDate?: string | null
   avicResponsibility?: boolean
   faultLocation?: string | null
   repairDescription?: string | null
+  repairProgress?: string | null
   // 详情记录字段
   sparePartLocation?: string | null
   spareParts?: Array<{
