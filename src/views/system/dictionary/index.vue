@@ -47,6 +47,12 @@
               <ElButton v-if="selectedType" @click="toggleExpand" v-ripple>
                 {{ isExpanded ? '收起' : '展开' }}
               </ElButton>
+              <DictionaryImport
+                v-if="selectedType"
+                :type-id="selectedType.id"
+                :type-name="selectedType.name"
+                @success="handleImportSuccess"
+              />
               <ElButton v-if="selectedType" @click="showEnumDialog('add')" v-ripple>
                 新增字典枚举
               </ElButton>
@@ -99,6 +105,7 @@
   import ArtTable from '@/components/tables/art-table/index.vue'
   import TypeDialog from './modules/type-dialog.vue'
   import EnumDialog from './modules/enum-dialog.vue'
+  import DictionaryImport from './modules/dictionary-import.vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { DictionaryService } from '@/api/dictionaryApi'
   import type { DictionaryTypeItem, DictionaryEnumItem } from '@/types/api'
@@ -348,6 +355,10 @@
         processRows(enumData.value)
       }
     })
+  }
+
+  const handleImportSuccess = () => {
+    getEnumData()
   }
 
   onMounted(() => {

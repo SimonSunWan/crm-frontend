@@ -8,7 +8,9 @@ import type {
   DictionaryEnumListData,
   CreateDictionaryEnumParams,
   UpdateDictionaryEnumParams,
-  DictionaryData
+  DictionaryData,
+  BatchImportDictionaryEnumParams,
+  BatchImportResult
 } from '@/types/api'
 
 export class DictionaryService {
@@ -94,6 +96,20 @@ export class DictionaryService {
   static deleteDictionaryEnum(id: number) {
     return request.del({
       url: `/dictionary/enums/${id}`
+    })
+  }
+
+  static batchImportDictionaryEnums(data: BatchImportDictionaryEnumParams) {
+    return request.post<BatchImportResult>({
+      url: '/dictionary/enums/batch-import',
+      data
+    })
+  }
+
+  static downloadDictionaryEnumTemplate(typeId: number) {
+    return request.get({
+      url: `/dictionary/enums/template/${typeId}`,
+      responseType: 'blob'
     })
   }
 }

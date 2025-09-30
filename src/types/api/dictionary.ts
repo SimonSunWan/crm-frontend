@@ -80,3 +80,28 @@ export interface UpdateDictionaryEnumParams {
   path?: string
   status?: boolean
 }
+
+// 批量导入相关接口
+export interface BatchImportDictionaryEnumParams {
+  typeId: number
+  data: BatchImportEnumItem[]
+}
+
+export interface BatchImportEnumItem {
+  keyValue: string
+  dictValue: string
+  sortOrder?: number
+  parentKeyValue?: string
+  level?: number
+}
+
+export interface BatchImportResult {
+  success: boolean
+  message: string
+  successCount: number
+  failCount: number
+  errors?: Array<{
+    row: number
+    message: string
+  }>
+}
