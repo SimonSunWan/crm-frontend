@@ -48,11 +48,11 @@
   ]
 
   const previewColumns = [
-    { prop: 'keyValue', label: '枚举编码', width: 120 },
-    { prop: 'dictValue', label: '枚举名称', width: 150 },
-    { prop: 'sortOrder', label: '排序', width: 80 },
-    { prop: 'parentKeyValue', label: '父级编码', width: 120 },
-    { prop: 'level', label: '层级', width: 80 }
+    { prop: 'keyValue', label: '枚举编码' },
+    { prop: 'dictValue', label: '枚举名称' },
+    { prop: 'sortOrder', label: '排序' },
+    { prop: 'parentKeyValue', label: '父级编码' },
+    { prop: 'level', label: '层级' }
   ]
 
   const handlePreview = async (file: File): Promise<any> => {
@@ -168,6 +168,17 @@
       if (item.level && (isNaN(item.level) || item.level < 1)) {
         warnings.push({ row, message: '层级值应大于等于1，已自动修正为1' })
         item.level = 1
+      }
+
+      // 验证层级和父级关系
+      if (item.level && item.level > 1 && !item.parentKeyValue) {
+        errors.push({ row, message: `层级为${item.level}的项必须指定父级编码` })
+        hasError = true
+      }
+
+      if (item.level === 1 && item.parentKeyValue) {
+        warnings.push({ row, message: '层级为1的项不需要指定父级编码，已忽略' })
+        item.parentKeyValue = undefined
       }
 
       if (!hasError) {

@@ -136,11 +136,17 @@
               <div class="result-info">
                 <h4>{{ importResult.success ? '导入成功' : '导入失败' }}</h4>
                 <p>{{ importResult.message }}</p>
-                <div v-if="importResult.success" class="result-stats">
-                  <ElTag type="success">成功导入: {{ importResult.successCount }} 条</ElTag>
-                  <ElTag v-if="importResult.failCount > 0" type="danger">
-                    失败: {{ importResult.failCount }} 条
-                  </ElTag>
+              </div>
+            </div>
+
+            <div
+              v-if="!importResult.success && importResult.errors && importResult.errors.length > 0"
+              class="error-details"
+            >
+              <div class="error-list">
+                <div v-for="(error, index) in importResult.errors" :key="index" class="error-item">
+                  <span class="error-row">第{{ error.row }}行:</span>
+                  <span class="error-message">{{ error.message }}</span>
                 </div>
               </div>
             </div>
@@ -197,6 +203,10 @@
     message: string
     successCount: number
     failCount: number
+    errors?: Array<{
+      row: number
+      message: string
+    }>
   }
 
   interface PreviewColumn {
@@ -525,7 +535,6 @@
             }
 
             p {
-              margin: 0 0 12px;
               font-size: 14px;
               color: #666;
             }
@@ -533,6 +542,38 @@
             .result-stats {
               display: flex;
               gap: 8px;
+            }
+          }
+        }
+
+        .error-details {
+          padding: 16px;
+          margin-top: 16px;
+          background: #fef0f0;
+          border: 1px solid #fbc4c4;
+          border-radius: 6px;
+
+          .error-list {
+            .error-item {
+              display: flex;
+              margin-bottom: 8px;
+              font-size: 14px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+
+              .error-row {
+                min-width: 60px;
+                margin-right: 8px;
+                font-weight: 600;
+                color: #f56c6c;
+              }
+
+              .error-message {
+                flex: 1;
+                color: #606266;
+              }
             }
           }
         }
