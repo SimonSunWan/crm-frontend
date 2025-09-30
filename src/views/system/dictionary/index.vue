@@ -146,7 +146,6 @@
       prop: 'operation',
       label: '操作',
       width: 120,
-      fixed: 'right' as const,
       formatter: (row: DictionaryTypeItem) => {
         return h('div', [
           h(ArtButtonTable, {
