@@ -38,7 +38,7 @@ export class UserService {
     })
   }
 
-  static getUserList(params: Api.Common.PaginatingSearchParams) {
+  static getUserList(params?: Api.Common.PaginatingSearchParams) {
     return request.get<UserListData>({
       url: '/users/',
       params

@@ -1,8 +1,3 @@
-/**
- * 用户相关类型定义
- */
-
-// 用户信息
 export interface UserInfo {
   id: number
   userName: string
@@ -10,13 +5,12 @@ export interface UserInfo {
   email: string
   phone?: string
   avatar?: string
-  status: boolean // 统一使用status字段
-  roles?: string[] // 可选的角色字段
-  roleNames?: string[] // 可选的角色名称字段
-  buttons?: string[] // 按钮权限列表
+  status: boolean
+  roles?: string[]
+  roleNames?: string[]
+  buttons?: string[]
 }
 
-// 用户列表数据
 export interface UserListData {
   records: UserListItem[]
   total: number
@@ -24,19 +18,18 @@ export interface UserListData {
   size: number
 }
 
-// 用户列表项
 export interface UserListItem {
   id: number
-  status: boolean // 改为boolean类型
+  status: boolean
   userName: string
   nickName: string
   phone: string
   email: string
   roles: string[]
-  roleNames?: string[] // 角色名称数组
+  roleNames?: string[]
+  departments?: string[]
 }
 
-// 创建用户参数
 export interface CreateUserParams {
   userName: string
   nickName?: string
@@ -47,7 +40,6 @@ export interface CreateUserParams {
   status?: boolean
 }
 
-// 更新用户参数
 export interface UpdateUserParams {
   userName?: string
   nickName?: string
@@ -55,7 +47,6 @@ export interface UpdateUserParams {
   phone?: string
 }
 
-// 用户注册参数
 export interface RegisterUserParams {
   userName: string
   nickName: string
@@ -65,14 +56,12 @@ export interface RegisterUserParams {
   systemCode: string
 }
 
-// 忘记密码参数
 export interface ForgetPasswordParams {
   username: string
   newPassword: string
   systemCode: string
 }
 
-// 头像上传响应
 export interface AvatarUploadResponse {
   avatar_url: string
 }

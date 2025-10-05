@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :title="dialogTitle" v-model="dialogVisible" width="700px" align-center>
+  <ElDialog :title="dialogTitle" v-model="dialogVisible" width="500px" align-center>
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="85px">
       <ElFormItem label="菜单类型">
         <ElRadioGroup v-model="menuType" :disabled="disableMenuType">
@@ -9,88 +9,64 @@
       </ElFormItem>
 
       <template v-if="menuType === 'menu'">
-        <ElRow :gutter="20">
-          <ElCol :span="12">
-            <ElFormItem label="菜单名称" prop="name">
-              <ElInput v-model="formData.name" placeholder="请输入菜单名称"></ElInput>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="路由地址" prop="path" v-if="!formData.isLink">
-              <ElInput v-model="formData.path" placeholder="请输入路由地址"></ElInput>
-            </ElFormItem>
-            <ElFormItem label="外链地址" prop="link" v-else>
-              <ElInput v-model="formData.link" placeholder="请输入外链地址"></ElInput>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="20">
-          <ElCol :span="12">
-            <ElFormItem label="图标" prop="icon">
-              <ArtIconSelector v-model="formData.icon" :iconType="iconType" width="100%" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="排序" prop="sort" style="width: 100%">
-              <ElInputNumber
-                v-model="formData.sort"
-                style="width: 100%"
-                :min="1"
-                controls-position="right"
-              />
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+        <ElFormItem label="菜单名称" prop="name">
+          <ElInput v-model="formData.name" placeholder="请输入菜单名称"></ElInput>
+        </ElFormItem>
 
-        <ElRow :gutter="20" v-if="!isDirectory">
-          <ElCol :span="6">
-            <ElFormItem label="是否启用" prop="isEnable">
-              <ElSwitch v-model="formData.isEnable"></ElSwitch>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="是否外链" prop="isLink">
-              <ElSwitch v-model="formData.isLink"></ElSwitch>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="页面缓存" prop="keepAlive">
-              <ElSwitch v-model="formData.keepAlive"></ElSwitch>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+        <ElFormItem label="路由地址" prop="path" v-if="!formData.isLink">
+          <ElInput v-model="formData.path" placeholder="请输入路由地址"></ElInput>
+        </ElFormItem>
+        <ElFormItem label="外链地址" prop="link" v-else>
+          <ElInput v-model="formData.link" placeholder="请输入外链地址"></ElInput>
+        </ElFormItem>
+
+        <ElFormItem label="图标" prop="icon">
+          <ArtIconSelector v-model="formData.icon" :iconType="iconType" width="100%" />
+        </ElFormItem>
+
+        <ElFormItem label="排序" prop="sort">
+          <ElInputNumber
+            v-model="formData.sort"
+            style="width: 100%"
+            :min="1"
+            controls-position="right"
+          />
+        </ElFormItem>
+
+        <ElFormItem label="是否启用" prop="isEnable" v-if="!isDirectory">
+          <ElSwitch v-model="formData.isEnable"></ElSwitch>
+        </ElFormItem>
+
+        <ElFormItem label="是否外链" prop="isLink" v-if="!isDirectory">
+          <ElSwitch v-model="formData.isLink"></ElSwitch>
+        </ElFormItem>
+
+        <ElFormItem label="页面缓存" prop="keepAlive" v-if="!isDirectory">
+          <ElSwitch v-model="formData.keepAlive"></ElSwitch>
+        </ElFormItem>
       </template>
 
       <template v-if="menuType === 'button'">
-        <ElRow :gutter="20">
-          <ElCol :span="12">
-            <ElFormItem label="权限名称" prop="name">
-              <ElInput v-model="formData.name" placeholder="请输入权限名称"></ElInput>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="权限标识" prop="authMark">
-              <ElInput v-model="formData.authMark" placeholder="请输入权限标识"></ElInput>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="20">
-          <ElCol :span="12">
-            <ElFormItem label="排序" prop="authSort" style="width: 100%">
-              <ElInputNumber
-                v-model="formData.authSort"
-                style="width: 100%"
-                :min="1"
-                controls-position="right"
-              />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="是否启用" prop="isEnable">
-              <ElSwitch v-model="formData.isEnable"></ElSwitch>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+        <ElFormItem label="权限名称" prop="name">
+          <ElInput v-model="formData.name" placeholder="请输入权限名称"></ElInput>
+        </ElFormItem>
+
+        <ElFormItem label="权限标识" prop="authMark">
+          <ElInput v-model="formData.authMark" placeholder="请输入权限标识"></ElInput>
+        </ElFormItem>
+
+        <ElFormItem label="排序" prop="authSort">
+          <ElInputNumber
+            v-model="formData.authSort"
+            style="width: 100%"
+            :min="1"
+            controls-position="right"
+          />
+        </ElFormItem>
+
+        <ElFormItem label="是否启用" prop="isEnable">
+          <ElSwitch v-model="formData.isEnable"></ElSwitch>
+        </ElFormItem>
       </template>
     </ElForm>
 
@@ -104,28 +80,16 @@
 </template>
 
 <script setup lang="ts">
-  // 组件导入
   import ArtIconSelector from '@/components/base/art-icon-selector/index.vue'
-
-  // Element Plus 组件和类型
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-
-  // 枚举和类型
   import { IconTypeEnum } from '@/enums/appEnum'
-
-  // API 服务
   import { MenuService } from '@/api/menuApi'
-
-  // Store
   import { useMenuStore } from '@/store/modules/menu'
-
-  // Vue 工具函数
   import { ref, reactive, computed, watch } from 'vue'
 
   defineOptions({ name: 'MenuDialog' })
 
-  // Props 和 Emits
   interface Props {
     visible: boolean
     type: 'add' | 'edit'
@@ -141,7 +105,6 @@
     submit: []
   }>()
 
-  // 响应式数据
   const formRef = ref<FormInstance>()
   const loading = ref(false)
   const menuType = ref('menu')
@@ -163,7 +126,6 @@
     authSort: 1
   })
 
-  // 计算属性
   const dialogVisible = computed({
     get: () => props.visible,
     set: value => emit('update:visible', value)
@@ -185,13 +147,11 @@
     return false
   })
 
-  // 判断是否为目录层级
   const isDirectory = computed(() => {
     if (menuType.value !== 'menu' || !props.menuData?.children) return false
     return props.menuData.children.some((child: any) => child.menuType !== 'button')
   })
 
-  // 表单验证规则
   const rules = computed<FormRules>(() => {
     const baseRules: FormRules = {}
     if (menuType.value === 'menu') {
@@ -209,7 +169,6 @@
     return baseRules
   })
 
-  // 初始化表单数据
   const initFormData = () => {
     if (props.type === 'edit' && props.menuData) {
       isEdit.value = true
@@ -237,9 +196,7 @@
       }
     } else {
       isEdit.value = false
-      // 先重置表单
       resetForm()
-      // 然后设置父菜单ID(如果是新增子菜单)
       if (props.isSubMenu && props.menuData) {
         formData.parentId = props.menuData.id || 0
         menuType.value = 'menu'
@@ -249,7 +206,6 @@
     }
   }
 
-  // 重置表单
   const resetForm = () => {
     formRef.value?.resetFields()
     Object.assign(formData, {
@@ -268,7 +224,6 @@
     })
   }
 
-  // 监听弹窗显示状态
   watch(
     () => [props.visible, props.type, props.menuData, props.parentId, props.isSubMenu],
     () => {
@@ -279,7 +234,6 @@
     { immediate: true }
   )
 
-  // 提交表单
   const handleSubmit = async () => {
     if (!formRef.value) return
 
@@ -323,7 +277,6 @@
             ElMessage.success('新增成功')
           }
 
-          // 同步更新左侧菜单列表
           const menuStore = useMenuStore()
           await menuStore.fetchMenuList()
 

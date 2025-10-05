@@ -129,6 +129,26 @@
           }
         },
         {
+          prop: 'departments',
+          label: '所属部门',
+          formatter: row => {
+            if (!row.departments || row.departments.length === 0) {
+              return '-'
+            }
+            return h(
+              'div',
+              {},
+              row.departments.map(deptName =>
+                h(
+                  ElTag,
+                  { type: 'success', size: 'small', style: 'margin-right: 4px;' },
+                  () => deptName
+                )
+              )
+            )
+          }
+        },
+        {
           prop: 'status',
           label: '状态',
           formatter: row => {
