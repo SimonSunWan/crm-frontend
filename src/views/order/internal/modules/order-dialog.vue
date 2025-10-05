@@ -20,13 +20,22 @@
       <!-- 工单进度 -->
       <ElDivider content-position="left">工单进度</ElDivider>
       <ElRow :gutter="20">
-        <ElCol :span="24">
+        <ElCol :span="12">
           <ElFormItem label="工单进度" prop="orderProgress">
             <ElInput
               v-model="formData.orderProgress"
               type="textarea"
               :rows="3"
               placeholder="请输入工单进度"
+              :disabled="!hasViewAllPermission"
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="中航派工单号" prop="avicOrderNumber">
+            <ElInput
+              v-model="formData.avicOrderNumber"
+              placeholder="请输入中航派工单号"
               :disabled="!hasViewAllPermission"
             />
           </ElFormItem>
@@ -573,7 +582,8 @@
     sealCode: '',
     underWarranty: null,
     faultDescription: '',
-    orderProgress: ''
+    orderProgress: '',
+    avicOrderNumber: ''
   })
 
   const repairData = reactive({
@@ -760,7 +770,8 @@
       sealCode: '',
       underWarranty: null,
       faultDescription: '',
-      orderProgress: ''
+      orderProgress: '',
+      avicOrderNumber: ''
     })
     Object.assign(repairData, {
       repairPerson: '',
@@ -944,6 +955,7 @@
       underWarranty: formData.underWarranty ?? false,
       faultDescription: cleanFieldValue(formData.faultDescription),
       orderProgress: cleanFieldValue(formData.orderProgress),
+      avicOrderNumber: cleanFieldValue(formData.avicOrderNumber),
       // 维修记录
       repairPerson: cleanFieldValue(repairData.repairPerson),
       repairDate: cleanFieldValue(repairData.repairDate),

@@ -4,10 +4,16 @@
       <!-- 工单进度 -->
       <ElDivider content-position="left">工单进度</ElDivider>
       <ElRow :gutter="20">
-        <ElCol :span="24">
+        <ElCol :span="12">
           <div class="info-item">
             <span class="label">工单进度：</span>
             <span class="value">{{ orderData.orderProgress || '-' }}</span>
+          </div>
+        </ElCol>
+        <ElCol :span="12">
+          <div class="info-item">
+            <span class="label">中航派工单号：</span>
+            <span class="value">{{ orderData.avicOrderNumber || '-' }}</span>
           </div>
         </ElCol>
       </ElRow>

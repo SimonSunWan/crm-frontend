@@ -64,6 +64,7 @@ export interface OrderItem {
   faultDescription?: string
   isEnd?: boolean
   orderProgress?: string
+  avicOrderNumber?: string
   sparePartLocation?: string
   createTime: string
   updateTime?: string
@@ -100,6 +101,7 @@ export interface OrderCreateParams {
   underWarranty: boolean
   faultDescription?: string | null
   isEnd?: boolean
+  avicOrderNumber?: string | null
 }
 
 // 更新工单参数
@@ -124,6 +126,7 @@ export interface OrderUpdateParams {
   faultDescription?: string | null
   isEnd?: boolean
   orderProgress?: string | null
+  avicOrderNumber?: string | null
   // 维修记录字段
   repairPerson?: string | null
   repairDate?: string | null

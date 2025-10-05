@@ -134,6 +134,13 @@
       formatter: row => row.orderProgress || '-'
     },
     {
+      prop: 'avicOrderNumber',
+      label: '中航派工单号',
+      width: 150,
+      showOverflowTooltip: true,
+      formatter: row => row.avicOrderNumber || '-'
+    },
+    {
       prop: 'customer',
       label: '整车厂',
       width: 120,
