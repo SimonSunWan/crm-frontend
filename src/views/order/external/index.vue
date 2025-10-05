@@ -61,7 +61,6 @@
   import { DictionaryService } from '@/api/dictionaryApi'
   import { getDictionaryLabel } from './utils/dictionaryUtils'
   import { PermissionManager } from '@/utils/permissionManager'
-  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'ExternalOrder' })
 
@@ -91,12 +90,7 @@
     sparePartLocation: ''
   })
 
-  // 用户store
-  const userStore = useUserStore()
   const getOrderListWithPermission = async (params: any) => {
-    if (!PermissionManager.hasPagePermission('/order/external', 'view_all')) {
-      params.createdBy = userStore.getUserInfo.id
-    }
     return ExternalOrderService.getOrderList(params)
   }
 
