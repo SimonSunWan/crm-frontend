@@ -53,7 +53,7 @@
               ref="tableRef"
               :data="userList"
               :loading="loading"
-              height="400"
+              height="100%"
               @selection-change="handleSelectionChange"
             >
               <ElTableColumn type="selection" width="55" />
@@ -295,7 +295,7 @@
         }
 
         .list-content {
-          height: calc(100% - 48px);
+          height: calc(100% - 42px);
         }
       }
 
@@ -316,7 +316,7 @@
 
         .selected-content {
           box-sizing: border-box;
-          height: calc(100% - 60px);
+          height: calc(100% - 42px);
           padding: 16px;
           overflow-y: auto;
 
