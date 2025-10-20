@@ -404,19 +404,14 @@
         <ElTable :data="labors" border style="width: 100%">
           <ElTableColumn prop="repairSelection" label="保外维修项目">
             <template #default="{ row }">
-              <ElSelect
+              <ElCascader
                 v-model="row.repairSelection"
+                :options="props.dictionaryOptions?.outRepairItems || []"
+                :props="cascaderProps"
                 placeholder="请选择保外维修项目"
                 @change="value => handleRepairSelectionChange(row, value)"
                 style="width: 100%"
-              >
-                <ElOption
-                  v-for="item in props.dictionaryOptions?.outRepairItems || []"
-                  :key="item.keyValue"
-                  :label="item.dictValue"
-                  :value="item.keyValue"
-                />
-              </ElSelect>
+              />
             </template>
           </ElTableColumn>
           <ElTableColumn prop="quantity" label="维修数量" width="120">
@@ -471,7 +466,7 @@
   // API服务
   import { ExternalOrderService } from '@/api/orderApi'
   import type { OrderItem } from '@/types/api'
-  import { cleanFieldValue } from '../utils/dictionaryUtils'
+  import { cleanFieldValue, cascaderProps } from '../utils/dictionaryUtils'
   import { PermissionManager } from '@/utils/permissionManager'
 
   defineOptions({ name: 'ExternalOrderDialog' })
@@ -558,7 +553,7 @@
 
   const labors = ref([
     {
-      repairSelection: '',
+      repairSelection: [] as string[],
       quantity: '',
       coefficient: ''
     }
@@ -649,7 +644,7 @@
             remark: cost.remark || ''
           }))
           labors.value = (detail.labors || []).map((labor: any) => ({
-            repairSelection: labor.repairSelection || [],
+            repairSelection: Array.isArray(labor.repairSelection) ? labor.repairSelection : [],
             quantity: labor.quantity || '',
             coefficient: labor.coefficient || ''
           }))
@@ -720,7 +715,7 @@
     ]
     labors.value = [
       {
-        repairSelection: '',
+        repairSelection: [] as string[],
         quantity: '',
         coefficient: ''
       }
@@ -815,7 +810,7 @@
 
   const addLabor = () => {
     labors.value.push({
-      repairSelection: '',
+      repairSelection: [] as string[],
       quantity: '',
       coefficient: ''
     })
@@ -835,8 +830,9 @@
     }
   }
 
-  // 处理维修项目选择变化
+  // 处理维修项目级联选择变化
   const handleRepairSelectionChange = (row: any, value: any) => {
+    // ElCascader组件会提供路径数组
     row.repairSelection = value
   }
 

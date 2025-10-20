@@ -359,7 +359,35 @@
   // 获取维修项目选择文本
   const getRepairSelectionText = (repairSelection: any) => {
     if (!repairSelection) return null
+
+    // 如果是数组（级联选择器的结果），需要处理级联路径
+    if (Array.isArray(repairSelection)) {
+      return getCascaderLabel(repairSelection, props.dictionaryOptions?.outRepairItems || [])
+    }
+
+    // 如果是字符串（旧数据），直接获取标签
     return getOutRepairItemLabel(repairSelection)
+  }
+
+  // 获取级联选择器的标签文本
+  const getCascaderLabel = (path: string[], options: any[]): string => {
+    if (!path || path.length === 0 || !options) return ''
+
+    const findLabel = (items: any[], targetValue: string): string => {
+      for (const item of items) {
+        if (item.keyValue === targetValue) {
+          return item.dictValue
+        }
+        if (item.children && item.children.length > 0) {
+          const childLabel = findLabel(item.children, targetValue)
+          if (childLabel) return childLabel
+        }
+      }
+      return ''
+    }
+
+    const labels = path.map(value => findLabel(options, value)).filter(Boolean)
+    return labels.join(' / ')
   }
 
   // 获取详情数据
