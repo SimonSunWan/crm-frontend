@@ -1,5 +1,11 @@
 <template>
-  <ElDialog title="查看保外工单" v-model="dialogVisible" width="900px" align-center>
+  <ElDialog
+    title="查看保外工单"
+    v-model="dialogVisible"
+    width="900px"
+    align-center
+    :close-on-click-modal="false"
+  >
     <div class="order-view-content">
       <!-- 工单进度 -->
       <ElDivider content-position="left">工单进度</ElDivider>

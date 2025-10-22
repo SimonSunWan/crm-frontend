@@ -1,5 +1,11 @@
 <template>
-  <ElDialog :title="dialogTitle" v-model="dialogVisible" width="900px" align-center>
+  <ElDialog
+    :title="dialogTitle"
+    v-model="dialogVisible"
+    width="900px"
+    align-center
+    :close-on-click-modal="false"
+  >
     <!-- 步骤指示器 -->
     <div class="step-indicator">
       <ElSteps :active="currentStep" finish-status="success" align-center>
