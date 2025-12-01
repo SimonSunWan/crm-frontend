@@ -467,7 +467,7 @@
             <template #default="{ row }">
               <ElCascader
                 v-model="row.repairSelection"
-                :options="props.dictionaryOptions?.repairItems || []"
+                :options="getRepairItemsByProjectType(formData.projectType)"
                 :props="cascaderProps"
                 placeholder="请选择故障位置/维修项目"
                 @change="value => handleRepairSelectionChange(row, value)"
@@ -522,12 +522,12 @@
   import type { FormInstance, FormRules } from 'element-plus'
 
   // Vue 工具函数
-  import { ref, reactive, computed, watch } from 'vue'
+  import { ref, reactive, computed, watch, nextTick } from 'vue'
 
   // API服务
   import { InternalOrderService } from '@/api/orderApi'
   import type { OrderItem } from '@/types/api'
-  import { cleanFieldValue, cascaderProps } from '../utils/dictionaryUtils'
+  import { cleanFieldValue, cascaderProps, getDictionaryLabel } from '../utils/dictionaryUtils'
   import { PermissionManager } from '@/utils/permissionManager'
 
   // 组件
@@ -550,6 +550,8 @@
       partNumber: any[]
       feeType: any[]
       repairItems: any[]
+      commercialRepairItems: any[]
+      energyRepairItems: any[]
     }
   }
 
@@ -646,6 +648,24 @@
     return PermissionManager.hasPagePermission('/order/internal', 'view_all')
   })
 
+  // 根据项目类型获取对应的维修项目字典
+  const getRepairItemsByProjectType = (projectType: string) => {
+    if (!projectType || !props.dictionaryOptions) return []
+
+    // 获取项目类型的标签值，使用中文进行匹配
+    const projectTypeLabel = getDictionaryLabel(projectType, props.dictionaryOptions.projectType)
+
+    // 根据项目类型的中文名称返回对应的维修项目
+    if (projectTypeLabel === '乘用车') {
+      return props.dictionaryOptions.repairItems // 乘用车使用order_repair_items
+    } else if (projectTypeLabel === '商用车') {
+      return props.dictionaryOptions.commercialRepairItems // 商用车使用order_commercial_repair_items
+    } else {
+      // 其他所有情况（包括储能）都使用储能的字典作为通用字典
+      return props.dictionaryOptions.energyRepairItems // 储能使用order_energy_repair_items
+    }
+  }
+
   // 表单验证规则
   const rules: FormRules = {
     carSelection: [{ required: true, message: '请选择整车厂/车型', trigger: 'change' }],
@@ -676,6 +696,9 @@
 
   // 初始化表单数据
   const initFormData = async () => {
+    // 标记正在初始化
+    isInitializing.value = true
+
     // 重置步骤状态
     currentStep.value = 0
     if (props.type === 'edit' && props.orderData) {
@@ -748,6 +771,11 @@
     } else {
       resetForm()
     }
+
+    // 初始化完成，重置标志
+    nextTick(() => {
+      isInitializing.value = false
+    })
   }
 
   // 重置表单
@@ -1032,6 +1060,26 @@
       loading.value = false
     }
   }
+
+  // 用于跟踪是否正在初始化表单
+  const isInitializing = ref(false)
+
+  // 监听项目类型变化，清空维修项目选择
+  watch(
+    () => formData.projectType,
+    (newValue, oldValue) => {
+      // 只有在不是初始化阶段且项目类型确实发生变化时才清空维修项目
+      if (!isInitializing.value && newValue !== oldValue) {
+        console.log('projectType changed from', oldValue, 'to', newValue)
+        // 当项目类型变化时，清空所有维修项目的选择
+        labors.value.forEach(labor => {
+          labor.repairSelection = []
+          labor.faultLocation = ''
+          labor.repairItem = ''
+        })
+      }
+    }
+  )
 
   // 监听弹窗显示状态
   watch(

@@ -352,6 +352,8 @@
       partNumber: any[]
       feeType: any[]
       repairItems: any[]
+      commercialRepairItems: any[]
+      energyRepairItems: any[]
     }
   }
 
@@ -411,8 +413,11 @@
     getLabel(keyValue, props.dictionaryOptions?.feeType || [])
 
   // 获取维修项目标签
-  const getRepairItemLabel = (keyValue: string) =>
-    getLabel(keyValue, props.dictionaryOptions?.repairItems || [], true)
+  const getRepairItemLabel = (keyValue: string) => {
+    const projectType = props.orderData?.projectType
+    const repairItems = getRepairItemsByProjectType(projectType)
+    return getLabel(keyValue, repairItems || [], true)
+  }
 
   // 获取维修选择标签
   const getRepairSelectionLabel = (repairSelection: any, index: number) => {
@@ -447,6 +452,24 @@
   const getLabors = () => {
     const labors = getDetailValue('labors')
     return Array.isArray(labors) ? labors : []
+  }
+
+  // 根据项目类型获取对应的维修项目字典
+  const getRepairItemsByProjectType = (projectType: string) => {
+    if (!projectType || !props.dictionaryOptions) return []
+
+    // 获取项目类型的标签值，使用中文进行匹配
+    const projectTypeLabel = getLabel(projectType, props.dictionaryOptions.projectType)
+
+    // 根据项目类型的中文名称返回对应的维修项目
+    if (projectTypeLabel === '乘用车') {
+      return props.dictionaryOptions.repairItems // 乘用车使用order_repair_items
+    } else if (projectTypeLabel === '商用车') {
+      return props.dictionaryOptions.commercialRepairItems // 商用车使用order_commercial_repair_items
+    } else {
+      // 其他所有情况（包括储能）都使用储能的字典作为通用字典
+      return props.dictionaryOptions.energyRepairItems // 储能使用order_energy_repair_items
+    }
   }
 
   // 计算属性

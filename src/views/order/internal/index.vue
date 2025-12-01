@@ -81,7 +81,9 @@
     spareLocation: [] as any[],
     partNumber: [] as any[],
     feeType: [] as any[],
-    repairItems: [] as any[]
+    repairItems: [] as any[],
+    commercialRepairItems: [] as any[], // 商用车维修项目
+    energyRepairItems: [] as any[] // 储能维修项目
   })
 
   // 搜索表单
@@ -393,7 +395,9 @@
       spareLocation: 'order_spare_location',
       partNumber: 'order_part_number',
       feeType: 'order_fee_type',
-      repairItems: 'order_repair_items'
+      repairItems: 'order_repair_items', // 乘用车维修项目
+      commercialRepairItems: 'order_commercial_repair_items', // 商用车维修项目
+      energyRepairItems: 'order_energy_repair_items' // 储能维修项目
     }
 
     const loadPromises = Object.entries(dictionaryCodes).map(async ([key, code]) => {
