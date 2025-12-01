@@ -1012,6 +1012,7 @@
           ? labor.repairSelection
           : labor.repairSelection || [],
         faultLocation: labor.faultLocation,
+        repairItem: labor.repairItem,
         quantity: labor.quantity,
         coefficient: labor.coefficient
       }))
