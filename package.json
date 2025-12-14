@@ -11,18 +11,8 @@
     "lint:fix": "eslint . --fix",
     "fix": "eslint --fix",
     "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\"",
-    "lint:stylelint": "stylelint  \"**/*.{css,scss,vue}\" --fix",
     "lint:lint-staged": "lint-staged",
-    "format:comments": "node scripts/format-comments.js",
-    "format:all": "npm run format:comments && npm run lint:fix && npm run lint:prettier",
-    "prepare": "husky",
-    "commit": "git-cz",
-    "clean:dev": "tsx scripts/clean-dev.ts"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
+    "format:all": "npm run lint:fix && npm run lint:prettier"
   },
   "lint-staged": {
     "*.{js,ts,mjs,mts,tsx}": [
@@ -34,14 +24,12 @@
     ],
     "*.vue": [
       "eslint --fix",
-      "stylelint --fix --allow-empty-input",
       "prettier --write"
     ],
     "*.{html,htm}": [
       "prettier --write"
     ],
     "*.{scss,css,less}": [
-      "stylelint --fix --allow-empty-input",
       "prettier --write"
     ],
     "*.{md,mdx}": [
@@ -77,32 +65,21 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.4.1",
-    "@commitlint/config-conventional": "^19.4.1",
     "@eslint/js": "^9.9.1",
     "@types/node": "^22.1.0",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/compiler-sfc": "^3.0.5",
-    "commitizen": "^4.3.0",
-    "cz-git": "^1.11.1",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-vue": "^9.27.0",
     "globals": "^15.9.0",
-    "husky": "^9.1.5",
     "lint-staged": "^15.5.2",
     "prettier": "^3.5.3",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.81.0",
-    "stylelint": "^16.20.0",
-    "stylelint-config-html": "^1.1.0",
-    "stylelint-config-recess-order": "^4.6.0",
-    "stylelint-config-recommended-scss": "^14.1.0",
-    "stylelint-config-recommended-vue": "^1.5.0",
-    "stylelint-config-standard": "^36.0.1",
     "terser": "^5.36.0",
     "tsx": "^4.20.3",
     "typescript": "~5.6.3",

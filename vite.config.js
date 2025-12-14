@@ -6,15 +6,11 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath } from 'url'
-// import vueDevTools from 'vite-plugin-vue-devtools'
 
-export default ({ mode }: { mode: string }) => {
+export default ({ mode }) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
   const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_PROXY_URL } = env
-
-  // 配置信息已隐藏
-
   return defineConfig({
     define: {
       __APP_VERSION__: JSON.stringify(VITE_VERSION)
@@ -26,12 +22,10 @@ export default ({ mode }: { mode: string }) => {
         '/api': {
           target: VITE_API_PROXY_URL,
           changeOrigin: true
-          // rewrite: path => path.replace(/^\/api/, '')
         }
       },
       host: true
     },
-    // 路径别名
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -51,8 +45,8 @@ export default ({ mode }: { mode: string }) => {
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true, // 生产环境去除 console
-          drop_debugger: true // 生产环境去除 debugger
+          drop_console: true,
+          drop_debugger: true
         }
       },
       rollupOptions: {
@@ -70,13 +64,12 @@ export default ({ mode }: { mode: string }) => {
     },
     plugins: [
       vue(),
-      // 自动导入 components 下面的组件, 无需 import 引入
       Components({
         deep: true,
         extensions: ['vue'],
-        dirs: ['src/components'], // 自动导入的组件目录
+        dirs: ['src/components'],
         resolvers: [ElementPlusResolver()],
-        dts: 'src/types/components.d.ts' // 指定类型声明文件的路径
+        dts: 'src/types/components.d.ts'
       }),
       AutoImport({
         imports: ['vue', 'vue-router', '@vueuse/core', 'pinia'],
@@ -88,18 +81,15 @@ export default ({ mode }: { mode: string }) => {
           globalsPropValue: true
         }
       }),
-      // 压缩
       viteCompression({
-        verbose: true, // 是否在控制台输出压缩结果
-        disable: false, // 是否禁用
-        algorithm: 'gzip', // 压缩算法
-        ext: '.gz', // 压缩后的文件名后缀
-        threshold: 10240, // 只有大小大于该值的资源会被处理 10240B = 10KB
-        deleteOriginFile: false // 压缩后是否删除原文件
+        verbose: true,
+        disable: false,
+        algorithm: 'gzip',
+        ext: '.gz',
+        threshold: 10240,
+        deleteOriginFile: false
       })
-      // vueDevTools()
     ],
-    // 预加载项目必需的组件
     optimizeDeps: {
       include: [
         'vue',
@@ -215,6 +205,6 @@ export default ({ mode }: { mode: string }) => {
   })
 }
 
-function resolvePath(paths: string) {
+function resolvePath(paths) {
   return path.resolve(__dirname, paths)
 }

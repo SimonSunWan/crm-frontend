@@ -1,9 +1,9 @@
 node_modules
-.DS_Store
 dist
-dist-ssr
-*.local
-.cursorrules
-
+.env.local
+.env.*.local
+.DS_Store
 src/types/auto-imports.d.ts
 src/types/components.d.ts
+.auto-import.json
+pnpm-lock.yaml
