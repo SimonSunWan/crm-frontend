@@ -61,6 +61,7 @@
   import { DictionaryService } from '@/api/dictionaryApi'
   import { getDictionaryLabel, getHierarchicalDictionaryLabel } from './utils/dictionaryUtils'
   import { PermissionManager } from '@/utils/permissionManager'
+  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'Order' })
 
@@ -91,6 +92,7 @@
     orderNo: '',
     carSelection: [] as string[],
     repairShop: '',
+    projectType: '',
     sparePartLocation: ''
   })
 
@@ -321,6 +323,7 @@
     const params: any = {
       orderNo: searchForm.value.orderNo,
       repairShop: searchForm.value.repairShop,
+      projectType: searchForm.value.projectType,
       sparePartLocation: searchForm.value.sparePartLocation
     }
 
@@ -334,10 +337,31 @@
   }
 
   const resetSearch = () => {
+    // 先获取当前角色对应的项目类型
+    const userStore = useUserStore()
+    const roles = userStore.getUserInfo.roles || []
+    let projectTypeValue = ''
+    
+    if (roles.length === 1) {
+      const roleCode = roles[0]
+      switch (roleCode) {
+        case 'cycwf':
+          projectTypeValue = 'cy'
+          break
+        case 'sycwf':
+          projectTypeValue = 'sy'
+          break
+        case 'cnwf':
+          projectTypeValue = 'cn'
+          break
+      }
+    }
+    
     searchForm.value = {
       orderNo: '',
       carSelection: [],
       repairShop: '',
+      projectType: projectTypeValue,
       sparePartLocation: ''
     }
     getData()
@@ -377,10 +401,51 @@
     }
   }
 
+  // 根据用户角色初始化项目类型
+  const initProjectTypeByRole = () => {
+    const userStore = useUserStore()
+    const roles = userStore.getUserInfo.roles || []
+    
+    // 只有一个角色时进行特殊处理
+    if (roles.length === 1) {
+      const roleCode = roles[0]
+      let projectTypeValue = ''
+      
+      switch (roleCode) {
+        case 'cycwf':
+          projectTypeValue = 'cy'
+          break
+        case 'sycwf':
+          projectTypeValue = 'sy'
+          break
+        case 'cnwf':
+          projectTypeValue = 'cn'
+          break
+      }
+      
+      if (projectTypeValue) {
+        searchForm.value.projectType = projectTypeValue
+      }
+    }
+  }
+
   // 初始化
   onMounted(async () => {
     await loadDictionaryData()
-    getData()
+    initProjectTypeByRole()
+    // 检查是否有自动设置的项目类型，如果有则立即查询
+    if (searchForm.value.projectType) {
+      const queryParams = {
+        orderNo: searchForm.value.orderNo,
+        repairShop: searchForm.value.repairShop,
+        projectType: searchForm.value.projectType,
+        sparePartLocation: searchForm.value.sparePartLocation
+      }
+      getData(queryParams)
+    } else {
+      // 没有特定项目类型时，使用默认查询
+      getData()
+    }
   })
 
   // 通用字典数据加载函数

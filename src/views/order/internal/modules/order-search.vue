@@ -10,10 +10,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, watch } from 'vue'
   import ArtSearchBar from '@/components/forms/art-search-bar/index.vue'
   import type { SearchFormItem } from '@/components/forms/art-search-bar/index.vue'
   import { cascaderProps } from '../utils/dictionaryUtils'
+  import { useUserStore } from '@/store/modules/user'
 
   interface Props {
     modelValue: Record<string, any>
@@ -48,7 +49,60 @@
 
   const rules = {}
 
-  const formItems = computed((): SearchFormItem[] => [
+  const userStore = useUserStore()
+
+// 根据角色获取项目类型配置
+const getProjectTypeConfigByRole = () => {
+  const roles = userStore.getUserInfo.roles || []
+  
+  // 只有一个角色时进行特殊处理
+  if (roles.length === 1) {
+    const roleCode = roles[0]
+    let projectTypeValue = ''
+    let isDisabled = false
+    
+    switch (roleCode) {
+      case 'cycwf':
+        projectTypeValue = 'cy'
+        isDisabled = true
+        break
+      case 'sycwf':
+        projectTypeValue = 'sy'
+        isDisabled = true
+        break
+      case 'cnwf':
+        projectTypeValue = 'cn'
+        isDisabled = true
+        break
+    }
+    
+    return { projectTypeValue, isDisabled }
+  }
+  
+  return { projectTypeValue: '', isDisabled: false }
+}
+
+// 根据角色设置项目类型值
+const setProjectTypeByRole = () => {
+  const { projectTypeValue, isDisabled } = getProjectTypeConfigByRole()
+  
+  if (projectTypeValue) {
+    emit('update:modelValue', {
+      ...props.modelValue,
+      projectType: projectTypeValue
+    })
+  }
+}
+
+// 监听角色变化，自动设置项目类型
+watch(() => userStore.getUserInfo.roles, () => {
+  setProjectTypeByRole()
+}, { immediate: true })
+
+const formItems = computed((): SearchFormItem[] => {
+  const { isDisabled } = getProjectTypeConfigByRole()
+  
+  return [
     {
       label: '工单编号',
       key: 'orderNo',
@@ -82,6 +136,22 @@
       }
     },
     {
+      label: '项目类型',
+      key: 'projectType',
+      type: 'select',
+      labelWidth: '70px',
+      props: {
+        options: (props.dictionaryOptions?.projectType || []).map(item => ({
+          label: item.dictValue,
+          value: item.keyValue
+        })),
+        placeholder: '请选择项目类型',
+        clearable: !isDisabled,
+        disabled: isDisabled,
+        style: { width: '100%' }
+      }
+    },
+    {
       label: '备件所属库位',
       key: 'sparePartLocation',
       type: 'select',
@@ -96,7 +166,8 @@
         style: { width: '100%' }
       }
     }
-  ])
+  ]
+})
 
   function handleReset() {
     emit('reset')
